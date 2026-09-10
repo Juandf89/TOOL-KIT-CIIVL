@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DataLex Lab · LATIO API Console & Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-page: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-dark: #0B132B;
+  --bg-dark-surface: #131E3D;
+  --border-light: #E2E8F0;
+  --border-dark: #223158;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --text-dark-muted: #94A3B8;
+  --accent-primary: #1C4587;
+  --accent-hover: #15366D;
+  --accent-glow: rgba(28, 69, 135, 0.12);
+  --badge-get: #10B981;
+  --badge-get-bg: #ECFDF5;
+  --badge-post: #3B82F6;
+  --badge-post-bg: #EFF6FF;
+  --tag-hohfeld: #8B5CF6;
+  --tag-hohfeld-bg: #F5F3FF;
+  --tag-warn: #D97706;
+  --tag-warn-bg: #FFFBEB;
+  --tag-fail: #DC2626;
+  --tag-fail-bg: #FEF2F2;
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Fira Code", monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* Header */
+header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-light);
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+}
+.header-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo-badge {
+  background: var(--bg-dark);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  padding: 7px 11px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(11, 19, 43, 0.15);
+}
+.brand-titles h1 {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+.brand-titles p {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--badge-get-bg);
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--badge-get);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nav-link-btn {
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 5px;
+  transition: all 0.15s ease;
+}
+.nav-link-btn:hover {
+  color: var(--text-main);
+  background: #F1F5F9;
+}
+.btn-primary-sm {
+  background: var(--accent-primary);
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 5px;
+  transition: background 0.15s ease;
+}
+.btn-primary-sm:hover {
+  background: var(--accent-hover);
+}
+
+/* Main Studio Layout (3 columns) */
+.studio-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 1.15fr;
+  min-height: calc(100vh - 64px);
+}
+
+/* Column 1: Sidebar Navigator */
+.col-nav {
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-light);
+  padding: 24px 16px;
+  overflow-y: auto;
+}
+.nav-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin: 18px 8px 8px;
+}
+.nav-section-title:first-child { margin-top: 0; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: var(--text-main);
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+.nav-item:hover {
+  background: var(--bg-page);
+  border-color: var(--border-light);
+}
+.nav-item.active {
+  background: var(--accent-glow);
+  color: var(--accent-primary);
+  font-weight: 600;
+  border-color: #BFDBFE;
+}
+.badge-method {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+  min-width: 40px;
+  text-align: center;
+}
+.badge-post { background: var(--badge-post-bg); color: #1D4ED8; }
+.badge-get { background: var(--badge-get-bg); color: #047857; }
+
+.preset-chip {
+  display: block;
+  background: #F8FAFC;
+  border: 1px solid var(--border-light);
+  border-radius: 5px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.preset-chip strong { display: block; color: var(--accent-primary); margin-bottom: 2px; font-size: 12.5px; }
+.preset-chip:hover {
+  background: #EFF6FF;
+  border-color: #93C5FD;
+}
+
+/* Column 2: Parameters & Request Builder */
+.col-builder {
+  padding: 28px 32px;
+  overflow-y: auto;
+  border-right: 1px solid var(--border-light);
+  background: var(--bg-page);
+}
+.endpoint-hero {
+  margin-bottom: 24px;
+}
+.endpoint-method-url {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.endpoint-url-text {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  padding: 4px 10px;
+  border-radius: 5px;
+}
+.endpoint-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.builder-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 22px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  margin-bottom: 20px;
+}
+.builder-card h3 {
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.param-row {
+  margin-bottom: 16px;
+}
+.param-row:last-child { margin-bottom: 0; }
+.param-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+.param-type {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 13.5px;
+  border: 1px solid var(--border-light);
+  border-radius: 5px;
+  background: #F8FAFC;
+  color: var(--text-main);
+  transition: all 0.15s ease;
+  font-family: var(--font-sans);
+}
+.form-textarea {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 130px;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.btn-execute {
+  width: 100%;
+  background: var(--accent-primary);
+  color: #FFFFFF;
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 6px rgba(28, 69, 135, 0.25);
+  transition: all 0.15s ease;
+}
+.btn-execute:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+.btn-execute:active { transform: translateY(0); }
+
+/* Column 3: Live Developer Console & Response */
+.col-console {
+  background: var(--bg-dark);
+  color: #F8FAFC;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.console-card {
+  background: var(--bg-dark-surface);
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.console-tabs-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0D1630;
+  border-bottom: 1px solid var(--border-dark);
+  padding: 4px 12px;
+}
+.tab-buttons {
+  display: flex;
+  gap: 4px;
+}
+.c-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-dark-muted);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.c-tab:hover { color: #FFFFFF; }
+.c-tab.active {
+  color: #60A5FA;
+  background: rgba(96, 165, 250, 0.12);
+  font-weight: 600;
+}
+.btn-copy-code {
+  background: transparent;
+  border: 1px solid var(--border-dark);
+  color: var(--text-dark-muted);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-copy-code:hover {
+  color: #FFFFFF;
+  border-color: #64748B;
+}
+
+.code-pre-box {
+  padding: 16px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #E2E8F0;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Response Box */
+.response-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0D1630;
+  border-bottom: 1px solid var(--border-dark);
+  padding: 8px 16px;
+}
+.res-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.badge-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #064E3B;
+  color: #34D399;
+}
+.res-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dark-muted);
+}
+.view-switch {
+  display: flex;
+  gap: 4px;
+}
+.v-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dark-muted);
+  font-size: 11.5px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.v-btn.active {
+  background: #1E293B;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* Visual Tree View */
+.visual-tree-container {
+  padding: 18px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+.v-statement-card {
+  background: #0F1935;
+  border: 1px solid var(--border-dark);
+  border-left: 4px solid #3B82F6;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.v-statement-card.is-exc {
+  border-left-color: var(--tag-warn);
+}
+.v-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.v-tag {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+.vt-type { background: #1E3A8A; color: #93C5FD; }
+.vt-hohfeld { background: #4C1D95; color: #DDD6FE; }
+.vt-deontic { background: #064E3B; color: #A7F3D0; }
+.vt-dest { background: #78350F; color: #FDE68A; }
+.vt-exc { background: #7F1D1D; color: #FECACA; }
+
+.v-text {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: #F1F5F9;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+.v-burden {
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #FCA5A5;
+  margin-top: 6px;
+}
+
+@media(max-width: 1100px) {
+  .studio-layout { grid-template-columns: 1fr; }
+  .col-nav, .col-builder, .col-console { border: none; border-bottom: 1px solid var(--border-light); }
+}
+
+/* Demo data banner */
+.demo-banner {
+  background: var(--tag-warn-bg);
+  border-bottom: 1px solid #FDE68A;
+  color: #92400E;
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 8px 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  justify-content: center;
+}
+.demo-banner strong { font-weight: 700; }
+.mock-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #92400E;
+  background: var(--tag-warn-bg);
+  border: 1px solid #FDE68A;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.docs-link-pending {
+  position: relative;
+}
+.docs-link-pending .pending-flag {
+  font-size: 9.5px;
+  font-weight: 700;
+  margin-left: 4px;
+  opacity: 0.85;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-wrapper">
+    <div class="brand-group">
+      <div class="logo-badge">DL</div>
+      <div class="brand-titles">
+        <h1>DataLex Lab · LATIO Console</h1>
+        <p>Motor de Razonamiento y Ontología del Civil Law</p>
+      </div>
+    </div>
+    
+    <div class="status-pill" title="Consola en modo demostración: las respuestas se generan en el navegador con datos de ejemplo, no consultan un backend en vivo.">
+      <div class="pulse-dot"></div>
+      <span>Modo Demo (datos de ejemplo) · v1.0.0</span>
+    </div>
+
+    <div class="header-actions">
+      <a href="https://www.datalexlab.com" target="_blank" class="nav-link-btn">datalexlab.com ↗</a>
+      <a href="https://github.com/Juandf89/latio-kit" target="_blank" class="nav-link-btn">GitHub ↗</a>
+      <a href="https://api.datalexlab.com/docs" target="_blank" class="btn-primary-sm docs-link-pending" title="Swagger Docs — backend aún no desplegado en api.datalexlab.com; corre src/api.py localmente (uvicorn src.api:app) mientras tanto.">Swagger Docs<span class="pending-flag">(pendiente de despliegue)</span></a>
+    </div>
+  </div>
+</header>
+
+<div class="demo-banner">
+  ⚠️ <strong>Modo demostración:</strong> todas las respuestas de esta consola —incluidas <code>/v1/behavior/summary</code> y <code>/v1/behavior/lift</code>— provienen de datos de ejemplo (<code>MOCK_METRICS</code> / <code>MOCK_LIFT</code>) precalculados en el cliente. No hay una API en vivo respondiendo estas peticiones.
+</div>
+
+<div class="studio-layout">
+
+  <!-- Columna 1: Navegador de Endpoints & Presets -->
+  <aside class="col-nav">
+    <div class="nav-section-title">Casos Canónicos DataLex</div>
+    <div class="preset-chip" onclick="loadCase('art-66-co')">
+      <strong>⚖ Presunción Derrotable</strong>
+      <span>Art. 66 Colombia · Carga de prueba</span>
+    </div>
+    <div class="preset-chip" onclick="loadCase('art-150-cl')">
+      <strong>⚡ Potestad y Capacidad</strong>
+      <span>Art. 150 Chile · Patrimonio reservado</span>
+    </div>
+    <div class="preset-chip" onclick="loadCase('art-1362-pe')">
+      <strong>📜 Deber de Buena Fe</strong>
+      <span>Art. 1362 Perú · Concepto indeterminado</span>
+    </div>
+    <div class="preset-chip" onclick="loadCase('art-1710-ar')">
+      <strong>🛡 Prevención del Daño</strong>
+      <span>Art. 1710 Argentina CCyC · Deber general</span>
+    </div>
+
+    <div class="nav-section-title">Endpoints Disponibles</div>
+    <div class="nav-item active" id="btn-ep-parse" onclick="selectEndpoint('parse')">
+      <span class="badge-method badge-post">POST</span>
+      <span>/v1/statements/parse</span>
+    </div>
+    <div class="nav-item" id="btn-ep-search" onclick="selectEndpoint('search')">
+      <span class="badge-method badge-get">GET</span>
+      <span>/v1/statements/search</span>
+    </div>
+    <div class="nav-item" id="btn-ep-summary" onclick="selectEndpoint('summary')">
+      <span class="badge-method badge-get">GET</span>
+      <span>/v1/behavior/summary</span>
+    </div>
+    <div class="nav-item" id="btn-ep-lift" onclick="selectEndpoint('lift')">
+      <span class="badge-method badge-get">GET</span>
+      <span>/v1/behavior/lift</span>
+    </div>
+    <div class="nav-item" id="btn-ep-books" onclick="selectEndpoint('books')">
+      <span class="badge-method badge-get">GET</span>
+      <span>/v1/behavior/books</span>
+    </div>
+  </aside>
+
+  <!-- Columna 2: Request Builder & Parámetros -->
+  <section class="col-builder">
+    <div class="endpoint-hero">
+      <div class="endpoint-method-url">
+        <span class="badge-method badge-post" id="current-badge">POST</span>
+        <span class="endpoint-url-text" id="current-url">/v1/statements/parse</span>
+      </div>
+      <p class="endpoint-desc" id="current-desc">
+        Descompone texto legal no estructurado en enunciados normativos formales, asignando posiciones de Hohfeld, deóntica de Von Wright e inferencia de carga probatoria.
+      </p>
+    </div>
+
+    <div id="dynamic-params-container">
+      <!-- Inyectado dinámicamente según endpoint seleccionado -->
+    </div>
+
+    <button class="btn-execute" onclick="executeApiCall()">
+      <span>Ejecutar Petición (Send Request)</span>
+      <span style="opacity:0.6;font-size:12px;font-family:var(--font-mono)">Ctrl + ↵</span>
+    </button>
+  </section>
+
+  <!-- Columna 3: Developer Console & Response -->
+  <aside class="col-console">
+    
+    <!-- Code Snippet Generator -->
+    <div class="console-card">
+      <div class="console-tabs-bar">
+        <div class="tab-buttons">
+          <button class="c-tab active" onclick="setLang('curl')">cURL</button>
+          <button class="c-tab" onclick="setLang('python')">Python</button>
+          <button class="c-tab" onclick="setLang('javascript')">JavaScript</button>
+        </div>
+        <button class="btn-copy-code" onclick="copySnippet()">Copiar</button>
+      </div>
+      <pre class="code-pre-box" id="code-snippet-pre"></pre>
+    </div>
+
+    <!-- Live Response Viewer -->
+    <div class="console-card" style="flex:1;display:flex;flex-direction:column;">
+      <div class="response-header-bar">
+        <div class="res-meta">
+          <span class="badge-status" id="res-status-badge">200 OK</span>
+          <span class="res-time" id="res-time-text">34 ms</span>
+          <span class="mock-tag" title="Respuesta simulada en el navegador (MOCK_METRICS / MOCK_LIFT o heurística local), no proviene de un backend desplegado.">⚠ Dato de ejemplo</span>
+        </div>
+        <div class="view-switch">
+          <button class="v-btn active" id="btn-view-tree" onclick="setResponseView('tree')">Visual Tree</button>
+          <button class="v-btn" id="btn-view-json" onclick="setResponseView('json')">JSON Raw</button>
+        </div>
+      </div>
+
+      <div id="res-tree-view" class="visual-tree-container">
+        <!-- Renderizado visual de Statements -->
+      </div>
+      <pre id="res-json-view" class="code-pre-box" style="display:none;max-height:520px;"></pre>
+    </div>
+
+  </aside>
+
+</div>
+
+<script>
+// Estado de la consola
+let currentEndpoint = 'parse';
+let currentLang = 'curl';
+let currentView = 'tree';
+let currentPayload = {
+  text: "Se permitirá probar la no existencia del hecho que legalmente se presume, aunque sean ciertos los antecedentes de que lo infiere la ley; a menos que la misma ley rechace expresamente esta prueba.",
+  jurisdiction: "CO-CC"
+};
+let lastResponseData = null;
+
+// Datos de ejemplo (NO provienen de una API en vivo): esta consola es una
+// demo client-side. MOCK_METRICS y MOCK_LIFT son valores precalculados que
+// simulan respuestas de /v1/behavior/summary y /v1/behavior/lift para que
+// la UX se pueda explorar sin backend desplegado. Ver banner "Modo demostración".
+const MOCK_METRICS = {
+  total_articulos_analizados: 21957,
+  corpora_count: 8,
+  promedios_regionales: {
+    ciego_40_pct: 46.52,
+    remision_hacia_atras_pct: 78.43,
+    remision_mismo_titulo_pct: 65.41
+  },
+  por_jurisdiccion: {
+    "CO-CC": { nombre: "Colombia", articulos: 2679, ciego_pct: 40.68 },
+    "CL-CC": { nombre: "Chile", articulos: 2529, ciego_pct: 42.63 },
+    "PE-CC": { nombre: "Perú", articulos: 2122, ciego_pct: 45.71 },
+    "AR-CCYC": { nombre: "Argentina CCyC", articulos: 2670, ciego_pct: 37.87 },
+    "MX-CCF": { nombre: "México Federal", articulos: 3027, ciego_pct: 49.72 }
+  }
+};
+
+const MOCK_LIFT = {
+  pares_canonicos: [
+    { par: "permiso + prohibición", lift: 2.46, corpus_count: 7, patron: "Concede facultad y la restringe en la misma unidad ('podrá... pero no podrá...')" },
+    { par: "juez + plazo", lift: 2.34, corpus_count: 7, patron: "El juez llega con reloj: convoca al adjudicador e impone término perentorio" },
+    { par: "indeterminado + obligación", lift: 1.80, corpus_count: 6, patron: "Lo indeterminado modula el deber: buena fe o diligencia regulan obligaciones" }
+  ]
+};
+
+// Inicializar vistas
+function init() {
+  renderParamsForm();
+  updateCodeSnippet();
+  executeApiCall();
+}
+
+function selectEndpoint(ep) {
+  currentEndpoint = ep;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById(`btn-ep-${ep}`).classList.add('active');
+
+  const badge = document.getElementById('current-badge');
+  const url = document.getElementById('current-url');
+  const desc = document.getElementById('current-desc');
+
+  if (ep === 'parse') {
+    badge.className = 'badge-method badge-post';
+    badge.innerText = 'POST';
+    url.innerText = '/v1/statements/parse';
+    desc.innerText = 'Descompone texto normativo en tiempo real extrayendo operadores deónticos, posiciones de Hohfeld y derrotabilidad.';
+  } else if (ep === 'search') {
+    badge.className = 'badge-method badge-get';
+    badge.innerText = 'GET';
+    url.innerText = '/v1/statements/search';
+    desc.innerText = 'Consulta en el corpus de los 8 códigos civiles mediante filtros sobre primitivas de lógica jurídica.';
+  } else if (ep === 'summary') {
+    badge.className = 'badge-method badge-get';
+    badge.innerText = 'GET';
+    url.innerText = '/v1/behavior/summary';
+    desc.innerText = 'Devuelve métricas consolidadas sobre 21.957 artículos (regularidades del título, reenvíos y el 40% ciego).';
+  } else if (ep === 'lift') {
+    badge.className = 'badge-method badge-get';
+    badge.innerText = 'GET';
+    url.innerText = '/v1/behavior/lift';
+    desc.innerText = 'Matriz de lift de co-ocurrencia: revela las figuras arquetípicas de redacción legislativa continental.';
+  } else if (ep === 'books') {
+    badge.className = 'badge-method badge-get';
+    badge.innerText = 'GET';
+    url.innerText = '/v1/behavior/books';
+    desc.innerText = 'Distribución funcional por libros temáticos (Familia delega en el juez, Obligaciones en excepciones).';
+  }
+
+  renderParamsForm();
+  updateCodeSnippet();
+  executeApiCall();
+}
+
+function renderParamsForm() {
+  const container = document.getElementById('dynamic-params-container');
+
+  if (currentEndpoint === 'parse') {
+    container.innerHTML = `
+      <div class="builder-card">
+        <h3>Payload Body (JSON) <span class="param-type">application/json</span></h3>
+        <div class="param-row">
+          <div class="param-label"><span>text</span><span class="param-type">string · required</span></div>
+          <textarea id="param-text" class="form-textarea" oninput="onPayloadChange()">${currentPayload.text}</textarea>
+        </div>
+        <div class="param-row">
+          <div class="param-label"><span>jurisdiction</span><span class="param-type">string · optional</span></div>
+          <select id="param-jur" class="form-select" onchange="onPayloadChange()">
+            <option value="CO-CC">Colombia (CO-CC)</option>
+            <option value="CL-CC">Chile (CL-CC)</option>
+            <option value="PE-CC">Perú (PE-CC)</option>
+            <option value="AR-CCYC">Argentina CCyC (AR-CCYC)</option>
+            <option value="MX-CCF">México Federal (MX-CCF)</option>
+          </select>
+        </div>
+      </div>
+    `;
+  } else if (currentEndpoint === 'search') {
+    container.innerHTML = `
+      <div class="builder-card">
+        <h3>Query Parameters <span class="param-type">URL params</span></h3>
+        <div class="param-row">
+          <div class="param-label"><span>q</span><span class="param-type">string</span></div>
+          <input type="text" id="param-q" class="form-input" placeholder="Ej. buena fe, 150..." oninput="updateCodeSnippet()">
+        </div>
+        <div class="param-row">
+          <div class="param-label"><span>hohfeldian_position</span><span class="param-type">string</span></div>
+          <select id="param-hohfeld" class="form-select" onchange="updateCodeSnippet()">
+            <option value="">Cualquiera</option>
+            <option value="deber">deber</option>
+            <option value="potestad">potestad</option>
+            <option value="derecho_subjetivo">derecho_subjetivo</option>
+          </select>
+        </div>
+        <div class="param-row">
+          <div class="param-label"><span>addressee</span><span class="param-type">string</span></div>
+          <select id="param-addressee" class="form-select" onchange="updateCodeSnippet()">
+            <option value="">Cualquiera</option>
+            <option value="juez">juez</option>
+            <option value="partes">partes</option>
+          </select>
+        </div>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <div class="builder-card">
+        <h3>Parámetros de Consulta</h3>
+        <p style="color:var(--text-muted);font-size:13px;">Este endpoint no requiere parámetros obligatorios. Ejecuta directamente para obtener la matriz agregada.</p>
+      </div>
+    `;
+  }
+}
+
+function onPayloadChange() {
+  if (currentEndpoint === 'parse') {
+    currentPayload.text = document.getElementById('param-text').value;
+    currentPayload.jurisdiction = document.getElementById('param-jur').value;
+  }
+  updateCodeSnippet();
+}
+
+function loadCase(caseKey) {
+  selectEndpoint('parse');
+  if (caseKey === 'art-66-co') {
+    currentPayload.text = "Se permitirá probar la no existencia del hecho que legalmente se presume, aunque sean ciertos los antecedentes de que lo infiere la ley; a menos que la misma ley rechace expresamente esta prueba.";
+    currentPayload.jurisdiction = "CO-CC";
+  } else if (caseKey === 'art-150-cl') {
+    currentPayload.text = "La mujer casada de cualquier edad podrá dedicarse libremente al ejercicio de un empleo, oficio o industria, y administrará su patrimonio de manera independiente.";
+    currentPayload.jurisdiction = "CL-CC";
+  } else if (caseKey === 'art-1362-pe') {
+    currentPayload.text = "Los contratos deben negociarse, celebrarse y ejecutarse según las reglas de la buena fe y común intención de las partes.";
+    currentPayload.jurisdiction = "PE-CC";
+  } else if (caseKey === 'art-1710-ar') {
+    currentPayload.text = "Toda persona tiene el deber, en cuanto de ella dependa, de evitar causar un daño no justificado y adoptar de buena fe las medidas razonables.";
+    currentPayload.jurisdiction = "AR-CCYC";
+  }
+  renderParamsForm();
+  updateCodeSnippet();
+  executeApiCall();
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.c-tab').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  updateCodeSnippet();
+}
+
+function updateCodeSnippet() {
+  const pre = document.getElementById('code-snippet-pre');
+  const baseUrl = "https://api.datalexlab.com";
+
+  if (currentEndpoint === 'parse') {
+    const jsonBody = JSON.stringify(currentPayload, null, 2);
+    if (currentLang === 'curl') {
+      pre.innerText = `curl -X POST "${baseUrl}/v1/statements/parse" \\
+  -H "Content-Type: application/json" \\
+  -d '${JSON.stringify(currentPayload)}'`;
+    } else if (currentLang === 'python') {
+      pre.innerText = `import requests
+
+url = "${baseUrl}/v1/statements/parse"
+payload = ${jsonBody}
+
+response = requests.post(url, json=payload)
+data = response.json()
+print(data)`;
+    } else if (currentLang === 'javascript') {
+      pre.innerText = `const response = await fetch("${baseUrl}/v1/statements/parse", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(${jsonBody})
+});
+const data = await response.json();
+console.log(data);`;
+    }
+  } else if (currentEndpoint === 'search') {
+    const q = document.getElementById('param-q') ? document.getElementById('param-q').value : '';
+    const h = document.getElementById('param-hohfeld') ? document.getElementById('param-hohfeld').value : '';
+    const a = document.getElementById('param-addressee') ? document.getElementById('param-addressee').value : '';
+    let params = [];
+    if (q) params.push(`q=${encodeURIComponent(q)}`);
+    if (h) params.push(`hohfeldian_position=${h}`);
+    if (a) params.push(`addressee=${a}`);
+    const qs = params.length ? '?' + params.join('&') : '';
+
+    if (currentLang === 'curl') {
+      pre.innerText = `curl -X GET "${baseUrl}/v1/statements/search${qs}"`;
+    } else if (currentLang === 'python') {
+      pre.innerText = `import requests
+response = requests.get("${baseUrl}/v1/statements/search${qs}")
+print(response.json())`;
+    } else if (currentLang === 'javascript') {
+      pre.innerText = `const res = await fetch("${baseUrl}/v1/statements/search${qs}");
+const data = await res.json();`;
+    }
+  } else {
+    const path = `/v1/behavior/${currentEndpoint}`;
+    if (currentLang === 'curl') {
+      pre.innerText = `curl -X GET "${baseUrl}${path}"`;
+    } else if (currentLang === 'python') {
+      pre.innerText = `import requests
+response = requests.get("${baseUrl}${path}")
+print(response.json())`;
+    } else if (currentLang === 'javascript') {
+      pre.innerText = `const res = await fetch("${baseUrl}${path}");
+const data = await res.json();`;
+    }
+  }
+}
+
+function executeApiCall() {
+  const start = performance.now();
+  
+  if (currentEndpoint === 'parse') {
+    const text = currentPayload.text || "";
+    const isExc = /salvo|a menos que|sin perjuicio|pero en tal caso/i.test(text);
+    const hasIndet = /buena fe|orden público|justa causa|equidad/i.test(text);
+    const isJuez = /juez|tribunal|adjudicador/i.test(text);
+    
+    let deontic = "permiso";
+    let hohfeld = "potestad";
+    let stType = isExc ? "supuesto_con_excepcion" : "regla";
+
+    if (/deberá|deben|tiene el deber/i.test(text)) {
+      deontic = "obligacion";
+      hohfeld = "deber";
+    } else if (/prohíbese|se prohíbe|es nulo/i.test(text)) {
+      deontic = "prohibicion";
+      hohfeld = "deber";
+    }
+
+    lastResponseData = {
+      original_text: text,
+      statements_count: 1,
+      statements: [
+        {
+          statement_id: 1,
+          text_span: text,
+          statement_type: stType,
+          deontic_modality: deontic,
+          hohfeldian_position: hohfeld,
+          addressee: isJuez ? "juez" : "partes",
+          is_exception: isExc,
+          exception_marker: isExc ? "a menos que / salvo" : null,
+          burden_of_proof: isExc ? "La excepción deroga la regla por defecto: la carga de la prueba recae sobre quien alega la excepción." : null,
+          indeterminate_concepts: hasIndet ? ["buena_fe"] : [],
+          ontological_rationale: `Enunciado clasificado como ${stType}. Deóntica: ${deontic}. Posición jurídica: ${hohfeld} dirigida a ${isJuez ? 'juez' : 'partes'}.`
+        }
+      ],
+      neurosymbolic_summary: {
+        has_defeasible_rules: isExc,
+        proleg_computable: true,
+        architecture: "Neurosymbolic LATIO v1.1"
+      }
+    };
+  } else if (currentEndpoint === 'summary') {
+    lastResponseData = MOCK_METRICS;
+  } else if (currentEndpoint === 'lift') {
+    lastResponseData = MOCK_LIFT;
+  } else {
+    lastResponseData = { status: "success", endpoint: currentEndpoint, results_count: 6 };
+  }
+
+  const duration = Math.round(performance.now() - start + 28);
+  document.getElementById('res-time-text').innerText = `${duration} ms`;
+  renderResponse();
+}
+
+function renderResponse() {
+  document.getElementById('res-json-view').innerText = JSON.stringify(lastResponseData, null, 2);
+
+  const tree = document.getElementById('res-tree-view');
+  if (currentEndpoint === 'parse' && lastResponseData.statements) {
+    tree.innerHTML = lastResponseData.statements.map(st => `
+      <div class="v-statement-card ${st.is_exception ? 'is-exc' : ''}">
+        <div class="v-tags">
+          <span class="v-tag vt-type">${st.statement_type}</span>
+          <span class="v-tag vt-hohfeld">HOHFELD: ${st.hohfeldian_position}</span>
+          <span class="v-tag vt-deontic">DEÓNTICA: ${st.deontic_modality}</span>
+          <span class="v-tag vt-dest">DESTINATARIO: ${st.addressee}</span>
+          ${st.is_exception ? '<span class="v-tag vt-exc">DERROTABLE (EXCEPCIÓN)</span>' : ''}
+        </div>
+        <div class="v-text">"${st.text_span}"</div>
+        <div style="font-size:12px;color:var(--text-dark-muted);">${st.ontological_rationale}</div>
+        ${st.burden_of_proof ? `<div class="v-burden">⚖ Carga probatoria (PROLEG): ${st.burden_of_proof}</div>` : ''}
+      </div>
+    `).join('');
+  } else {
+    tree.innerHTML = `
+      <div style="padding:14px;background:#0F1935;border-radius:6px;border:1px solid var(--border-dark);">
+        <p style="font-size:13px;color:#93C5FD;margin-bottom:8px;"><strong>Respuesta de Métricas Estructurales</strong></p>
+        <p style="font-size:12px;color:var(--text-dark-muted);line-height:1.6;">Los datos calculados están disponibles en la pestaña <strong>JSON Raw</strong>. Cambia de vista arriba para inspeccionar los campos numéricos.</p>
+      </div>
+    `;
+  }
+}
+
+function setResponseView(view) {
+  currentView = view;
+  document.getElementById('btn-view-tree').classList.toggle('active', view === 'tree');
+  document.getElementById('btn-view-json').classList.toggle('active', view === 'json');
+  document.getElementById('res-tree-view').style.display = view === 'tree' ? 'block' : 'none';
+  document.getElementById('res-json-view').style.display = view === 'json' ? 'block' : 'none';
+}
+
+function copySnippet() {
+  const text = document.getElementById('code-snippet-pre').innerText;
+  navigator.clipboard.writeText(text).then(() => alert('Código copiado al portapapeles.'));
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 'Enter') executeApiCall();
+});
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

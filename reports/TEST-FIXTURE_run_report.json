@@ -1,0 +1,76 @@
+{
+  "corpus_id": "TEST-FIXTURE",
+  "pipeline_version": "pipeline_v0.2",
+  "generated_at": "2026-09-10T14:44:35.824427+00:00",
+  "source_hash": "sha256:ccb4096995fda6ed7dcf9d71b9d6791beeaa3c1da44673b1c9a0dad283adf2f5",
+  "segment_stats": {
+    "articles_parsed": 4,
+    "max_article_number": 4,
+    "rejected_non_monotonic": 0,
+    "furniture_lines_removed": 0,
+    "with_suffix": 0,
+    "with_editorial_notes": 0,
+    "empty_body": 0,
+    "max_depth": 1,
+    "level_types": [
+      "titulo"
+    ]
+  },
+  "referral_stats": {
+    "edges_total": 2,
+    "edges_anaphoric": 1,
+    "edges_unresolved": 0,
+    "resolution_rate": 1.0,
+    "reflexive": 0
+  },
+  "gates": [
+    {
+      "gate": "completitud",
+      "metric": "artículos base / declarados en fuente",
+      "value": "4/4",
+      "threshold": "100%",
+      "status": "PASS",
+      "detail": "ausentes: 0 → []"
+    },
+    {
+      "gate": "unicidad",
+      "metric": "uid duplicados",
+      "value": 0,
+      "threshold": "0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "gate": "consistencia_N4",
+      "metric": "remisiones con destino existente",
+      "value": 1.0,
+      "threshold": "≥ 0.98",
+      "status": "PASS",
+      "detail": "sin resolver: 0"
+    },
+    {
+      "gate": "integridad_grafo",
+      "metric": "aristas reflexivas",
+      "value": 0,
+      "threshold": "0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "gate": "cuerpo_no_vacio",
+      "metric": "artículos sin texto",
+      "value": 0,
+      "threshold": "0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "gate": "trazabilidad",
+      "metric": "url + fecha de consulta + versión",
+      "value": "ausente",
+      "threshold": "100%",
+      "status": "FAIL",
+      "detail": "fuente no oficial: solo válido para run_type=dry_run"
+    }
+  ]
+}

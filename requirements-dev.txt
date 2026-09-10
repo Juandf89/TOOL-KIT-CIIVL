@@ -1,0 +1,6 @@
+# Dependencias de desarrollo/pruebas (no necesarias para correr src/ en
+# producción). Instalar además de requirements.txt para correr tests/:
+#   pip install -r requirements.txt -r requirements-dev.txt
+#   pytest
+-r requirements.txt
+pytest>=7.0.0

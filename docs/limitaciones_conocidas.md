@@ -1,0 +1,74 @@
+# Limitaciones conocidas
+
+**Proyecto:** LATIO Kit — Taxonomía y Ontología de la Información Jurídica para el Civil Law
+**Versión de esquema cubierta:** `n3_v1.1` (`src/models.py`) · Pipeline `pipeline_v0.2` (`src/pipeline.py`)
+**Fecha:** 2026-09-10
+
+Esta sección documenta, con la misma honestidad que exigiría el proyecto de cualquier otra fuente, dónde el modelo de datos y el pipeline de LATIO se quedan cortos frente a lo que el dominio (civil law) exige o frente a lo que `docs/latio_manifiesto.md` promete. El objetivo es que ningún investigador, juez o equipo de LegalTech confunda el alcance actual con el alcance declarado. Ninguna de estas limitaciones es un defecto oculto: todas están, en mayor o menor medida, ya sugeridas por el propio esquema (campos `indeterminada`, `unresolved`, anotaciones marcadas `UNVERIFIED`) — aquí se hacen explícitas y se acotan con evidencia de código.
+
+---
+
+## 1. Remisiones: detección léxica, no semántica
+
+El módulo N4 (`src/pipeline.py:198-239`) resuelve remisiones con dos expresiones regulares:
+
+```python
+NUM_REF = re.compile(r"(?i)art[íi]culos?\s+(\d+)")                      # pipeline.py:198
+ANA_REF = re.compile(r"(?i)art[íi]culo\s+(anterior|precedente|siguiente)")  # pipeline.py:199
+```
+
+Esto cubre exactamente dos patrones: la cita numérica explícita ("artículo 1502") y la referencia anafórica inmediata ("artículo anterior/precedente/siguiente"). Fuera de ese rango:
+
+- **No hay detección de remisión tácita.** Una norma que presupone el régimen de otra sin citarla por número (p. ej. una disposición sobre nulidad de los actos de un incapaz que remite conceptualmente al régimen de capacidad sin decir "artículo N") es invisible para el extractor: no genera arista en `n4_referrals`.
+- **No hay cierre transitivo de cadenas.** `referrals()` (`pipeline.py:201-239`) construye una arista por cada coincidencia de regex sobre el texto de *un* artículo; no existe ninguna función de recorrido de grafo que, dado A→B y B→C, derive o marque A⇢C. `n_resolved` (`models.py:305-306`) cuenta aristas directas, no alcanzabilidad.
+- **`"derogado_tacitamente"` es una etiqueta sin trazabilidad verificable.** `ValidityStatus` la incluye como valor válido (`src/models.py:84`), pero la clase `Validity` que la contiene (`src/models.py:321-326`) solo tiene `amended_by: list[str]`, `last_amendment_date` y `constitutional_ruling` — ningún campo apunta a la norma derogante ni al mecanismo de la derogación tácita. Un registro puede declarar `status="derogado_tacitamente"` sin que el esquema exija ni permita justificar por qué: es una afirmación, no una inferencia auditable.
+
+En conjunto, el N4 actual mide densidad de citación explícita, no el grafo de dependencia normativa real que la propiedad P1 ("Sistematicidad", `docs/datos_logica_juridica_v1.md:8`) pretende capturar.
+
+## 2. Modelo de Hohfeld: anotación unilateral, no correlatividad
+
+`HohfeldianPosition` (`src/models.py:76`) es un vocabulario cerrado de seis valores (`deber`, `derecho_subjetivo`, `potestad`, `sujecion`, `inmunidad`, `ninguno`), y `NormativeStatement.hohfeldian_position` (`src/models.py:229`) anota **exactamente uno** de esos valores por enunciado — la posición del destinatario del enunciado (`addressee`, `src/models.py:78,231`).
+
+El valor analítico de la taxonomía de Hohfeld no está en la lista de posiciones aisladas, sino en su estructura de **pares correlativos**: todo deber presupone un derecho subjetivo en cabeza de otro sujeto (y viceversa), toda potestad presupone una sujeción, toda inmunidad presupone una ausencia-de-potestad. El esquema actual no modela esa relación: no hay campo que vincule el enunciado que impone un deber con el enunciado (o la posición implícita, cuando no está escrita) que porta el derecho correlativo. Cada artículo queda anotado como un punto aislado en la taxonomía, no como un nodo de una relación jurídica de dos extremos. Esto limita cualquier análisis agregado de "estructura de posiciones jurídicas" (P6, `docs/datos_logica_juridica_v1.md:13`) a un conteo de frecuencias unilaterales, no a un mapa de relaciones jurídicas.
+
+## 3. Cobertura y composición del corpus
+
+`config/corpus_registry.yaml` registra 8 entradas para **6 países**: Chile, Colombia, Argentina (×2), Brasil, México (×2) y Perú. No hay ningún corpus centroamericano ni del Caribe hispanohablante (Guatemala, Costa Rica, Panamá, Cuba, República Dominicana, etc.), pese a que el README (`README.md:5`) y el manifiesto presentan el proyecto como una taxonomía para "el civil law latinoamericano" sin acotar el alcance geográfico real.
+
+Dentro de los 8 corpus, dos problemas de composición afectan cualquier comparación agregada o regional:
+
+- **`AR-CC` es un corpus histórico derogado, sin ponderar frente a los vigentes.** `config/corpus_registry.yaml:44-62` registra el Código Civil de Vélez Sarsfield (1869) con la nota explícita `"Código de Vélez Sarsfield, derogado. Corpus histórico."` (línea 54). Convive en el mismo registro, sin ningún campo que lo distinga estadísticamente, con `AR-CCYC` (línea 64-84), el Código Civil y Comercial de 2015 actualmente vigente. Cualquier análisis que trate los 8 (o 6) corpus como muestras intercambiables de "civil law latinoamericano vigente" está mezclando derecho derogado hace más de un siglo con derecho en vigor sin declararlo ni ponderarlo.
+- **`MX-CCF` y `MX-CDMX` no son observaciones independientes.** Ambos tienen `year_tag: '1928'` y el mismo `expected_article_count: 3074` (`config/corpus_registry.yaml:106-125` y `127-146`) — comparten linaje textual directo (el Código Civil para el Distrito Federal de 1928 es la fuente histórica común de la que derivan tanto el código federal como el de la Ciudad de México). Tratarlos como dos puntos de datos independientes en cualquier estadística por país (p. ej. "6 de 8 corpus muestran X") sobre-representa a México y arriesga pseudo-réplica: gran parte de la varianza compartida entre ambos no es señal jurídica nueva, es el mismo texto heredado.
+
+## 4. Exclusión de la Ley 153 de 1887 del corpus CO-CC
+
+`config/corpus_registry.yaml:35-41` declara explícitamente el alcance del corpus colombiano:
+
+```yaml
+codification_scope:
+  included:
+  - Código Civil, texto codificado vigente
+  excluded:
+  - Ley 153 de 1887
+  - Título III de la Constitución de 1886
+  rationale: solo texto codificado
+```
+
+La Ley 153 de 1887 es, precisamente, la norma colombiana que regula la derogación y la interpretación de la ley (incluida la derogación tácita). Excluirla del corpus mientras el esquema usa activamente la etiqueta `"derogado_tacitamente"` sobre artículos de ese mismo corpus (`ValidityStatus`, `src/models.py:84`) es una inconsistencia de alcance: se etiqueta un fenómeno regulado por una fuente que el propio registro decide no incluir como texto codificado. El `rationale: solo texto codificado` es defendible como criterio de inclusión, pero no se traduce en ninguna advertencia en el esquema de que las etiquetas de derogación tácita para CO-CC carecen del marco normativo que las fundamenta dentro del corpus mismo.
+
+## 5. Brecha entre el manifiesto y la implementación
+
+`docs/latio_manifiesto.md:8-11` describe una arquitectura neurosimbólica de tres capas, de las cuales la segunda es un **"Motor de reglas (tipo PROLEG)"** que "aplica reglas por defecto, excepciones y desplazamiento de la carga probatoria, garantizando inferencias auditables y explicables". `docs/datos_logica_juridica_v1.md:10` reitera esto como propiedad P3, "Derrotabilidad estructurada: reglas por defecto derrotables por excepciones jerárquicas (PROLEG)".
+
+Verificado contra `src/`, ese motor no existe en el código:
+
+- No hay ningún módulo, función ni dependencia de razonamiento por defecto, resolución de excepciones jerárquicas o desplazamiento de carga probatoria en `src/pipeline.py`, `src/behavior.py` ni `src/api.py`. Una búsqueda de `proleg|rule engine|inference|razonamiento|derrotab` en `src/` solo encuentra el comentario que declara la intención en `src/models.py:12-13`, no una implementación.
+- Lo que sí existe es anotación estática: `ExceptionInfo` (`src/models.py:159-170`) registra si un enunciado tiene excepción, su marcador léxico y su alcance (`interna`/`por_remision`/`implicita`), y `PresumptionInfo.burden_shifts_to` (`src/models.py:172-176`, tipo `BurdenShiftsTo`, `src/models.py:87`) registra hacia quién se desplaza la carga probatoria — pero como **campo anotado a mano por artículo**, no como una regla ejecutable que un motor pueda encadenar, priorizar jerárquicamente o usar para derivar el resultado de un caso. No hay estructura de "regla por defecto + excepción que la desplaza" que se pueda evaluar: solo hay una bandera booleana y una cadena de texto libre.
+- `src/behavior.py` (`FEATURES`, `profile_of`, líneas 21-47) calcula perfiles de frecuencia y co-ocurrencia de esas anotaciones, no inferencia jurídica: no hay noción de conflicto de reglas, prioridad ni derrotabilidad en tiempo de evaluación.
+- `src/api.py` expone un único endpoint (`GET /`, `src/api.py:9-11`); no hay ruta de razonamiento, parseo de hechos ni aplicación de reglas — el LLM del primer eslabón de la arquitectura tampoco tiene contraparte en este repositorio.
+
+En síntesis: LATIO hoy es la tercera capa del manifiesto (la taxonomía/ontología) más un pipeline de extracción y segmentación (N0→N1→N4) y sondas estadísticas descriptivas sobre anotación manual. El "motor de reglas tipo PROLEG" — la pieza que convertiría estas anotaciones en inferencias jurídicas auditables — es, en esta versión del repositorio, una descripción de intención arquitectónica, no un componente construido.
+
+---
+
+Estas limitaciones no invalidan el valor del proyecto como modelo de datos y como intento de estandarización: `src/models.py` codifica un conjunto de distinciones jurídicamente informado (presunción legal vs. de derecho, derogabilidad, generalidad de la norma, estructura de excepciones) que rara vez se encuentra formalizado con este nivel de detalle para el civil law latinoamericano. Lo que este documento acota es el salto — todavía no dado — entre esa taxonomía y un sistema de razonamiento jurídico auditable sobre corpus representativo y vigente. Cerrar cada brecha aquí listada es, en sí mismo, la hoja de ruta de investigación del proyecto.

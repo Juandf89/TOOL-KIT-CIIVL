@@ -1,0 +1,9 @@
+{
+  "manifest_id": "ef5830aeeff0d456",
+  "run_type": "dry_run",
+  "pipeline_version": "pipeline_v0.2",
+  "schema_version": "n3_v1.1",
+  "generated_at": "2026-09-08T20:08:53+00:00",
+  "total_articles_evaluated": 21957,
+  "_governance_note": "DISCREPANCIA DE ALCANCE NO RECONCILIADA (2026-09-10, latio-implementador-datos): docs/informe_hito1.md declara que esta corrida en seco cubrió únicamente Chile y Colombia (CL-CC + CO-CC, ~5208 artículos declarados en config/corpus_registry.yaml), pero total_articles_evaluated=21957 aquí es consistente en cambio con la suma de las 8 fuentes del registro (~22246 artículos declarados). No se resuelve cuál de los dos documentos es correcto: no hay corpus_id, source_hash ni gates() registrados en este manifiesto que permitan verificarlo, y config/corpus_registry.yaml no tenía la clave `parsing` que src/pipeline.py exige (KeyError inmediato), por lo que el pipeline no podía producir esta cifra con el código tal como estaba al momento de generated_at. Este manifiesto no es reproducible por el código actual y su origen exacto no pudo verificarse desde el repositorio. Ver docs/notas_gobernanza.md, la nota agregada en docs/informe_hito1.md, y el hallazgo C-4 de reports/debate_revision_2026-09-10.md."
+}

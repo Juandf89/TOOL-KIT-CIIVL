@@ -1,0 +1,60 @@
+<!-- ============================================================= -->
+<!-- DataLex Lab (datalexlab.com) · Tarjeta Proyecto 3              -->
+<!-- Ubicación: Sección 'Laboratorio Aplicado / Proyectos'         -->
+<!-- ============================================================= -->
+<!-- DEPENDENCIA: este fragmento usa clases utilitarias de Tailwind -->
+<!-- CSS (bg-white, rounded-lg, text-slate-*, etc.) y NO las define -->
+<!-- por sí mismo. Solo se renderizará correctamente si el sitio    -->
+<!-- destino (datalexlab.com) ya carga Tailwind CSS globalmente     -->
+<!-- (build de Tailwind o el script de Play CDN). No se agrega un   -->
+<!-- <link>/<script> de Tailwind aquí porque toolkit-api/index.html -->
+<!-- (el otro artefacto de este repo) no usa Tailwind — no hay un   -->
+<!-- patrón CDN establecido en el proyecto que replicar. Si este    -->
+<!-- fragmento se incrusta en una página sin Tailwind, agrega el    -->
+<!-- Play CDN de Tailwind antes de este bloque:                     -->
+<!--   <script src="https://cdn.tailwindcss.com"></script>          -->
+<!-- ============================================================= -->
+
+<div class="bg-white rounded-lg border border-slate-200 p-6 hover:shadow-md transition duration-200 flex flex-col justify-between">
+  <div>
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+        🧠 Lógica Computable
+      </span>
+      <span class="text-xs text-slate-500 font-mono">v1.0.0</span>
+    </div>
+    
+    <h3 class="text-xl font-bold font-serif text-slate-900 mb-2">
+      LATIO · Motor Ontológico del Civil Law
+    </h3>
+    
+    <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+      Modelamos 8 códigos civiles de América Latina (21.957 artículos) a través de una ontología del enunciado normativo y derrotabilidad (PROLEG). Analiza la estructura deóntica de cualquier norma o contrato y accede a la API abierta.
+    </p>
+    
+    <div class="grid grid-cols-3 gap-2 py-3 border-y border-slate-100 text-center text-xs mb-4">
+      <div>
+        <span class="block font-bold text-slate-900 font-mono text-sm">21.957</span>
+        <span class="text-slate-500">Artículos</span>
+      </div>
+      <div>
+        <span class="block font-bold text-slate-900 font-mono text-sm">8</span>
+        <span class="text-slate-500">Códigos</span>
+      </div>
+      <div>
+        <span class="block font-bold text-emerald-600 font-mono text-sm">API Live</span>
+        <span class="text-slate-500">Open REST</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between pt-2">
+    <!-- Enlace a la consola desplegada -->
+    <a href="/latio/" target="_blank" class="text-sm font-semibold text-blue-700 hover:text-blue-800 inline-flex items-center gap-1.5 transition">
+      Abrir consola interactiva ➔
+    </a>
+    <a href="https://github.com/Juandf89/latio-kit" target="_blank" class="text-xs text-slate-500 hover:text-slate-800 transition">
+      Código en GitHub ↗
+    </a>
+  </div>
+</div>

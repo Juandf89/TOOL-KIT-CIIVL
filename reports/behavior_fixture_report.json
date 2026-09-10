@@ -1,0 +1,86 @@
+{
+  "behavior_version": "behavior_v0.1",
+  "note": "TODO: reemplazar _fixture_articles() por carga real de data/processed/*.json en cuanto exista un lote de ArticleRecord anotados (N2/N3/N5); hoy corre sobre un fixture sintético embebido en behavior.py, no sobre datos jurídicos reales.",
+  "profiles": {
+    "XX-TEST-2026-ART-1": {
+      "flat_profile": {
+        "is_definitional": true,
+        "P6_deontic": [],
+        "P5_addressee": [
+          "partes"
+        ],
+        "P3_exception": false,
+        "P2_indeterminate": [
+          "buena fe"
+        ],
+        "has_time_limit": false,
+        "is_presumption": false,
+        "antecedent": []
+      },
+      "profile_tuple": [
+        "DEF",
+        "",
+        "",
+        "",
+        "IND",
+        "",
+        ""
+      ],
+      "features": {
+        "definitorio": true,
+        "obligación": false,
+        "permiso": false,
+        "prohibición": false,
+        "juez": false,
+        "notario": false,
+        "partes": true,
+        "excepción": false,
+        "indeterminado": true,
+        "plazo": false,
+        "presunción": false,
+        "antecedente": false
+      }
+    },
+    "XX-TEST-2026-ART-2": {
+      "flat_profile": {
+        "is_definitional": false,
+        "P6_deontic": [
+          "obligacion"
+        ],
+        "P5_addressee": [
+          "juez"
+        ],
+        "P3_exception": true,
+        "P2_indeterminate": [],
+        "has_time_limit": true,
+        "is_presumption": true,
+        "antecedent": [
+          "si"
+        ]
+      },
+      "profile_tuple": [
+        "",
+        "OBL",
+        "JUE",
+        "EXC",
+        "",
+        "PLZ",
+        "PRE"
+      ],
+      "features": {
+        "definitorio": false,
+        "obligación": true,
+        "permiso": false,
+        "prohibición": false,
+        "juez": true,
+        "notario": false,
+        "partes": false,
+        "excepción": true,
+        "indeterminado": false,
+        "plazo": true,
+        "presunción": true,
+        "antecedente": true
+      }
+    }
+  }
+}
