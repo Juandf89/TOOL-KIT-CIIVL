@@ -26,8 +26,9 @@ TOOL-KIT-CIIVL/
 │   ├── models.py              # Modelos de datos Pydantic v2 (N1 a N5, esquema n3_v1.1, StrictModel base)
 │   ├── pipeline.py            # Pipeline determinista N0 -> N1 -> N4 (monotonicidad y remisiones) + CLI
 │   ├── behavior.py            # Análisis de regularidades lógicas, lift de figuras y perfiles + CLI
-│   └── api.py                 # API FastAPI local (src/api.py) — no desplegada en api.datalexlab.com
-├── tests/                     # Suite pytest: modelos, pipeline, behavior (57 casos)
+│   ├── reasoning/              # Motor de razonamiento derrotable (PROLEG): models.py, engine.py, rulesets/
+│   └── api.py                 # API FastAPI local (src/api.py) — no desplegada en api.datalexlab.com; expone /v1/reasoning/*
+├── tests/                     # Suite pytest: modelos, pipeline, behavior, motor de razonamiento, API (68 casos)
 ├── docs/
 │   ├── latio_manifiesto.md    # Manifiesto LATIO: La necesidad de arquitectura neurosimbólica
 │   ├── bitacora_ontologia_civil_law.md # Bitácora de diseño de la ontología del enunciado
@@ -70,6 +71,20 @@ Salida: `data/processed/<corpus_id>_{articles,referrals}.json` y `reports/<corpu
 python -m src.behavior
 ```
 Hoy corre sobre un fixture sintético embebido (`_fixture_articles()`), no sobre datos jurídicos reales — el pipeline solo produce N0/N1/N4; N2/N3/N5 (anotación de modalidad deóntica, posición de Hohfeld, etc.) requieren un lote anotado que todavía no existe en `data/processed/`. Ver `docs/limitaciones_conocidas.md`.
+
+### Motor de Razonamiento Derrotable (PROLEG)
+`src/reasoning/` implementa el meta-intérprete de la teoría japonesa del hecho último presupuesto (Satoh et al., "PROLEG: An Implementation of the Presupposed Ultimate Fact Theory of Japanese Civil Code by PROLOG Technology", JURISIN 2010): reglas por defecto + excepciones + carga de la prueba (`allege`/`provide_evidence`/`admission`/`plausible`), con traza de argumentación entre demandante y demandado. El único ruleset cargado hoy (`jp-civil-612-sublease-demo`) es el ejemplo del propio paper (Art. 612 del Código Civil japonés) — se eligió deliberadamente contenido citable y verificable (el Apéndice B del paper sirve de test de oro) en vez de inventar reglas sobre los 8 corpus LATAM, que todavía no tienen anotación N2/N3 suficiente para alimentar un motor de este tipo (ver `docs/limitaciones_conocidas.md`). `Rule.source_uid` queda como el punto de enlace para cuando esa anotación exista.
+
+Con la API corriendo (`uvicorn src.api:app --reload`):
+```bash
+curl http://127.0.0.1:8000/v1/reasoning/rulebases
+curl -X POST http://127.0.0.1:8000/v1/reasoning/prove -H "Content-Type: application/json" -d '{
+  "rulebase_id": "jp-civil-612-sublease-demo",
+  "goal": "contract_end",
+  "party": "plaintiff",
+  "facts": [ ... ver tests/test_api_reasoning.py para el factbase completo del caso de oro ... ]
+}'
+```
 
 ### Correr las Pruebas
 ```bash

@@ -4,3 +4,4 @@
 #   pytest
 -r requirements.txt
 pytest>=7.0.0
+httpx>=0.24.0
