@@ -15,7 +15,16 @@ app = FastAPI(title='DataLex Lab · LATIO API', version='1.0.0', docs_url='/docs
 # TODO(despliegue): 'https://datalexlab.com' es el dominio conocido del
 # proyecto (README); ajustar esta lista a los orígenes reales de
 # producción/staging/preview antes de un despliegue definitivo.
-ALLOWED_ORIGINS = ['https://datalexlab.com']
+#
+# Los orígenes localhost/127.0.0.1 de abajo son para desarrollo local de
+# toolkit-api/index.html (consola de razonamiento real, sección
+# "/v1/reasoning/prove"): servir ese HTML con `python -m http.server 5500`
+# (o el puerto que uses) y agregar ese puerto acá si no es 5500/8080.
+ALLOWED_ORIGINS = [
+    'https://datalexlab.com',
+    'http://localhost:5500', 'http://127.0.0.1:5500',
+    'http://localhost:8080', 'http://127.0.0.1:8080',
+]
 
 app.add_middleware(
     CORSMiddleware,

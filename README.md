@@ -73,9 +73,14 @@ python -m src.behavior
 Hoy corre sobre un fixture sintético embebido (`_fixture_articles()`), no sobre datos jurídicos reales — el pipeline solo produce N0/N1/N4; N2/N3/N5 (anotación de modalidad deóntica, posición de Hohfeld, etc.) requieren un lote anotado que todavía no existe en `data/processed/`. Ver `docs/limitaciones_conocidas.md`.
 
 ### Motor de Razonamiento Derrotable (PROLEG)
-`src/reasoning/` implementa el meta-intérprete de la teoría japonesa del hecho último presupuesto (Satoh et al., "PROLEG: An Implementation of the Presupposed Ultimate Fact Theory of Japanese Civil Code by PROLOG Technology", JURISIN 2010): reglas por defecto + excepciones + carga de la prueba (`allege`/`provide_evidence`/`admission`/`plausible`), con traza de argumentación entre demandante y demandado. El único ruleset cargado hoy (`jp-civil-612-sublease-demo`) es el ejemplo del propio paper (Art. 612 del Código Civil japonés) — se eligió deliberadamente contenido citable y verificable (el Apéndice B del paper sirve de test de oro) en vez de inventar reglas sobre los 8 corpus LATAM, que todavía no tienen anotación N2/N3 suficiente para alimentar un motor de este tipo (ver `docs/limitaciones_conocidas.md`). `Rule.source_uid` queda como el punto de enlace para cuando esa anotación exista.
+`src/reasoning/` implementa el meta-intérprete de la teoría japonesa del hecho último presupuesto (Satoh et al., "PROLEG: An Implementation of the Presupposed Ultimate Fact Theory of Japanese Civil Code by PROLOG Technology", JURISIN 2010): reglas por defecto + excepciones + carga de la prueba (`allege`/`provide_evidence`/`admission`/`plausible`), con traza de argumentación entre demandante y demandado. Dos rulesets cargados hoy, ambos escritos a mano a partir de una fuente citable (no se inventó contenido) — ver `docs/limitaciones_conocidas.md`:
 
-Con la API corriendo (`uvicorn src.api:app --reload`):
+- `jp-civil-612-sublease-demo` — el ejemplo del propio paper (Art. 612 del Código Civil japonés); el Apéndice B del paper sirve de test de oro.
+- `co-civil-256-visitas` — **primer artículo LATAM real conectado al motor**: régimen de visitas del Art. 256 del Código Civil colombiano (modificado por la Ley 2229 de 2022), con `Rule.source_uid="CO-CC-1873-ART-256"`.
+
+`Rule.source_uid` queda como el punto de enlace hacia `ArticleRecord.uid` para cuando exista anotación N2/N3 real de los 8 corpus (hoy no existe — estos dos rulesets se codificaron a mano, no salieron del pipeline).
+
+Con la API corriendo (`uvicorn src.api:app --reload`), y sirviendo `toolkit-api/index.html` con un servidor local (sección "Motor de Razonamiento (real)" de la consola — ver `ALLOWED_ORIGINS` en `src/api.py` para los orígenes de desarrollo permitidos):
 ```bash
 curl http://127.0.0.1:8000/v1/reasoning/rulebases
 curl -X POST http://127.0.0.1:8000/v1/reasoning/prove -H "Content-Type: application/json" -d '{

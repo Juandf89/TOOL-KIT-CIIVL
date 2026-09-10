@@ -338,6 +338,18 @@ header {
   transform: translateY(-1px);
 }
 .btn-execute:active { transform: translateY(0); }
+.btn-secondary-sm {
+  background: #F1F5F9;
+  color: var(--accent-primary);
+  border: 1px solid var(--border-light);
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.btn-secondary-sm:hover { background: #E2E8F0; }
 
 /* Column 3: Live Developer Console & Response */
 .col-console {
@@ -549,6 +561,69 @@ header {
   padding: 3px 8px;
   border-radius: 4px;
 }
+.real-tag, .error-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.real-tag { color: #065F46; background: var(--badge-get-bg); border: 1px solid #A7F3D0; }
+.error-tag { color: #991B1B; background: var(--tag-fail-bg); border: 1px solid #FECACA; }
+.reasoning-banner {
+  background: var(--badge-get-bg);
+  border-bottom: 1px solid #A7F3D0;
+  color: #065F46;
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 8px 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  justify-content: center;
+}
+.reasoning-banner strong { font-weight: 700; }
+.proof-verdict {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  font-weight: 700;
+  font-size: 14px;
+}
+.proof-verdict.is-proved { background: #052e21; border: 1px solid #065F46; color: #34D399; }
+.proof-verdict.is-not-proved { background: #2a1414; border: 1px solid #7F1D1D; color: #FCA5A5; }
+.trace-step {
+  display: flex;
+  gap: 10px;
+  padding: 7px 10px;
+  border-left: 3px solid var(--border-dark);
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--text-dark-muted);
+}
+.trace-step .ts-actor { color: #93C5FD; font-weight: 600; }
+.trace-step.ts-good { border-left-color: #10B981; }
+.trace-step.ts-bad { border-left-color: #DC2626; }
+.trace-step.ts-neutral { border-left-color: #3B82F6; }
+.api-conn-error {
+  padding: 14px;
+  background: #2a1414;
+  border: 1px solid #7F1D1D;
+  border-radius: 6px;
+  color: #FCA5A5;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.api-conn-error code { background: rgba(0,0,0,0.25); padding: 1px 5px; border-radius: 3px; }
 .docs-link-pending {
   position: relative;
 }
@@ -579,7 +654,7 @@ header {
 
     <div class="header-actions">
       <a href="https://www.datalexlab.com" target="_blank" class="nav-link-btn">datalexlab.com ↗</a>
-      <a href="https://github.com/Juandf89/latio-kit" target="_blank" class="nav-link-btn">GitHub ↗</a>
+      <a href="https://github.com/Juandf89/TOOL-KIT-CIIVL" target="_blank" class="nav-link-btn">GitHub ↗</a>
       <a href="https://api.datalexlab.com/docs" target="_blank" class="btn-primary-sm docs-link-pending" title="Swagger Docs — backend aún no desplegado en api.datalexlab.com; corre src/api.py localmente (uvicorn src.api:app) mientras tanto.">Swagger Docs<span class="pending-flag">(pendiente de despliegue)</span></a>
     </div>
   </div>
@@ -611,6 +686,20 @@ header {
       <span>Art. 1710 Argentina CCyC · Deber general</span>
     </div>
 
+    <div class="nav-section-title">Motor de Razonamiento (real)</div>
+    <div class="preset-chip" onclick="loadReasoningGoldenCase()">
+      <strong>🧩 Art. 612 · Código Civil Japonés</strong>
+      <span>Caso de oro PROLEG · llama a una API real</span>
+    </div>
+    <div class="preset-chip" onclick="loadReasoningCase256(false)">
+      <strong>👪 Art. 256 CO · Visitas concedidas</strong>
+      <span>Primer artículo LATAM real · sin condena</span>
+    </div>
+    <div class="preset-chip" onclick="loadReasoningCase256(true)">
+      <strong>🚫 Art. 256 CO · Excepción de victimario</strong>
+      <span>Mismo artículo · derecho derrotado</span>
+    </div>
+
     <div class="nav-section-title">Endpoints Disponibles</div>
     <div class="nav-item active" id="btn-ep-parse" onclick="selectEndpoint('parse')">
       <span class="badge-method badge-post">POST</span>
@@ -631,6 +720,10 @@ header {
     <div class="nav-item" id="btn-ep-books" onclick="selectEndpoint('books')">
       <span class="badge-method badge-get">GET</span>
       <span>/v1/behavior/books</span>
+    </div>
+    <div class="nav-item" id="btn-ep-reasoning" onclick="selectEndpoint('reasoning')">
+      <span class="badge-method badge-post">POST</span>
+      <span>/v1/reasoning/prove</span>
     </div>
   </aside>
 
@@ -678,7 +771,7 @@ header {
         <div class="res-meta">
           <span class="badge-status" id="res-status-badge">200 OK</span>
           <span class="res-time" id="res-time-text">34 ms</span>
-          <span class="mock-tag" title="Respuesta simulada en el navegador (MOCK_METRICS / MOCK_LIFT o heurística local), no proviene de un backend desplegado.">⚠ Dato de ejemplo</span>
+          <span class="mock-tag" id="res-mode-tag" title="Respuesta simulada en el navegador (MOCK_METRICS / MOCK_LIFT o heurística local), no proviene de un backend desplegado.">⚠ Dato de ejemplo</span>
         </div>
         <div class="view-switch">
           <button class="v-btn active" id="btn-view-tree" onclick="setResponseView('tree')">Visual Tree</button>
@@ -743,7 +836,7 @@ function init() {
   executeApiCall();
 }
 
-function selectEndpoint(ep) {
+function selectEndpoint(ep, autoExec = true) {
   currentEndpoint = ep;
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById(`btn-ep-${ep}`).classList.add('active');
@@ -777,11 +870,16 @@ function selectEndpoint(ep) {
     badge.innerText = 'GET';
     url.innerText = '/v1/behavior/books';
     desc.innerText = 'Distribución funcional por libros temáticos (Familia delega en el juez, Obligaciones en excepciones).';
+  } else if (ep === 'reasoning') {
+    badge.className = 'badge-method badge-post';
+    badge.innerText = 'POST';
+    url.innerText = '/v1/reasoning/prove';
+    desc.innerText = '🟢 Único endpoint de esta consola que llama a un backend real (src/reasoning/), no a datos de ejemplo. Motor de razonamiento derrotable tipo PROLEG (Satoh et al. 2010): reglas por defecto, excepciones y carga de la prueba. Requiere correr la API localmente — ver el aviso debajo.';
   }
 
   renderParamsForm();
   updateCodeSnippet();
-  executeApiCall();
+  if (autoExec) executeApiCall();
 }
 
 function renderParamsForm() {
@@ -834,6 +932,49 @@ function renderParamsForm() {
         </div>
       </div>
     `;
+  } else if (currentEndpoint === 'reasoning') {
+    container.innerHTML = `
+      <div class="builder-card">
+        <h3>Conexión <span class="param-type">requiere backend local</span></h3>
+        <div class="param-row">
+          <div class="param-label"><span>API base URL</span><span class="param-type">string</span></div>
+          <input type="text" id="param-api-base" class="form-input" value="${getStoredApiBase()}" oninput="onReasoningBaseChange()" placeholder="http://127.0.0.1:8000">
+        </div>
+        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;">
+          Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita — ver <code>ALLOWED_ORIGINS</code> en <code>src/api.py</code>.
+        </p>
+      </div>
+      <div class="builder-card">
+        <h3>Ruleset</h3>
+        <div class="param-row">
+          <div class="param-label"><span>rulebase_id</span><span class="param-type">string · required</span></div>
+          <select id="param-rulebase" class="form-select" onchange="updateCodeSnippet()">
+            <option value="jp-civil-612-sublease-demo">jp-civil-612-sublease-demo</option>
+            <option value="co-civil-256-visitas">co-civil-256-visitas</option>
+          </select>
+        </div>
+        <button class="btn-secondary-sm" onclick="refreshRulebases()">🔄 Actualizar lista desde /v1/reasoning/rulebases</button>
+      </div>
+      <div class="builder-card">
+        <h3>Caso</h3>
+        <button class="btn-secondary-sm" onclick="loadReasoningGoldenCase()" style="margin-bottom:16px;">🧩 Cargar caso de oro (Art. 612 japonés)</button>
+        <div class="param-row">
+          <div class="param-label"><span>party</span><span class="param-type">string · required</span></div>
+          <select id="param-party" class="form-select" onchange="updateCodeSnippet()">
+            <option value="plaintiff">plaintiff (demandante)</option>
+            <option value="defendant">defendant (demandado)</option>
+          </select>
+        </div>
+        <div class="param-row">
+          <div class="param-label"><span>goal</span><span class="param-type">string · required</span></div>
+          <input type="text" id="param-goal" class="form-input" value="" placeholder="contract_end" oninput="updateCodeSnippet()">
+        </div>
+        <div class="param-row">
+          <div class="param-label"><span>facts</span><span class="param-type">FactEntry[] · JSON</span></div>
+          <textarea id="param-facts" class="form-textarea" style="font-family:var(--font-mono);font-size:12px;min-height:220px;" oninput="updateCodeSnippet()">[]</textarea>
+        </div>
+      </div>
+    `;
   } else {
     container.innerHTML = `
       <div class="builder-card">
@@ -870,6 +1011,151 @@ function loadCase(caseKey) {
   renderParamsForm();
   updateCodeSnippet();
   executeApiCall();
+}
+
+// ---------------------------------------------------------------------
+// Motor de razonamiento (real) — a diferencia de todo lo anterior, esta
+// sección hace fetch() de verdad contra src/api.py (/v1/reasoning/*).
+// No hay MOCK_* acá: si el backend no está corriendo, se muestra un
+// error de conexión explícito, nunca una respuesta simulada.
+// ---------------------------------------------------------------------
+
+function getStoredApiBase() {
+  try {
+    return localStorage.getItem('latio_reasoning_api_base') || 'http://127.0.0.1:8000';
+  } catch (e) {
+    return 'http://127.0.0.1:8000';
+  }
+}
+
+function persistApiBase(v) {
+  try { localStorage.setItem('latio_reasoning_api_base', v); } catch (e) { /* localStorage no disponible; degradar en silencio */ }
+}
+
+function onReasoningBaseChange() {
+  const input = document.getElementById('param-api-base');
+  if (input) persistApiBase(input.value.trim());
+  updateCodeSnippet();
+}
+
+function currentApiBase() {
+  const input = document.getElementById('param-api-base');
+  return (input ? input.value.trim() : getStoredApiBase()) || 'http://127.0.0.1:8000';
+}
+
+// Caso de oro: el ejemplo completo del Apéndice A/B del paper PROLEG
+// (Satoh et al. 2010) tal como está codificado en
+// src/reasoning/rulesets/jp_civil_612_sublease.py — nombres de hechos
+// exactos, no parafraseados.
+const REASONING_GOLDEN_CASE = {
+  rulebase_id: "jp-civil-612-sublease-demo",
+  goal: "contract_end",
+  party: "plaintiff",
+  facts: [
+    { action: "admission", fact: "agreement_of_lease_contract", party: "defendant" },
+    { action: "admission", fact: "handover_to_lessee", party: "defendant" },
+    { action: "admission", fact: "agreement_of_sublease_contract", party: "defendant" },
+    { action: "admission", fact: "handover_to_sublessee", party: "defendant" },
+    { action: "admission", fact: "using_leased_thing", party: "defendant" },
+    { action: "admission", fact: "manifestation_cancellation", party: "defendant" },
+    { action: "allege", fact: "approval_of_sublease", party: "defendant" },
+    { action: "provide_evidence", fact: "approval_of_sublease", party: "defendant" },
+    { action: "allege", fact: "approval_before_cancellation", party: "defendant" },
+    { action: "provide_evidence", fact: "approval_before_cancellation", party: "defendant" },
+    { action: "allege", fact: "fact_of_nonabuse_of_confidence", party: "defendant" },
+    { action: "provide_evidence", fact: "fact_of_nonabuse_of_confidence", party: "defendant" },
+    { action: "plausible", fact: "fact_of_nonabuse_of_confidence" },
+    { action: "allege", fact: "fact_of_abuse_of_confidence", party: "plaintiff" },
+    { action: "provide_evidence", fact: "fact_of_abuse_of_confidence", party: "plaintiff" },
+    { action: "plausible", fact: "fact_of_abuse_of_confidence" }
+  ]
+};
+
+function loadReasoningGoldenCase() {
+  selectEndpoint('reasoning', false);
+  document.getElementById('param-rulebase').value = REASONING_GOLDEN_CASE.rulebase_id;
+  document.getElementById('param-party').value = REASONING_GOLDEN_CASE.party;
+  document.getElementById('param-goal').value = REASONING_GOLDEN_CASE.goal;
+  document.getElementById('param-facts').value = JSON.stringify(REASONING_GOLDEN_CASE.facts, null, 2);
+  updateCodeSnippet();
+  executeApiCall();
+}
+
+// Primer artículo LATAM real conectado al motor (ver
+// src/reasoning/rulesets/co_civil_256_visitas.py para el texto fuente
+// citado). Dos variantes del mismo caso: sin condena (se concede el
+// derecho) y con condena por victimario (excepción absoluta lo derrota) —
+// demuestran que el motor razona de verdad, no que siempre da el mismo
+// resultado.
+const REASONING_CO_256_BASE_FACTS = [
+  { action: "admission", fact: "no_tiene_cuidado_personal_hijos", party: "defendant" }
+];
+const REASONING_CO_256_VICTIMARIO_FACTS = [
+  { action: "allege", fact: "condena_ejecutoriada_violencia_intrafamiliar", party: "defendant" },
+  { action: "provide_evidence", fact: "condena_ejecutoriada_violencia_intrafamiliar", party: "defendant" },
+  { action: "plausible", fact: "condena_ejecutoriada_violencia_intrafamiliar" },
+  { action: "allege", fact: "es_victima_o_hermano_del_solicitante", party: "defendant" },
+  { action: "provide_evidence", fact: "es_victima_o_hermano_del_solicitante", party: "defendant" },
+  { action: "plausible", fact: "es_victima_o_hermano_del_solicitante" }
+];
+
+function loadReasoningCase256(withVictimario) {
+  selectEndpoint('reasoning', false);
+  document.getElementById('param-rulebase').value = 'co-civil-256-visitas';
+  document.getElementById('param-party').value = 'plaintiff';
+  document.getElementById('param-goal').value = 'derecho_de_visitas_progenitor';
+  const facts = withVictimario
+    ? REASONING_CO_256_BASE_FACTS.concat(REASONING_CO_256_VICTIMARIO_FACTS)
+    : REASONING_CO_256_BASE_FACTS;
+  document.getElementById('param-facts').value = JSON.stringify(facts, null, 2);
+  updateCodeSnippet();
+  executeApiCall();
+}
+
+async function refreshRulebases() {
+  const select = document.getElementById('param-rulebase');
+  if (!select) return;
+  const base = currentApiBase();
+  try {
+    const res = await fetch(`${base}/v1/reasoning/rulebases`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const current = select.value;
+    select.innerHTML = data.map(rb => `<option value="${rb.id}">${rb.id}</option>`).join('');
+    if (data.some(rb => rb.id === current)) select.value = current;
+  } catch (e) {
+    alert(`No se pudo consultar /v1/reasoning/rulebases en ${base}.\n\n¿Está corriendo "uvicorn src.api:app --reload --port 8000"? ¿Serviste este HTML desde un origen permitido por CORS (no file://)?\n\nDetalle: ${e.message}`);
+  }
+}
+
+function partyLabel(p) {
+  return p === 'plaintiff' ? 'demandante' : (p === 'defendant' ? 'demandado' : (p || '—'));
+}
+
+const TRACE_KIND_META = {
+  try_prove:            { icon: '🔍', css: 'ts-neutral', text: s => `intenta probar "${s.subject}"` },
+  rule_matched:         { icon: '📘', css: 'ts-neutral', text: s => `encontró una regla para "${s.subject}" y evalúa sus requisitos procesales` },
+  no_rule:              { icon: '🚫', css: 'ts-bad',     text: s => `no alegó+evidenció (ni la contraria admitió) todos los hechos requeridos para intentar "${s.subject}"` },
+  admitted:             { icon: '🤝', css: 'ts-good',    text: s => `admitió "${s.subject}"` },
+  plausible_true:       { icon: '⚖️', css: 'ts-good',    text: s => `el juez determina plausible "${s.subject}"` },
+  failed_ultimate_fact: { icon: '❌', css: 'ts-bad',     text: s => `no logró probar el hecho último "${s.subject}" (sin admisión ni plausibilidad)` },
+  alleges_defense:      { icon: '🛡️', css: 'ts-neutral', text: s => `alega "${s.subject}" como defensa contra "${s.against}"` },
+  defense_succeeded:    { icon: '✅', css: 'ts-good',    text: s => `probó "${s.subject}" — la defensa contra "${s.against}" tiene éxito` },
+  defense_failed:       { icon: '❌', css: 'ts-bad',     text: s => `no pudo probar "${s.subject}" — la defensa contra "${s.against}" falla` },
+  proved:               { icon: '✅', css: 'ts-good',    text: s => `probó "${s.subject}"` },
+  failed:               { icon: '❌', css: 'ts-bad',     text: s => `no pudo probar "${s.subject}"` }
+};
+
+function renderTraceSteps(trace) {
+  return trace.map(step => {
+    const meta = TRACE_KIND_META[step.kind] || { icon: '•', css: 'ts-neutral', text: s => s.kind };
+    return `
+      <div class="trace-step ${meta.css}">
+        <span>${meta.icon}</span>
+        <span>${step.actor ? `<span class="ts-actor">${partyLabel(step.actor)}</span> ` : ''}${meta.text(step)}</span>
+      </div>
+    `;
+  }).join('');
 }
 
 function setLang(lang) {
@@ -927,6 +1213,38 @@ print(response.json())`;
       pre.innerText = `const res = await fetch("${baseUrl}/v1/statements/search${qs}");
 const data = await res.json();`;
     }
+  } else if (currentEndpoint === 'reasoning') {
+    const realBase = currentApiBase();
+    const rulebaseId = document.getElementById('param-rulebase') ? document.getElementById('param-rulebase').value : REASONING_GOLDEN_CASE.rulebase_id;
+    const party = document.getElementById('param-party') ? document.getElementById('param-party').value : 'plaintiff';
+    const goal = document.getElementById('param-goal') ? document.getElementById('param-goal').value : '';
+    let facts = [];
+    try { facts = JSON.parse(document.getElementById('param-facts') ? document.getElementById('param-facts').value : '[]'); } catch (e) { /* JSON inválido: se valida al ejecutar */ }
+    const body = { rulebase_id: rulebaseId, goal, party, facts };
+    const jsonBody = JSON.stringify(body, null, 2);
+
+    if (currentLang === 'curl') {
+      pre.innerText = `curl -X POST "${realBase}/v1/reasoning/prove" \\
+  -H "Content-Type: application/json" \\
+  -d '${JSON.stringify(body)}'`;
+    } else if (currentLang === 'python') {
+      pre.innerText = `import requests
+
+url = "${realBase}/v1/reasoning/prove"
+payload = ${jsonBody}
+
+response = requests.post(url, json=payload)
+data = response.json()
+print(data["proved"])`;
+    } else if (currentLang === 'javascript') {
+      pre.innerText = `const response = await fetch("${realBase}/v1/reasoning/prove", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(${jsonBody})
+});
+const data = await response.json();
+console.log(data.proved);`;
+    }
   } else {
     const path = `/v1/behavior/${currentEndpoint}`;
     if (currentLang === 'curl') {
@@ -942,9 +1260,98 @@ const data = await res.json();`;
   }
 }
 
-function executeApiCall() {
+async function executeReasoningCall(start) {
+  const base = currentApiBase();
+  const modeTag = document.getElementById('res-mode-tag');
+  const statusBadge = document.getElementById('res-status-badge');
+  const timeText = document.getElementById('res-time-text');
+
+  const rulebaseId = document.getElementById('param-rulebase').value;
+  const party = document.getElementById('param-party').value;
+  const goal = document.getElementById('param-goal').value.trim();
+
+  if (!goal) {
+    lastResponseData = { __error: true, message: 'Completá el campo "goal" (p. ej. contract_end) o hacé click en "Cargar caso de oro".' };
+    modeTag.className = 'error-tag';
+    modeTag.innerText = '🔴 Falta el goal';
+    statusBadge.innerText = '—';
+    timeText.innerText = '';
+    renderResponse();
+    return;
+  }
+
+  let facts;
+  try {
+    facts = JSON.parse(document.getElementById('param-facts').value || '[]');
+  } catch (e) {
+    lastResponseData = { __error: true, message: `El campo "facts" no es JSON válido: ${e.message}` };
+    modeTag.className = 'error-tag';
+    modeTag.innerText = '🔴 JSON inválido';
+    statusBadge.innerText = '—';
+    timeText.innerText = '';
+    renderResponse();
+    return;
+  }
+
+  const body = { rulebase_id: rulebaseId, goal, party, facts };
+
+  try {
+    const res = await fetch(`${base}/v1/reasoning/prove`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const duration = Math.round(performance.now() - start);
+    timeText.innerText = `${duration} ms`;
+
+    if (!res.ok) {
+      const errBody = await res.text();
+      lastResponseData = { __error: true, message: `HTTP ${res.status} de ${base}/v1/reasoning/prove: ${errBody}` };
+      modeTag.className = 'error-tag';
+      modeTag.innerText = `🔴 HTTP ${res.status}`;
+      statusBadge.innerText = `${res.status}`;
+      renderResponse();
+      return;
+    }
+
+    lastResponseData = await res.json();
+    modeTag.className = 'real-tag';
+    modeTag.innerText = '🟢 Respuesta real (API local)';
+    modeTag.title = `Respuesta obtenida en vivo de ${base}/v1/reasoning/prove — no es un dato de ejemplo.`;
+    statusBadge.innerText = `${res.status} OK`;
+    renderResponse();
+  } catch (e) {
+    const duration = Math.round(performance.now() - start);
+    timeText.innerText = `${duration} ms`;
+    lastResponseData = {
+      __error: true,
+      message: `No se pudo conectar a ${base}. ¿Corriste "uvicorn src.api:app --reload --port 8000"? ¿Serviste este HTML desde un origen permitido por CORS (no file://)? Detalle técnico: ${e.message}`
+    };
+    modeTag.className = 'error-tag';
+    modeTag.innerText = '🔴 Sin conexión';
+    statusBadge.innerText = 'ERROR';
+    renderResponse();
+  }
+}
+
+function resetResponseModeTag() {
+  const modeTag = document.getElementById('res-mode-tag');
+  modeTag.className = 'mock-tag';
+  modeTag.innerText = '⚠ Dato de ejemplo';
+  modeTag.title = 'Respuesta simulada en el navegador (MOCK_METRICS / MOCK_LIFT o heurística local), no proviene de un backend desplegado.';
+  document.getElementById('res-status-badge').innerText = '200 OK';
+}
+
+async function executeApiCall() {
   const start = performance.now();
-  
+
+  if (currentEndpoint === 'reasoning') {
+    await executeReasoningCall(start);
+    return;
+  }
+
+  resetResponseModeTag();
+
   if (currentEndpoint === 'parse') {
     const text = currentPayload.text || "";
     const isExc = /salvo|a menos que|sin perjuicio|pero en tal caso/i.test(text);
@@ -1004,6 +1411,24 @@ function renderResponse() {
   document.getElementById('res-json-view').innerText = JSON.stringify(lastResponseData, null, 2);
 
   const tree = document.getElementById('res-tree-view');
+
+  if (currentEndpoint === 'reasoning') {
+    if (lastResponseData && lastResponseData.__error) {
+      tree.innerHTML = `<div class="api-conn-error">⚠️ ${lastResponseData.message}</div>`;
+      return;
+    }
+    const proved = lastResponseData.proved;
+    tree.innerHTML = `
+      <div class="proof-verdict ${proved ? 'is-proved' : 'is-not-proved'}">
+        <span>${proved ? '✅' : '❌'}</span>
+        <span>${partyLabel(lastResponseData.party)} ${proved ? 'PROBÓ' : 'NO PUDO PROBAR'} "${lastResponseData.goal}"</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-dark-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;font-weight:700;">Traza de argumentación (${lastResponseData.trace.length} pasos)</div>
+      ${renderTraceSteps(lastResponseData.trace)}
+    `;
+    return;
+  }
+
   if (currentEndpoint === 'parse' && lastResponseData.statements) {
     tree.innerHTML = lastResponseData.statements.map(st => `
       <div class="v-statement-card ${st.is_exception ? 'is-exc' : ''}">
