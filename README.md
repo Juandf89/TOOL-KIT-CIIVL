@@ -9,7 +9,7 @@ LATIO es una iniciativa comunitaria y de código abierto para dotar al ecosistem
 ## 📂 Estructura del Repositorio
 
 ```text
-latio-kit/
+TOOL-KIT-CIIVL/
 ├── README.md                  # Descripción del proyecto, arquitectura y guía rápida
 ├── .gitignore                 # Exclusiones de control de versiones
 ├── requirements.txt           # Dependencias runtime: fastapi, uvicorn, pydantic, pyyaml
@@ -37,13 +37,10 @@ latio-kit/
 │   └── limitaciones_conocidas.md # Brechas honestas entre el esquema/pipeline y lo declarado
 ├── reports/
 │   └── manifest.json          # Manifiesto de ejecución con hashes inmutables y compuertas
-├── toolkit-api/
-│   ├── index.html              # LATIO Explorer / Consola interactiva (datos de demo en cliente)
-│   └── card-datalex.html       # Tarjeta de proyecto para incrustar en datalexlab.com
-└── TOOL KIT CIIVL/             # Submódulo git → github.com/Juandf89/TOOL-KIT-CIIVL (repo independiente)
+└── toolkit-api/
+    ├── index.html              # LATIO Explorer / Consola interactiva (datos de demo en cliente)
+    └── card-datalex.html       # Tarjeta de proyecto para incrustar en datalexlab.com
 ```
-
-> **Nota sobre `TOOL KIT CIIVL/`:** es un submódulo git que apunta a [github.com/Juandf89/TOOL-KIT-CIIVL](https://github.com/Juandf89/TOOL-KIT-CIIVL), un repositorio separado con su propio historial. Antes vivía copiado dentro de este repo como una carpeta suelta (con su propio `.git` anidado, sin relación declarada); se reemplazó por un submódulo real para eliminar la duplicación de fuente de verdad. Si cloná `latio-kit` de cero, traé su contenido con `git submodule update --init`.
 
 ---
 
@@ -54,9 +51,8 @@ latio-kit/
 - Dependencias listadas en `requirements.txt` (`pydantic`, `pyyaml`, y `fastapi`/`uvicorn` para `src/api.py`); `requirements-dev.txt` agrega `pytest` para correr la suite de pruebas.
 
 ```bash
-git clone https://github.com/tu-usuario/latio-kit.git
-cd latio-kit
-git submodule update --init   # trae TOOL KIT CIIVL/
+git clone https://github.com/Juandf89/TOOL-KIT-CIIVL.git
+cd TOOL-KIT-CIIVL
 pip install -r requirements.txt -r requirements-dev.txt
 ```
 
