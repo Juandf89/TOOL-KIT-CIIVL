@@ -1,60 +1,51 @@
 <!-- ============================================================= -->
-<!-- DataLex Lab (datalexlab.com) · Tarjeta Proyecto 3              -->
-<!-- Ubicación: Sección 'Laboratorio Aplicado / Proyectos'         -->
+<!-- DataLex Lab (datalexlab.com) · Tarjeta Proyecto — LATIO Kit     -->
+<!-- Ubicación: Sección "Laboratorio Aplicado / Proyectos"          -->
 <!-- ============================================================= -->
-<!-- DEPENDENCIA: este fragmento usa clases utilitarias de Tailwind -->
-<!-- CSS (bg-white, rounded-lg, text-slate-*, etc.) y NO las define -->
-<!-- por sí mismo. Solo se renderizará correctamente si el sitio    -->
-<!-- destino (datalexlab.com) ya carga Tailwind CSS globalmente     -->
-<!-- (build de Tailwind o el script de Play CDN). No se agrega un   -->
-<!-- <link>/<script> de Tailwind aquí porque toolkit-api/index.html -->
-<!-- (el otro artefacto de este repo) no usa Tailwind — no hay un   -->
-<!-- patrón CDN establecido en el proyecto que replicar. Si este    -->
-<!-- fragmento se incrusta en una página sin Tailwind, agrega el    -->
-<!-- Play CDN de Tailwind antes de este bloque:                     -->
-<!--   <script src="https://cdn.tailwindcss.com"></script>          -->
+<!-- Estructura y clases Tailwind calcadas del componente real de   -->
+<!-- datalexlab.com (verificado 2026-09-11 vía DevTools contra las  -->
+<!-- tarjetas de "Auditoría automatizada SECOP II" y "Grafo de      -->
+<!-- Jurisprudencia Constitucional"): mismo shell de tarjeta         -->
+<!-- (bg-slate-50/rounded-3xl/border-slate-200), mismo badge de      -->
+<!-- ícono con gradiente indigo→cyan, mismo patrón de pill+stats+CTA.-->
+<!-- DEPENDENCIA: usa clases utilitarias de Tailwind CSS (las mismas -->
+<!-- que ya usa datalexlab.com) — se renderiza correctamente solo si -->
+<!-- el sitio destino ya carga Tailwind globalmente, como es el caso -->
+<!-- en datalexlab.com. Fuente serif "font-serif" asumida mapeada a  -->
+<!-- Merriweather en la config de Tailwind del sitio (igual que en   -->
+<!-- las otras dos tarjetas) — no se redefine acá para no pisar la   -->
+<!-- config global del sitio.                                        -->
 <!-- ============================================================= -->
 
-<div class="bg-white rounded-lg border border-slate-200 p-6 hover:shadow-md transition duration-200 flex flex-col justify-between">
-  <div>
-    <div class="flex items-center gap-2 mb-3">
-      <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-        🧠 Lógica Computable
-      </span>
-      <span class="text-xs text-slate-500 font-mono">v1.0.0</span>
+<a href="https://juandf89.github.io/TOOL-KIT-CIIVL/" target="_blank"
+   class="group bg-slate-50 hover:bg-white rounded-3xl border border-slate-200 hover:border-indigo-300 hover:shadow-xl transition-all duration-300 p-8 flex flex-col">
+
+  <div class="flex justify-between items-start mb-6">
+    <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center text-white text-xl group-hover:scale-110 transition-transform">
+      🧠
     </div>
-    
-    <h3 class="text-xl font-bold font-serif text-slate-900 mb-2">
-      LATIO · Motor Ontológico del Civil Law
-    </h3>
-    
-    <p class="text-sm text-slate-600 mb-4 leading-relaxed">
-      Modelamos 8 códigos civiles de América Latina (21.957 artículos) a través de una ontología del enunciado normativo y derrotabilidad (PROLEG). Analiza la estructura deóntica de cualquier norma o contrato y accede a la API abierta.
-    </p>
-    
-    <div class="grid grid-cols-3 gap-2 py-3 border-y border-slate-100 text-center text-xs mb-4">
-      <div>
-        <span class="block font-bold text-slate-900 font-mono text-sm">21.957</span>
-        <span class="text-slate-500">Artículos</span>
-      </div>
-      <div>
-        <span class="block font-bold text-slate-900 font-mono text-sm">8</span>
-        <span class="text-slate-500">Códigos</span>
-      </div>
-      <div>
-        <span class="block font-bold text-emerald-600 font-mono text-sm">API Live</span>
-        <span class="text-slate-500">Open REST</span>
-      </div>
-    </div>
+    <span class="text-[10px] bg-violet-100 text-violet-700 px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+      Razonamiento real
+    </span>
   </div>
 
-  <div class="flex items-center justify-between pt-2">
-    <!-- Enlace a la consola desplegada -->
-    <a href="/latio/" target="_blank" class="text-sm font-semibold text-blue-700 hover:text-blue-800 inline-flex items-center gap-1.5 transition">
-      Abrir consola interactiva ➔
-    </a>
-    <a href="https://github.com/Juandf89/latio-kit" target="_blank" class="text-xs text-slate-500 hover:text-slate-800 transition">
-      Código en GitHub ↗
-    </a>
+  <h3 class="text-xl font-serif font-bold mb-2 text-slate-900">
+    LATIO · Motor Ontológico del Civil Law
+  </h3>
+
+  <p class="text-slate-600 text-sm leading-relaxed mb-6 flex-grow">
+    Modelamos la estructura del enunciado normativo en 8 códigos civiles de América Latina y conectamos
+    un motor de razonamiento derrotable (reglas por defecto, excepciones, carga de la prueba) que
+    responde sobre contenido real, no simulado.
+  </p>
+
+  <div class="flex flex-wrap gap-x-5 gap-y-1 text-xs text-slate-500 mb-6 font-semibold">
+    <span>22.110 artículos reales</span>
+    <span>8 códigos civiles LATAM</span>
   </div>
-</div>
+
+  <span class="inline-flex items-center gap-2 text-indigo-600 text-xs font-bold uppercase tracking-wider">
+    Abrir consola API
+    <span class="group-hover:translate-x-1 transition-transform">➔</span>
+  </span>
+</a>

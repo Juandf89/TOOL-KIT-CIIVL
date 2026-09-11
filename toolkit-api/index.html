@@ -6,8 +6,15 @@
 <title>DataLex Lab · LATIO API Console & Explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
+/* Paleta armonizada con datalexlab.com (verificada 2026-09-11 contra las
+   tarjetas/páginas de "Auditoría automatizada SECOP II" y "Grafo de
+   Jurisprudencia Constitucional"): Merriweather + Plus Jakarta Sans,
+   gradiente indigo-600→cyan-500, superficies slate. --bg-dark*/--border-dark
+   quedan para la columna de consola técnica (un registro visual "developer
+   console" deliberadamente distinto, común en herramientas de API — no
+   forman parte del sistema de marca de DataLex Lab en sí). */
 :root {
   --bg-page: #F8FAFC;
   --bg-card: #FFFFFF;
@@ -16,23 +23,25 @@
   --border-light: #E2E8F0;
   --border-dark: #223158;
   --text-main: #0F172A;
-  --text-muted: #64748B;
+  --text-muted: #475569;
   --text-dark-muted: #94A3B8;
-  --accent-primary: #1C4587;
-  --accent-hover: #15366D;
-  --accent-glow: rgba(28, 69, 135, 0.12);
+  --accent-primary: #4F46E5;
+  --accent-secondary: #06B6D4;
+  --accent-gradient: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+  --accent-hover: #4338CA;
+  --accent-glow: rgba(79, 70, 229, 0.12);
   --badge-get: #10B981;
   --badge-get-bg: #ECFDF5;
-  --badge-post: #3B82F6;
-  --badge-post-bg: #EFF6FF;
+  --badge-post: #4F46E5;
+  --badge-post-bg: #EEF2FF;
   --tag-hohfeld: #8B5CF6;
   --tag-hohfeld-bg: #F5F3FF;
   --tag-warn: #D97706;
   --tag-warn-bg: #FFFBEB;
   --tag-fail: #DC2626;
   --tag-fail-bg: #FEF2F2;
-  --font-serif: "Newsreader", Georgia, serif;
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: "Merriweather", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "Fira Code", monospace;
 }
 
@@ -71,17 +80,18 @@ header {
   gap: 14px;
 }
 .logo-badge {
-  background: var(--bg-dark);
+  background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
   color: #FFFFFF;
   font-weight: 700;
+  font-style: italic;
   font-size: 13px;
   letter-spacing: 0.05em;
   padding: 7px 11px;
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(11, 19, 43, 0.15);
+  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.25);
 }
 .brand-titles h1 {
   font-family: var(--font-serif);
@@ -135,14 +145,54 @@ header {
   background: var(--accent-primary);
   color: #FFFFFF;
   text-decoration: none;
-  font-size: 12.5px;
-  font-weight: 600;
-  padding: 7px 14px;
-  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 8px 20px;
+  border-radius: 9999px;
   transition: background 0.15s ease;
 }
 .btn-primary-sm:hover {
   background: var(--accent-hover);
+}
+
+/* Hero editorial — mismo patrón que las páginas de proyecto de
+   datalexlab.com (eyebrow cyan + h1 serif con tramo en gradiente itálico +
+   párrafo slate-600), para que LATIO se sienta parte de la misma familia
+   que SECOP II / Grafo de Jurisprudencia en vez de una consola aparte. */
+.hero-block {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 28px 32px;
+}
+.eyebrow {
+  color: var(--accent-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.hero-h1 {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-main);
+  margin: 14px 0 18px;
+}
+.hero-h1 em {
+  font-style: italic;
+  background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero-desc {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 640px;
 }
 
 /* Main Studio Layout (3 columns) */
@@ -639,26 +689,34 @@ header {
 
 <header>
   <div class="header-wrapper">
-    <div class="brand-group">
+    <a href="https://www.datalexlab.com" class="brand-group" style="text-decoration:none;">
       <div class="logo-badge">DL</div>
       <div class="brand-titles">
-        <h1>DataLex Lab · LATIO Console</h1>
-        <p>Motor de Razonamiento y Ontología del Civil Law</p>
+        <h1>DataLex <span style="font-weight:300;color:var(--text-muted);">Lab</span> · LATIO</h1>
       </div>
-    </div>
-    
+    </a>
+
     <div class="status-pill" title="Consola en modo demostración: las respuestas se generan en el navegador con datos de ejemplo, no consultan un backend en vivo.">
       <div class="pulse-dot"></div>
-      <span>Modo Demo (datos de ejemplo) · v1.0.0</span>
+      <span>Modo Demo · v1.0.0</span>
     </div>
 
     <div class="header-actions">
-      <a href="https://www.datalexlab.com" target="_blank" class="nav-link-btn">datalexlab.com ↗</a>
-      <a href="https://github.com/Juandf89/TOOL-KIT-CIIVL" target="_blank" class="nav-link-btn">GitHub ↗</a>
-      <a href="https://api.datalexlab.com/docs" target="_blank" class="btn-primary-sm docs-link-pending" title="Swagger Docs — backend aún no desplegado en api.datalexlab.com; corre src/api.py localmente (uvicorn src.api:app) mientras tanto.">Swagger Docs<span class="pending-flag">(pendiente de despliegue)</span></a>
+      <a href="https://api.datalexlab.com/docs" target="_blank" class="nav-link-btn docs-link-pending" title="Swagger Docs — backend aún no desplegado en api.datalexlab.com; corre src/api.py localmente (uvicorn src.api:app) mientras tanto.">Swagger Docs<span class="pending-flag">(pendiente)</span></a>
+      <a href="https://github.com/Juandf89/TOOL-KIT-CIIVL" target="_blank" class="btn-primary-sm">Ver Repo</a>
     </div>
   </div>
 </header>
+
+<div class="hero-block">
+  <span class="eyebrow">LegalTech · Ontología y Razonamiento del Civil Law</span>
+  <h1 class="hero-h1">Motor <em>ontológico</em> del civil law latinoamericano</h1>
+  <p class="hero-desc">
+    Modelamos la estructura del enunciado normativo en 8 códigos civiles de América Latina (22.110 artículos reales)
+    y conectamos un motor de razonamiento derrotable que responde sobre contenido real — no simulado — a través de
+    esta consola.
+  </p>
+</div>
 
 <div class="demo-banner">
   ⚠️ <strong>Modo demostración:</strong> todas las respuestas de esta consola —incluidas <code>/v1/behavior/summary</code> y <code>/v1/behavior/lift</code>— provienen de datos de ejemplo (<code>MOCK_METRICS</code> / <code>MOCK_LIFT</code>) precalculados en el cliente. No hay una API en vivo respondiendo estas peticiones.
