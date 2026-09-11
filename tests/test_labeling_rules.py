@@ -81,9 +81,84 @@ def test_texto_largo_sin_marcadores_deja_statement_type_no_determinado():
     assert "structure" in p.undetermined_fields  # depende de statement_type
 
 
-def test_deontic_addressee_generality_siempre_no_determinados_en_paso_1():
+def test_sin_marcador_deontico_deontic_y_addressee_quedan_no_determinados():
+    """Un texto sin obligación/prohibición/permiso explícitos (p. ej. una
+    presunción) no tiene de dónde derivar Von Wright ni un addressee por
+    defecto — generality siempre queda fuera del alcance de este motor."""
     p = propose_from_text("Se presume de derecho que el menor de diez años es incapaz.")
     assert set(["deontic_modality", "addressee", "generality"]) <= set(p.undetermined_fields)
+
+
+def test_detecta_obligacion_von_wright_y_deriva_deber_hohfeld():
+    p = propose_from_text("El comprador deberá pagar el precio en el plazo estipulado.")
+    assert p.deontic_modality == "obligacion"
+    assert p.hohfeldian_position == "deber"
+    assert "deontic_modality" in p.determined_fields
+    assert "hohfeldian_position" in p.default_fields  # correlato por defecto, no análisis bilateral
+
+
+def test_detecta_prohibicion_von_wright_y_deriva_deber_hohfeld():
+    p = propose_from_text("Se prohíbe la venta de bienes de dominio público.")
+    assert p.deontic_modality == "prohibicion"
+    assert p.hohfeldian_position == "deber"
+
+
+def test_detecta_permiso_von_wright_y_deriva_potestad_hohfeld():
+    p = propose_from_text(
+        "La mujer casada de cualquier edad podrá dedicarse libremente al ejercicio de un empleo."
+    )
+    assert p.deontic_modality == "permiso"
+    assert p.hohfeldian_position == "potestad"
+
+
+def test_deontica_explicita_sin_otro_marcador_deriva_statement_type_regla_por_defecto():
+    p = propose_from_text("Toda persona deberá evitar causar un daño no justificado a otro.")
+    assert p.statement_type == "regla"
+    assert "statement_type" in p.default_fields  # default modal, no marcador de regla en sí
+    assert p.structure == "supuesto_consecuencia"
+    assert "structure" in p.default_fields
+
+
+def test_addressee_juez_detectado_por_marcador():
+    p = propose_from_text("El juez podrá reducir la pena cuando concurran atenuantes.")
+    assert p.addressee == "juez"
+    assert "addressee" in p.determined_fields
+
+
+def test_addressee_default_partes_cuando_hay_deontica_sin_marcador_explicito():
+    p = propose_from_text("El comprador deberá pagar el precio en el plazo estipulado.")
+    assert p.addressee == "partes"
+    assert "addressee" in p.default_fields
+
+
+def test_definicion_detectada_por_formula_se_entiende_por():
+    p = propose_from_text(
+        "Se entiende por contrato de compraventa aquel por el cual una parte se obliga a "
+        "transferir la propiedad de una cosa."
+    )
+    assert p.statement_type == "definicion"
+    assert p.structure == "definicion_pura"
+    assert p.deontic_modality == "ninguno"
+    assert "deontic_modality" not in p.determined_fields
+    assert "deontic_modality" not in p.default_fields
+
+
+def test_proleg_preview_ausente_sin_excepcion():
+    p = propose_from_text("El comprador deberá pagar el precio en el plazo estipulado.")
+    assert p.proleg_preview is None
+
+
+def test_proleg_preview_presente_y_demuestra_derrotabilidad_real():
+    """Con excepción detectada, el motor PROLEG real corre dos veces sobre
+    una regla genérica con esa misma forma: prueba sin la excepción, y se
+    derrota cuando la excepción se prueba — el mecanismo real de
+    src/reasoning/engine.py, no un mock."""
+    p = propose_from_text(
+        "El deudor debe restituir la cosa, salvo que haya perecido por caso fortuito."
+    )
+    assert p.proleg_preview is not None
+    assert p.proleg_preview.without_exception.proved is True
+    assert p.proleg_preview.with_exception.proved is False
 
 
 def test_endpoint_propose_devuelve_shape_esperado():
@@ -125,3 +200,30 @@ def test_propuesta_de_reglas_pasa_validacion_real_end_to_end():
     assert body["valid"] is True
     assert body["normalized"]["annotated_by"] == "heuristica_local"
     assert body["normalized"]["derogability"] == "inderogable"
+
+
+def test_hohfeldian_position_propuesto_fluye_real_hasta_validate():
+    """hohfeldian_position ya no está hardcodeado a 'ninguno' en el backend
+    — lo que el motor de reglas deriva (o lo que un humano complete) se
+    respeta de verdad en /v1/statements/validate."""
+    text = "El comprador deberá pagar el precio en el plazo estipulado."
+    proposal = client.post("/v1/statements/propose", json={"text_span": text}).json()
+    assert proposal["hohfeldian_position"] == "deber"
+
+    payload = {
+        "text_span": text,
+        "statement_type": proposal["statement_type"],
+        "structure": proposal["structure"],
+        "deontic_modality": proposal["deontic_modality"],
+        "hohfeldian_position": proposal["hohfeldian_position"],
+        "addressee": proposal["addressee"],
+        "antecedent_operator": proposal["antecedent_operator"],
+        "exception_present": proposal["exception_present"],
+        "generality_n_conditions": 1,
+        "generality_has_enumeration": False,
+    }
+    res = client.post("/v1/statements/validate", json=payload)
+    assert res.status_code == 200
+    body = res.json()
+    assert body["valid"] is True
+    assert body["normalized"]["hohfeldian_position"] == "deber"

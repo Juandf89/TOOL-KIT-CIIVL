@@ -1,31 +1,36 @@
-"""rules.py — motor de reglas deterministas para el etiquetado N3 (Paso 1).
+"""rules.py — motor de reglas deterministas para el etiquetado N3.
 
-Alcance deliberadamente acotado a los campos con evidencia de alta
-confiabilidad léxica dentro del propio proyecto: antecedent_operator,
-exception_present/marker/scope, statement_type=presuncion/remision, y la
-derivación de structure cuando COMPATIBILITY (src/models.py) la deja sin
-ambigüedad una vez conocidos statement_type y exception_present.
+Cubre dos familias de campos, con confianza declarada distinta:
 
-No usa red, no usa LLM, no tiene costo. Todo lo que no se determina acá se
-reporta explícitamente en `undetermined_fields` — el llamador (UI o un
-humano) lo completa antes de mandar el resultado a
-POST /v1/statements/validate, que es quien de verdad decide si la
-combinación final es jurídicamente válida.
+  * "reglas" (determined_fields): marcador léxico de baja ambigüedad medido
+    o evidenciado dentro del propio proyecto — antecedent_operator,
+    exception, presuncion/remision/definicion, deóntica de Von Wright.
+  * "default" (default_fields): no hay marcador textual, pero hay un valor
+    modal razonable y documentado — p. ej. addressee="partes" para una
+    regla con deóntica explícita (la mayoría del derecho privado se dirige
+    a las partes salvo marca en contrario), o el correlato hohfeldiano por
+    defecto de la deóntica detectada (ver `_derive_hohfeld_from_deontic`:
+    es una simplificación declarada, NO un análisis bilateral completo de
+    Hohfeld, que exigiría identificar a la contraparte concreta).
+
+Todo lo que no cae en ninguna de las dos categorías queda en
+`undetermined_fields`, explícito, nunca adivinado. No usa red, no usa LLM,
+no tiene costo.
 """
 
 from __future__ import annotations
 
 from src.labeling import lexical_markers as lex
-from src.labeling.schemas import LabelProposal
+from src.labeling.schemas import LabelProposal, ProlegPreview, ProlegRunResult
 from src.models import COMPATIBILITY
+from src.reasoning.engine import prove
+from src.reasoning.models import FactAction, FactBase, FactEntry, Party, Rule, RuleBase, ExceptionLink
 
 
 def _detect_antecedent_operator(text: str) -> str:
     for label, pattern in lex.ANTECEDENT_PATTERNS:
         if pattern.search(text):
             return label
-    # Ausencia de marcador es en sí misma una respuesta determinada: el
-    # esquema tiene un valor explícito para "sin operador explícito".
     return "ninguno_explicito"
 
 
@@ -40,8 +45,6 @@ def _detect_exception(text: str) -> tuple[bool, str | None, str | None]:
 
 
 def _detect_presumption(text: str) -> tuple[bool, bool | None]:
-    """Devuelve (es_presuncion, rebuttable). rebuttable es None si
-    es_presuncion es False (no aplica)."""
     if lex.PRESUMPTION_DE_DERECHO_RE.search(text):
         return True, False
     if lex.PRESUMPTION_LEGAL_RE.search(text):
@@ -54,7 +57,65 @@ def _detect_remision(text: str) -> bool:
     return n_words <= lex.REMISION_MAX_WORDS and bool(lex.REMISION_LEAD_RE.search(text))
 
 
-def _derive_structure(statement_type: str | None, exception_present: bool) -> str | None:
+def _detect_definicion(text: str) -> bool:
+    return bool(lex.DEFINICION_LEAD_RE.search(text))
+
+
+def _detect_deontic_modality(text: str) -> str | None:
+    """Von Wright: obligación / prohibición / permiso. Orden importa —
+    prohibición antes que permiso ("no podrá" no debe matchear "podrá")."""
+    if lex.DEONTIC_PROHIBICION_RE.search(text):
+        return "prohibicion"
+    if lex.DEONTIC_OBLIGACION_RE.search(text):
+        return "obligacion"
+    if lex.DEONTIC_PERMISO_RE.search(text):
+        return "permiso"
+    return None
+
+
+def _derive_hohfeld_from_deontic(deontic_modality: str | None) -> str:
+    """Correlato hohfeldiano por defecto de la modalidad deóntica detectada.
+
+    Simplificación declarada: Hohfeld exige identificar a la CONTRAPARTE
+    concreta (quien tiene el deber correlativo del derecho, o quien está
+    sujeto al ejercicio de la potestad) — algo que un texto normativo
+    aislado no siempre da. Esta derivación asigna la posición del
+    DESTINATARIO del mandato (no de su contraparte), que es lo único que el
+    propio enunciado permite fijar sin inventar quién más interviene:
+    obligación/prohibición -> deber (el destinatario debe/no debe actuar);
+    permiso -> potestad (el destinatario puede ejercer la facultad);
+    sin deóntica -> ninguno (definiciones, remisiones).
+    Ver docs/limitaciones_conocidas.md §2 para el límite de fondo."""
+    if deontic_modality in ("obligacion", "prohibicion"):
+        return "deber"
+    if deontic_modality == "permiso":
+        return "potestad"
+    return "ninguno"
+
+
+def _detect_addressee(text: str) -> str | None:
+    if lex.ADDRESSEE_JUEZ_RE.search(text):
+        return "juez"
+    if lex.ADDRESSEE_FUNCIONARIO_RE.search(text):
+        return "funcionario_o_notario"
+    if lex.ADDRESSEE_TERCERO_RE.search(text):
+        return "tercero"
+    return None
+
+
+def _detect_enumeration(text: str) -> tuple[bool, bool | None]:
+    if not lex.ENUMERATION_ITEM_RE.search(text):
+        return False, None
+    if lex.ENUMERATION_CLOSED_RE.search(text):
+        return True, True
+    if lex.ENUMERATION_OPEN_RE.search(text):
+        return True, False
+    return True, None  # hay lista, pero abierta/cerrada queda sin determinar
+
+
+def _derive_structure(
+    statement_type: str | None, exception_present: bool, has_enumeration: bool
+) -> str | None:
     """Usa COMPATIBILITY para derivar structure solo cuando queda un único
     candidato posible — nunca elige entre varios igual de válidos."""
     if statement_type is None:
@@ -65,17 +126,84 @@ def _derive_structure(statement_type: str | None, exception_present: bool) -> st
     if exception_present:
         if "supuesto_consecuencia_con_excepcion" in candidates:
             return "supuesto_consecuencia_con_excepcion"
-        return None  # excepción detectada pero statement_type no la admite: ambiguo, no forzar
+        return None
     remaining = candidates - {"supuesto_consecuencia_con_excepcion"}
+    if not has_enumeration:
+        remaining = remaining - {"enumeracion_taxativa", "enumeracion_enunciativa"}
     if len(remaining) == 1:
         return next(iter(remaining))
     return None
+
+
+def build_proleg_preview(
+    exception_marker: str | None, exception_scope: str | None
+) -> ProlegPreview:
+    """Instancia una RuleBase mínima y GENÉRICA a partir de la MISMA
+    estructura ya detectada (regla + excepción) y corre el motor PROLEG
+    real (src/reasoning/engine.py) dos veces: una sin la excepción probada,
+    otra con ella. No fabrica contenido semántico del artículo — los
+    nombres de hecho ("antecedente_cumplido", "excepcion_probada") son
+    genéricos a propósito, para no simular una prueba jurídica que el
+    texto por sí solo no permite construir. Lo que demuestra es la
+    MECÁNICA de derrotabilidad, con el motor real, no un mock."""
+    rulebase = RuleBase(
+        id="preview_derrotabilidad",
+        description=(
+            f"Estructura genérica derivada del artículo: regla con excepción "
+            f'("{exception_marker}", scope={exception_scope}).'
+        ),
+        rules=[
+            Rule(
+                head="consecuencia_aplica",
+                body=["antecedente_cumplido"],
+                source_note="Regla base detectada por reglas léxicas (no contenido inventado).",
+            )
+        ],
+        exceptions=[ExceptionLink(rule_head="consecuencia_aplica", exception_head="excepcion_probada")],
+    )
+
+    base_facts = FactBase(
+        entries=[
+            FactEntry(action=FactAction.ALLEGE, fact="antecedente_cumplido", party=Party.PLAINTIFF),
+            FactEntry(action=FactAction.PROVIDE_EVIDENCE, fact="antecedente_cumplido", party=Party.PLAINTIFF),
+            FactEntry(action=FactAction.PLAUSIBLE, fact="antecedente_cumplido", party=None),
+        ]
+    )
+
+    without_exception = prove("consecuencia_aplica", Party.PLAINTIFF, rulebase, base_facts)
+
+    with_exception_facts = FactBase(
+        entries=list(base_facts.entries)
+        + [FactEntry(action=FactAction.PLAUSIBLE, fact="excepcion_probada", party=None)]
+    )
+    with_exception = prove("consecuencia_aplica", Party.PLAINTIFF, rulebase, with_exception_facts)
+
+    return ProlegPreview(
+        rulebase_id=rulebase.id,
+        without_exception=ProlegRunResult(
+            proved=without_exception.proved,
+            trace_length=len(without_exception.trace),
+        ),
+        with_exception=ProlegRunResult(
+            proved=with_exception.proved,
+            trace_length=len(with_exception.trace),
+        ),
+        note=(
+            "Vista previa estructural: usa el motor PROLEG real "
+            "(src/reasoning/engine.py) sobre una regla genérica con la "
+            "misma forma detectada en el artículo (regla + excepción). No "
+            "es un análisis semántico del contenido específico del "
+            "artículo — muestra que la excepción detectada, si se prueba, "
+            "efectivamente derrota la regla bajo el motor determinista."
+        ),
+    )
 
 
 def propose_from_text(text: str) -> LabelProposal:
     text = text.strip()
 
     determined: list[str] = []
+    default: list[str] = []
     undetermined: list[str] = []
     notes: list[str] = []
 
@@ -87,56 +215,119 @@ def propose_from_text(text: str) -> LabelProposal:
     if exception_present:
         determined += ["exception_marker", "exception_scope"]
 
+    deontic_modality = _detect_deontic_modality(text)
+    if deontic_modality is not None:
+        determined.append("deontic_modality")
+    else:
+        deontic_modality = "ninguno"
+        undetermined.append("deontic_modality")
+        notes.append(
+            "deontic_modality: sin marcador léxico de obligación/prohibición/"
+            "permiso — se deja 'ninguno' por defecto (correcto para "
+            "definiciones/remisiones, pero revisar si es una regla con "
+            "deóntica implícita en presente indicativo, ej. 'el comprador "
+            "paga el precio' sin 'deberá')."
+        )
+
+    hohfeldian_position = _derive_hohfeld_from_deontic(
+        deontic_modality if "deontic_modality" in determined else None
+    )
+    if "deontic_modality" in determined:
+        default.append("hohfeldian_position")
+        notes.append(
+            "hohfeldian_position: correlato por defecto de la deóntica "
+            "detectada, no un análisis bilateral de Hohfeld (no identifica "
+            "contraparte) — ver docs/limitaciones_conocidas.md §2."
+        )
+    else:
+        undetermined.append("hohfeldian_position")
+
     statement_type: str | None = None
-    presumption_rebuttable: str | None = None
+    statement_type_determined = False
+    presumption_rebuttable: bool | None = None
 
     is_presumption, rebuttable = _detect_presumption(text)
     if is_presumption:
         statement_type = "presuncion"
         presumption_rebuttable = rebuttable
+        statement_type_determined = True
         determined += ["statement_type", "presumption_rebuttable"]
     elif _detect_remision(text):
         statement_type = "remision"
+        statement_type_determined = True
         determined.append("statement_type")
+    elif _detect_definicion(text):
+        statement_type = "definicion"
+        statement_type_determined = True
+        determined.append("statement_type")
+    elif deontic_modality != "ninguno":
+        # Hay marcador deóntico explícito y ningún otro marcador más
+        # específico (presunción/remisión/definición): el default modal es
+        # "regla" — es, literalmente, la definición de statement_type=regla
+        # en este esquema (mandato con antecedente y consecuente).
+        statement_type = "regla"
+        default.append("statement_type")
     else:
         undetermined.append("statement_type")
         notes.append(
-            "statement_type no determinado por reglas léxicas: distinguir "
-            "regla/principio/definicion/regla_interpretativa/norma_organica/"
-            "ficcion sin marcador textual explícito requiere criterio humano "
-            "(o, más adelante, un clasificador local entrenado — ver Paso 2)."
+            "statement_type no determinado: sin marcador léxico de "
+            "presunción/remisión/definición ni deóntica explícita. "
+            "Distinguir principio/regla_interpretativa/norma_organica/"
+            "ficcion sin marcador textual requiere criterio humano."
         )
 
-    structure = _derive_structure(statement_type, exception_present)
+    has_enumeration, enumeration_closed = _detect_enumeration(text)
+
+    structure = _derive_structure(statement_type, exception_present, has_enumeration)
     if structure is not None:
-        determined.append("structure")
+        (determined if statement_type_determined else default).append("structure")
     else:
         undetermined.append("structure")
         if statement_type is not None:
             notes.append(
                 f"structure no determinado: statement_type='{statement_type}' "
-                f"admite más de una estructura compatible sin excepción "
-                f"detectada ({sorted(COMPATIBILITY.get(statement_type, set()))})."
+                f"admite más de una estructura compatible sin más evidencia "
+                f"({sorted(COMPATIBILITY.get(statement_type, set()))})."
             )
 
-    for field in ("deontic_modality", "addressee", "generality"):
-        undetermined.append(field)
+    addressee = _detect_addressee(text)
+    if addressee is not None:
+        determined.append("addressee")
+    elif deontic_modality != "ninguno":
+        addressee = "partes"
+        default.append("addressee")
+        notes.append(
+            "addressee: sin marcador de juez/funcionario/tercero — se "
+            "asume 'partes' por defecto (mayoría del derecho privado); "
+            "revisar si el artículo se dirige a otro destinatario."
+        )
+    else:
+        undetermined.append("addressee")
+
+    undetermined.append("generality")
     notes.append(
-        "deontic_modality, addressee y generality quedan fuera del alcance "
-        "de este paso (sin evidencia léxica confiable medida en el proyecto "
-        "para proponerlos automáticamente) — completalos manualmente antes "
-        "de validar."
+        "generality (n_conditions, indeterminate_concepts, etc.) queda "
+        "fuera del alcance de este motor de reglas — completar manualmente."
     )
+
+    proleg_preview = None
+    if exception_present:
+        proleg_preview = build_proleg_preview(exception_marker, exception_scope)
 
     return LabelProposal(
         statement_type=statement_type,
         structure=structure,
+        deontic_modality=deontic_modality,
+        hohfeldian_position=hohfeldian_position,
+        addressee=addressee,
         antecedent_operator=antecedent_operator,
         exception_present=exception_present,
         exception_marker=exception_marker,
         exception_scope=exception_scope,
         presumption_rebuttable=presumption_rebuttable,
         determined_fields=determined,
+        default_fields=default,
         undetermined_fields=undetermined,
         notes=notes,
+        proleg_preview=proleg_preview,
     )

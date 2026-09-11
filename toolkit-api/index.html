@@ -283,6 +283,13 @@ header {
 .endpoint-hero {
   margin-bottom: 24px;
 }
+.endpoint-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
 .endpoint-method-url {
   display: flex;
   align-items: center;
@@ -696,13 +703,12 @@ header {
       </div>
     </a>
 
-    <div class="status-pill" title="Consola en modo demostración: las respuestas se generan en el navegador con datos de ejemplo, no consultan un backend en vivo.">
+    <div class="status-pill" id="connection-status-pill" title="Verificando conexión con el analizador…">
       <div class="pulse-dot"></div>
-      <span>Modo Demo · v1.0.0</span>
+      <span id="connection-status-text">Verificando conexión…</span>
     </div>
 
     <div class="header-actions">
-      <a href="https://api.datalexlab.com/docs" target="_blank" class="nav-link-btn docs-link-pending" title="Swagger Docs — backend aún no desplegado en api.datalexlab.com; corre src/api.py localmente (uvicorn src.api:app) mientras tanto.">Swagger Docs<span class="pending-flag">(pendiente)</span></a>
       <a href="https://github.com/Juandf89/TOOL-KIT-CIIVL" target="_blank" class="btn-primary-sm">Ver Repo</a>
     </div>
   </div>
@@ -710,23 +716,26 @@ header {
 
 <div class="hero-block">
   <span class="eyebrow">LegalTech · Ontología y Razonamiento del Civil Law</span>
-  <h1 class="hero-h1">Motor <em>ontológico</em> del civil law latinoamericano</h1>
+  <h1 class="hero-h1">Analizador <em>ontológico</em> del civil law latinoamericano</h1>
   <p class="hero-desc">
-    Modelamos la estructura del enunciado normativo en 8 códigos civiles de América Latina (22.110 artículos reales)
-    y conectamos un motor de razonamiento derrotable que responde sobre contenido real — no simulado — a través de
-    esta consola.
+    Elegí un código civil y un artículo real de los 8 disponibles (22.110 artículos), y el analizador calcula su
+    tipo de norma, su modalidad deóntica (Von Wright), su posición jurídica (Hohfeld) y, cuando corresponde, muestra
+    en vivo cómo el motor de razonamiento derrotable (PROLEG) resolvería una excepción — con reglas deterministas,
+    sin inteligencia artificial ni costo.
   </p>
-</div>
-
-<div class="demo-banner">
-  ⚠️ <strong>Modo demostración:</strong> todas las respuestas de esta consola —incluidas <code>/v1/behavior/summary</code> y <code>/v1/behavior/lift</code>— provienen de datos de ejemplo (<code>MOCK_METRICS</code> / <code>MOCK_LIFT</code>) precalculados en el cliente. No hay una API en vivo respondiendo estas peticiones.
 </div>
 
 <div class="studio-layout">
 
   <!-- Columna 1: Navegador de Endpoints & Presets -->
   <aside class="col-nav">
-    <div class="nav-section-title">Casos Canónicos DataLex</div>
+    <div class="nav-section-title">Analizar</div>
+    <div class="preset-chip" onclick="selectEndpoint('labeling')">
+      <strong>🏷 Analizar un artículo</strong>
+      <span>Elegí un código civil y un artículo real</span>
+    </div>
+
+    <div class="nav-section-title">Ejemplos con análisis completo</div>
     <div class="preset-chip" onclick="loadCase('art-66-co')">
       <strong>⚖ Presunción Derrotable</strong>
       <span>Art. 66 Colombia · Carga de prueba</span>
@@ -744,10 +753,10 @@ header {
       <span>Art. 1710 Argentina CCyC · Deber general</span>
     </div>
 
-    <div class="nav-section-title">Motor de Razonamiento (real)</div>
+    <div class="nav-section-title">Razonamiento jurídico (PROLEG)</div>
     <div class="preset-chip" onclick="loadReasoningGoldenCase()">
       <strong>🧩 Art. 612 · Código Civil Japonés</strong>
-      <span>Caso de oro PROLEG · llama a una API real</span>
+      <span>Caso de oro del motor de razonamiento</span>
     </div>
     <div class="preset-chip" onclick="loadReasoningCase256(false)">
       <strong>👪 Art. 256 CO · Visitas concedidas</strong>
@@ -758,70 +767,25 @@ header {
       <span>Mismo artículo · derecho derrotado</span>
     </div>
 
-    <div class="nav-section-title">Corpus Reales (real)</div>
+    <div class="nav-section-title">Buscar en los códigos civiles</div>
     <div class="preset-chip" onclick="loadCorporaList()">
-      <strong>📚 Los 8 corpus reales</strong>
-      <span>CL/CO/AR×2/BR/MX×2/PE · llama a una API real</span>
+      <strong>📚 Los 8 códigos civiles</strong>
+      <span>CL/CO/AR×2/BR/MX×2/PE · 22.110 artículos</span>
     </div>
     <div class="preset-chip" onclick="loadCorpusArticles('CO-CC')">
-      <strong>🇨🇴 Artículos de CO-CC</strong>
+      <strong>🇨🇴 Artículos de Colombia</strong>
       <span>Ley 57 de 1887 · texto real paginado</span>
-    </div>
-
-    <div class="nav-section-title">Etiquetado Asistido (real, sin IA)</div>
-    <div class="preset-chip" onclick="loadLabelingExample()">
-      <strong>🏷 Proponer etiquetado por reglas</strong>
-      <span>Reglas léxicas + validación real · sin LLM, sin costo</span>
-    </div>
-
-    <div class="nav-section-title">Endpoints Disponibles</div>
-    <div class="nav-item active" id="btn-ep-parse" onclick="selectEndpoint('parse')">
-      <span class="badge-method badge-post">POST</span>
-      <span>/v1/statements/parse</span>
-    </div>
-    <div class="nav-item" id="btn-ep-search" onclick="selectEndpoint('search')">
-      <span class="badge-method badge-get">GET</span>
-      <span>/v1/statements/search</span>
-    </div>
-    <div class="nav-item" id="btn-ep-summary" onclick="selectEndpoint('summary')">
-      <span class="badge-method badge-get">GET</span>
-      <span>/v1/behavior/summary</span>
-    </div>
-    <div class="nav-item" id="btn-ep-lift" onclick="selectEndpoint('lift')">
-      <span class="badge-method badge-get">GET</span>
-      <span>/v1/behavior/lift</span>
-    </div>
-    <div class="nav-item" id="btn-ep-books" onclick="selectEndpoint('books')">
-      <span class="badge-method badge-get">GET</span>
-      <span>/v1/behavior/books</span>
-    </div>
-    <div class="nav-item" id="btn-ep-reasoning" onclick="selectEndpoint('reasoning')">
-      <span class="badge-method badge-post">POST</span>
-      <span>/v1/reasoning/prove</span>
-    </div>
-    <div class="nav-item" id="btn-ep-corpora" onclick="selectEndpoint('corpora')">
-      <span class="badge-method badge-get">GET</span>
-      <span>/v1/corpora</span>
-    </div>
-    <div class="nav-item" id="btn-ep-corpora-articles" onclick="selectEndpoint('corpora-articles')">
-      <span class="badge-method badge-get">GET</span>
-      <span>/v1/corpora/{corpus_id}/articles</span>
-    </div>
-    <div class="nav-item" id="btn-ep-labeling" onclick="selectEndpoint('labeling')">
-      <span class="badge-method badge-post">POST</span>
-      <span>/v1/statements/propose</span>
     </div>
   </aside>
 
   <!-- Columna 2: Request Builder & Parámetros -->
   <section class="col-builder">
     <div class="endpoint-hero">
-      <div class="endpoint-method-url">
-        <span class="badge-method badge-post" id="current-badge">POST</span>
-        <span class="endpoint-url-text" id="current-url">/v1/statements/parse</span>
-      </div>
+      <h2 class="endpoint-title" id="current-title">Analizar un artículo</h2>
       <p class="endpoint-desc" id="current-desc">
-        Descompone texto legal no estructurado en enunciados normativos formales, asignando posiciones de Hohfeld, deóntica de Von Wright e inferencia de carga probatoria.
+        Elegí un código civil y un artículo real, o pegá tu propio texto. El analizador determina el tipo de norma,
+        su modalidad deóntica (Von Wright) y su posición jurídica (Hohfeld) con reglas deterministas — sin
+        inteligencia artificial.
       </p>
     </div>
 
@@ -857,7 +821,7 @@ header {
         <div class="res-meta">
           <span class="badge-status" id="res-status-badge">200 OK</span>
           <span class="res-time" id="res-time-text">34 ms</span>
-          <span class="mock-tag" id="res-mode-tag" title="Respuesta simulada en el navegador (MOCK_METRICS / MOCK_LIFT o heurística local), no proviene de un backend desplegado.">⚠ Dato de ejemplo</span>
+          <span class="mock-tag" id="res-mode-tag" title="Todavía no ejecutaste una consulta contra el analizador.">Sin ejecutar</span>
         </div>
         <div class="view-switch">
           <button class="v-btn active" id="btn-view-tree" onclick="setResponseView('tree')">Visual Tree</button>
@@ -877,16 +841,12 @@ header {
 
 <script>
 // Estado de la consola
-let currentEndpoint = 'parse';
+let currentEndpoint = 'labeling';
 let currentLang = 'curl';
 let currentView = 'tree';
-let currentPayload = {
-  text: "Se permitirá probar la no existencia del hecho que legalmente se presume, aunque sean ciertos los antecedentes de que lo infiere la ley; a menos que la misma ley rechace expresamente esta prueba.",
-  jurisdiction: "CO-CC"
-};
 let lastResponseData = null;
 
-// Estado del "Etiquetado Asistido" — reglas léxicas deterministas
+// Estado del análisis de artículos — reglas léxicas deterministas
 // (src/labeling/rules.py), sin LLM ni servicio externo. `proposal` guarda
 // la última respuesta de /v1/statements/propose para saber qué campos
 // vinieron determinados por reglas vs. completados a mano.
@@ -895,96 +855,53 @@ let labelingState = {
   proposal: null,
 };
 
-// Datos de ejemplo (NO provienen de una API en vivo): esta consola es una
-// demo client-side. MOCK_METRICS y MOCK_LIFT son valores precalculados que
-// simulan respuestas de /v1/behavior/summary y /v1/behavior/lift para que
-// la UX se pueda explorar sin backend desplegado. Ver banner "Modo demostración".
-const MOCK_METRICS = {
-  total_articulos_analizados: 21957,
-  corpora_count: 8,
-  promedios_regionales: {
-    ciego_40_pct: 46.52,
-    remision_hacia_atras_pct: 78.43,
-    remision_mismo_titulo_pct: 65.41
-  },
-  por_jurisdiccion: {
-    "CO-CC": { nombre: "Colombia", articulos: 2679, ciego_pct: 40.68 },
-    "CL-CC": { nombre: "Chile", articulos: 2529, ciego_pct: 42.63 },
-    "PE-CC": { nombre: "Perú", articulos: 2122, ciego_pct: 45.71 },
-    "AR-CCYC": { nombre: "Argentina CCyC", articulos: 2670, ciego_pct: 37.87 },
-    "MX-CCF": { nombre: "México Federal", articulos: 3027, ciego_pct: 49.72 }
+async function checkAnalyzerConnection() {
+  const pill = document.getElementById('connection-status-pill');
+  const text = document.getElementById('connection-status-text');
+  try {
+    const res = await fetch(`${currentApiBase()}/health`);
+    if (res.ok) {
+      pill.title = 'El analizador está corriendo y respondiendo en vivo.';
+      text.innerText = 'Analizador conectado';
+      pill.style.background = '#ECFDF5';
+      pill.style.borderColor = '#A7F3D0';
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch (e) {
+    pill.title = 'No se pudo conectar al analizador local. Revisá los detalles técnicos en la sección "Analizar un artículo".';
+    text.innerText = 'Sin conexión al analizador';
   }
-};
-
-const MOCK_LIFT = {
-  pares_canonicos: [
-    { par: "permiso + prohibición", lift: 2.46, corpus_count: 7, patron: "Concede facultad y la restringe en la misma unidad ('podrá... pero no podrá...')" },
-    { par: "juez + plazo", lift: 2.34, corpus_count: 7, patron: "El juez llega con reloj: convoca al adjudicador e impone término perentorio" },
-    { par: "indeterminado + obligación", lift: 1.80, corpus_count: 6, patron: "Lo indeterminado modula el deber: buena fe o diligencia regulan obligaciones" }
-  ]
-};
+}
 
 // Inicializar vistas
 function init() {
-  renderParamsForm();
-  updateCodeSnippet();
-  executeApiCall();
+  selectEndpoint('labeling', false);
+  proposeLabels();
+  checkAnalyzerConnection();
 }
 
 function selectEndpoint(ep, autoExec = true) {
   currentEndpoint = ep;
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById(`btn-ep-${ep}`).classList.add('active');
+  const navBtn = document.getElementById(`btn-ep-${ep}`);
+  if (navBtn) navBtn.classList.add('active');
 
-  const badge = document.getElementById('current-badge');
-  const url = document.getElementById('current-url');
+  const title = document.getElementById('current-title');
   const desc = document.getElementById('current-desc');
 
-  if (ep === 'parse') {
-    badge.className = 'badge-method badge-post';
-    badge.innerText = 'POST';
-    url.innerText = '/v1/statements/parse';
-    desc.innerText = 'Descompone texto normativo en tiempo real extrayendo operadores deónticos, posiciones de Hohfeld y derrotabilidad.';
-  } else if (ep === 'search') {
-    badge.className = 'badge-method badge-get';
-    badge.innerText = 'GET';
-    url.innerText = '/v1/statements/search';
-    desc.innerText = 'Consulta en el corpus de los 8 códigos civiles mediante filtros sobre primitivas de lógica jurídica.';
-  } else if (ep === 'summary') {
-    badge.className = 'badge-method badge-get';
-    badge.innerText = 'GET';
-    url.innerText = '/v1/behavior/summary';
-    desc.innerText = 'Devuelve métricas consolidadas sobre 21.957 artículos (regularidades del título, reenvíos y el 40% ciego).';
-  } else if (ep === 'lift') {
-    badge.className = 'badge-method badge-get';
-    badge.innerText = 'GET';
-    url.innerText = '/v1/behavior/lift';
-    desc.innerText = 'Matriz de lift de co-ocurrencia: revela las figuras arquetípicas de redacción legislativa continental.';
-  } else if (ep === 'books') {
-    badge.className = 'badge-method badge-get';
-    badge.innerText = 'GET';
-    url.innerText = '/v1/behavior/books';
-    desc.innerText = 'Distribución funcional por libros temáticos (Familia delega en el juez, Obligaciones en excepciones).';
-  } else if (ep === 'reasoning') {
-    badge.className = 'badge-method badge-post';
-    badge.innerText = 'POST';
-    url.innerText = '/v1/reasoning/prove';
-    desc.innerText = '🟢 Único endpoint de esta consola que llama a un backend real (src/reasoning/), no a datos de ejemplo. Motor de razonamiento derrotable tipo PROLEG (Satoh et al. 2010): reglas por defecto, excepciones y carga de la prueba. Requiere correr la API localmente — ver el aviso debajo.';
+  if (ep === 'reasoning') {
+    title.innerText = 'Razonamiento jurídico derrotable (PROLEG)';
+    desc.innerText = 'Reglas por defecto, excepciones y carga de la prueba: el motor determina si un derecho queda probado o derrotado, con la traza completa del razonamiento.';
   } else if (ep === 'corpora') {
-    badge.className = 'badge-method badge-get';
-    badge.innerText = 'GET';
-    url.innerText = '/v1/corpora';
-    desc.innerText = '🟢 Llama a un backend real (data/processed/ + reports/manifest.json), no a datos de ejemplo. Lista los 8 corpus legales reales ya extraídos (CL-CC, CO-CC, AR-CC, AR-CCYC, BR-CC, MX-CCF, MX-CDMX, PE-CC) con su recall y compuertas de calidad. Requiere correr la API localmente — ver el aviso debajo.';
+    title.innerText = 'Los 8 códigos civiles';
+    desc.innerText = 'Cada código real ya extraído, con su cobertura (cuántos artículos se leyeron correctamente) y sus controles de calidad.';
   } else if (ep === 'corpora-articles') {
-    badge.className = 'badge-method badge-get';
-    badge.innerText = 'GET';
-    url.innerText = '/v1/corpora/{corpus_id}/articles';
-    desc.innerText = '🟢 Llama a un backend real. Artículos genuinos extraídos por el pipeline desde data/processed/{corpus_id}_articles.json, paginados (limit/offset). Elegí un corpus_id y ejecutá — requiere correr la API localmente.';
+    title.innerText = 'Artículos de un código civil';
+    desc.innerText = 'Texto real, tal como aparece en la fuente oficial, paginado. Elegí un código y navegá sus artículos.';
   } else if (ep === 'labeling') {
-    badge.className = 'badge-method badge-post';
-    badge.innerText = 'POST';
-    url.innerText = '/v1/statements/propose → /v1/statements/validate';
-    desc.innerText = '🟢 Llama a un backend real, sin IA ni servicio externo: un motor de reglas léxicas deterministas (src/labeling/rules.py) propone parte del etiquetado a partir del texto de un artículo. Completá a mano lo que las reglas no determinan, y "Ejecutar Petición" lo confirma contra el esquema ontológico real (Pydantic). Sin costo, sin clave de API, sin conexión a terceros. Requiere correr la API localmente.';
+    title.innerText = 'Analizar un artículo';
+    desc.innerText = 'Elegí un código civil y un artículo real, o pegá tu propio texto. El analizador determina el tipo de norma, su modalidad deóntica (Von Wright) y su posición jurídica (Hohfeld) con reglas deterministas — sin inteligencia artificial.';
   }
 
   renderParamsForm();
@@ -995,54 +912,7 @@ function selectEndpoint(ep, autoExec = true) {
 function renderParamsForm() {
   const container = document.getElementById('dynamic-params-container');
 
-  if (currentEndpoint === 'parse') {
-    container.innerHTML = `
-      <div class="builder-card">
-        <h3>Payload Body (JSON) <span class="param-type">application/json</span></h3>
-        <div class="param-row">
-          <div class="param-label"><span>text</span><span class="param-type">string · required</span></div>
-          <textarea id="param-text" class="form-textarea" oninput="onPayloadChange()">${currentPayload.text}</textarea>
-        </div>
-        <div class="param-row">
-          <div class="param-label"><span>jurisdiction</span><span class="param-type">string · optional</span></div>
-          <select id="param-jur" class="form-select" onchange="onPayloadChange()">
-            <option value="CO-CC">Colombia (CO-CC)</option>
-            <option value="CL-CC">Chile (CL-CC)</option>
-            <option value="PE-CC">Perú (PE-CC)</option>
-            <option value="AR-CCYC">Argentina CCyC (AR-CCYC)</option>
-            <option value="MX-CCF">México Federal (MX-CCF)</option>
-          </select>
-        </div>
-      </div>
-    `;
-  } else if (currentEndpoint === 'search') {
-    container.innerHTML = `
-      <div class="builder-card">
-        <h3>Query Parameters <span class="param-type">URL params</span></h3>
-        <div class="param-row">
-          <div class="param-label"><span>q</span><span class="param-type">string</span></div>
-          <input type="text" id="param-q" class="form-input" placeholder="Ej. buena fe, 150..." oninput="updateCodeSnippet()">
-        </div>
-        <div class="param-row">
-          <div class="param-label"><span>hohfeldian_position</span><span class="param-type">string</span></div>
-          <select id="param-hohfeld" class="form-select" onchange="updateCodeSnippet()">
-            <option value="">Cualquiera</option>
-            <option value="deber">deber</option>
-            <option value="potestad">potestad</option>
-            <option value="derecho_subjetivo">derecho_subjetivo</option>
-          </select>
-        </div>
-        <div class="param-row">
-          <div class="param-label"><span>addressee</span><span class="param-type">string</span></div>
-          <select id="param-addressee" class="form-select" onchange="updateCodeSnippet()">
-            <option value="">Cualquiera</option>
-            <option value="juez">juez</option>
-            <option value="partes">partes</option>
-          </select>
-        </div>
-      </div>
-    `;
-  } else if (currentEndpoint === 'reasoning') {
+  if (currentEndpoint === 'reasoning') {
     container.innerHTML = `
       <div class="builder-card">
         <h3>Conexión <span class="param-type">requiere backend local</span></h3>
@@ -1143,26 +1013,53 @@ function renderParamsForm() {
   } else if (currentEndpoint === 'labeling') {
     container.innerHTML = `
       <div class="builder-card">
-        <h3>Conexión <span class="param-type">requiere backend local</span></h3>
+        <h3>Conexión</h3>
         <div class="param-row">
-          <div class="param-label"><span>API base URL</span><span class="param-type">string</span></div>
+          <div class="param-label"><span>Dirección del analizador</span></div>
           <input type="text" id="param-api-base" class="form-input" value="${getStoredApiBase()}" oninput="onReasoningBaseChange()" placeholder="http://127.0.0.1:8000">
         </div>
-        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;">
-          Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita.
-        </p>
+        <details style="margin-top:8px;">
+          <summary style="cursor:pointer;font-size:11.5px;color:var(--text-muted);">Detalles técnicos para levantar el analizador</summary>
+          <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:8px;">
+            Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita.
+          </p>
+        </details>
       </div>
       <div class="builder-card">
-        <h3>Texto del artículo <span class="param-type">string · required</span></h3>
+        <h3>Elegí un artículo real</h3>
+        <div class="param-row">
+          <div class="param-label"><span>Código civil</span></div>
+          <select id="lbl-corpus-id" class="form-select" onchange="loadCorpusArticlesForLabeling()">
+            <option value="CL-CC">🇨🇱 Chile — Código Civil</option>
+            <option value="CO-CC" selected>🇨🇴 Colombia — Código Civil</option>
+            <option value="AR-CC">🇦🇷 Argentina — Código Civil (1869)</option>
+            <option value="AR-CCYC">🇦🇷 Argentina — Código Civil y Comercial (2015)</option>
+            <option value="BR-CC">🇧🇷 Brasil — Código Civil</option>
+            <option value="MX-CCF">🇲🇽 México — Código Civil Federal</option>
+            <option value="MX-CDMX">🇲🇽 México — Código Civil CDMX</option>
+            <option value="PE-CC">🇵🇪 Perú — Código Civil</option>
+          </select>
+        </div>
+        <div class="param-row">
+          <div class="param-label"><span>Artículo</span></div>
+          <select id="lbl-article-uid" class="form-select" onchange="loadArticleForLabeling()">
+            <option value="">— elegí un código civil arriba —</option>
+          </select>
+        </div>
+        <p id="lbl-article-status" style="font-size:11.5px;color:var(--text-muted);margin-top:6px;"></p>
+      </div>
+      <div class="builder-card">
+        <h3>Texto a analizar</h3>
         <textarea id="lbl-text" class="form-textarea" oninput="updateCodeSnippet()">${labelingState.text}</textarea>
-        <button class="btn-secondary-sm" style="margin-top:10px;" onclick="proposeLabels()">🏷 Proponer etiquetado (reglas, sin IA)</button>
+        <button class="btn-secondary-sm" style="margin-top:10px;" onclick="proposeLabels()">🏷 Analizar (reglas deterministas, sin IA)</button>
         <div id="lbl-proposal-notes" style="margin-top:10px;"></div>
       </div>
       <div class="builder-card">
-        <h3>Etiquetado <span class="param-type">completá lo que las reglas no determinaron</span></h3>
+        <h3>Etiquetado <span class="param-type">completá lo que el análisis no determinó</span></h3>
         <div class="param-row">
-          <div class="param-label"><span>statement_type</span><span class="param-type">required</span> <span id="lbl-badge-statement_type"></span></div>
+          <div class="param-label"><span>Tipo de norma</span><span class="param-type">statement_type</span> <span id="lbl-badge-statement_type"></span></div>
           <select id="lbl-statement_type" class="form-select" onchange="onLabelingFieldChange()">
+            <option value="">— elegí uno —</option>
             <option value="regla">regla</option>
             <option value="principio">principio</option>
             <option value="definicion">definicion</option>
@@ -1174,8 +1071,9 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>structure</span><span class="param-type">required</span> <span id="lbl-badge-structure"></span></div>
+          <div class="param-label"><span>Estructura</span><span class="param-type">structure</span> <span id="lbl-badge-structure"></span></div>
           <select id="lbl-structure" class="form-select" onchange="updateCodeSnippet()">
+            <option value="">— elegí una —</option>
             <option value="supuesto_consecuencia">supuesto_consecuencia</option>
             <option value="supuesto_consecuencia_con_excepcion">supuesto_consecuencia_con_excepcion</option>
             <option value="definicion_pura">definicion_pura</option>
@@ -1186,17 +1084,29 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>deontic_modality</span><span class="param-type">required</span></div>
-          <select id="lbl-deontic_modality" class="form-select" onchange="updateCodeSnippet()">
+          <div class="param-label"><span>Deóntica (Von Wright)</span><span class="param-type">deontic_modality</span> <span id="lbl-badge-deontic_modality"></span></div>
+          <select id="lbl-deontic_modality" class="form-select" onchange="onLabelingFieldChange()">
             <option value="ninguno">ninguno</option>
-            <option value="obligacion">obligacion</option>
-            <option value="prohibicion">prohibicion</option>
+            <option value="obligacion">obligación</option>
+            <option value="prohibicion">prohibición</option>
             <option value="permiso">permiso</option>
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>addressee</span><span class="param-type">required</span></div>
+          <div class="param-label"><span>Posición (Hohfeld)</span><span class="param-type">hohfeldian_position · correlato por defecto</span> <span id="lbl-badge-hohfeldian_position"></span></div>
+          <select id="lbl-hohfeldian_position" class="form-select" onchange="updateCodeSnippet()">
+            <option value="ninguno">ninguno</option>
+            <option value="deber">deber</option>
+            <option value="derecho_subjetivo">derecho_subjetivo</option>
+            <option value="potestad">potestad</option>
+            <option value="sujecion">sujeción</option>
+            <option value="inmunidad">inmunidad</option>
+          </select>
+        </div>
+        <div class="param-row">
+          <div class="param-label"><span>Destinatario</span><span class="param-type">addressee</span> <span id="lbl-badge-addressee"></span></div>
           <select id="lbl-addressee" class="form-select" onchange="updateCodeSnippet()">
+            <option value="">— elegí uno —</option>
             <option value="partes">partes</option>
             <option value="juez">juez</option>
             <option value="funcionario_o_notario">funcionario_o_notario</option>
@@ -1205,7 +1115,7 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>antecedent_operator</span><span class="param-type">required</span> <span id="lbl-badge-antecedent_operator"></span></div>
+          <div class="param-label"><span>Operador del antecedente</span><span class="param-type">antecedent_operator</span> <span id="lbl-badge-antecedent_operator"></span></div>
           <select id="lbl-antecedent_operator" class="form-select" onchange="updateCodeSnippet()">
             <option value="ninguno_explicito">ninguno_explicito</option>
             <option value="si">si</option>
@@ -1215,47 +1125,48 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>exception_present</span><span class="param-type">bool</span> <span id="lbl-badge-exception_present"></span></div>
+          <div class="param-label"><span>¿Tiene excepción?</span><span class="param-type">exception_present</span> <span id="lbl-badge-exception_present"></span></div>
           <select id="lbl-exception_present" class="form-select" onchange="onLabelingFieldChange()">
-            <option value="false">false</option>
-            <option value="true">true</option>
+            <option value="false">no</option>
+            <option value="true">sí</option>
           </select>
         </div>
         <div class="param-row" id="lbl-row-exception-details" style="display:none;">
-          <div class="param-label"><span>exception_marker</span><span class="param-type">string</span></div>
+          <div class="param-label"><span>Marcador de la excepción</span><span class="param-type">exception_marker</span></div>
           <input type="text" id="lbl-exception_marker" class="form-input" placeholder="ej. salvo que" oninput="updateCodeSnippet()">
-          <div class="param-label" style="margin-top:8px;"><span>exception_scope</span><span class="param-type">interna | por_remision</span></div>
+          <div class="param-label" style="margin-top:8px;"><span>¿Dónde está la excepción?</span><span class="param-type">exception_scope</span></div>
           <select id="lbl-exception_scope" class="form-select" onchange="updateCodeSnippet()">
-            <option value="interna">interna</option>
-            <option value="por_remision">por_remision</option>
+            <option value="interna">en el mismo artículo</option>
+            <option value="por_remision">remite a otro artículo</option>
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>generality_n_conditions</span><span class="param-type">int</span></div>
+          <div class="param-label"><span>Cantidad de condiciones</span><span class="param-type">generality_n_conditions</span></div>
           <input type="number" id="lbl-generality_n_conditions" class="form-input" value="1" min="0" oninput="updateCodeSnippet()">
         </div>
         <div class="param-row">
-          <div class="param-label"><span>generality_has_enumeration</span><span class="param-type">bool</span></div>
+          <div class="param-label"><span>¿Tiene una lista/enumeración?</span><span class="param-type">generality_has_enumeration</span></div>
           <select id="lbl-generality_has_enumeration" class="form-select" onchange="onLabelingFieldChange()">
-            <option value="false">false</option>
-            <option value="true">true</option>
+            <option value="false">no</option>
+            <option value="true">sí</option>
           </select>
         </div>
         <div class="param-row" id="lbl-row-enumeration-closed" style="display:none;">
-          <div class="param-label"><span>generality_enumeration_closed</span><span class="param-type">bool</span></div>
+          <div class="param-label"><span>¿La lista es cerrada?</span><span class="param-type">generality_enumeration_closed</span></div>
           <select id="lbl-generality_enumeration_closed" class="form-select" onchange="updateCodeSnippet()">
-            <option value="true">true (taxativa)</option>
-            <option value="false">false (enunciativa)</option>
+            <option value="true">sí, taxativa (solo esos casos)</option>
+            <option value="false">no, enunciativa (ejemplos, no cierra la lista)</option>
           </select>
         </div>
         <div class="param-row" id="lbl-row-presumption" style="display:none;">
-          <div class="param-label"><span>presumption_rebuttable</span><span class="param-type">solo si statement_type=presuncion</span> <span id="lbl-badge-presumption_rebuttable"></span></div>
+          <div class="param-label"><span>¿Admite prueba en contrario?</span><span class="param-type">presumption_rebuttable · solo si es presunción</span> <span id="lbl-badge-presumption_rebuttable"></span></div>
           <select id="lbl-presumption_rebuttable" class="form-select" onchange="updateCodeSnippet()">
-            <option value="true">true (presunción legal)</option>
-            <option value="false">false (presunción de derecho)</option>
+            <option value="true">sí (presunción legal)</option>
+            <option value="false">no (presunción de derecho)</option>
           </select>
         </div>
       </div>
+      <div id="lbl-proleg-preview"></div>
     `;
     onLabelingFieldChange();
   } else {
@@ -1268,32 +1179,19 @@ function renderParamsForm() {
   }
 }
 
-function onPayloadChange() {
-  if (currentEndpoint === 'parse') {
-    currentPayload.text = document.getElementById('param-text').value;
-    currentPayload.jurisdiction = document.getElementById('param-jur').value;
-  }
-  updateCodeSnippet();
-}
+const CANONICAL_CASES = {
+  'art-66-co': "Se permitirá probar la no existencia del hecho que legalmente se presume, aunque sean ciertos los antecedentes de que lo infiere la ley; a menos que la misma ley rechace expresamente esta prueba.",
+  'art-150-cl': "La mujer casada de cualquier edad podrá dedicarse libremente al ejercicio de un empleo, oficio o industria, y administrará su patrimonio de manera independiente.",
+  'art-1362-pe': "Los contratos deben negociarse, celebrarse y ejecutarse según las reglas de la buena fe y común intención de las partes.",
+  'art-1710-ar': "Toda persona tiene el deber, en cuanto de ella dependa, de evitar causar un daño no justificado y adoptar de buena fe las medidas razonables.",
+};
 
 function loadCase(caseKey) {
-  selectEndpoint('parse');
-  if (caseKey === 'art-66-co') {
-    currentPayload.text = "Se permitirá probar la no existencia del hecho que legalmente se presume, aunque sean ciertos los antecedentes de que lo infiere la ley; a menos que la misma ley rechace expresamente esta prueba.";
-    currentPayload.jurisdiction = "CO-CC";
-  } else if (caseKey === 'art-150-cl') {
-    currentPayload.text = "La mujer casada de cualquier edad podrá dedicarse libremente al ejercicio de un empleo, oficio o industria, y administrará su patrimonio de manera independiente.";
-    currentPayload.jurisdiction = "CL-CC";
-  } else if (caseKey === 'art-1362-pe') {
-    currentPayload.text = "Los contratos deben negociarse, celebrarse y ejecutarse según las reglas de la buena fe y común intención de las partes.";
-    currentPayload.jurisdiction = "PE-CC";
-  } else if (caseKey === 'art-1710-ar') {
-    currentPayload.text = "Toda persona tiene el deber, en cuanto de ella dependa, de evitar causar un daño no justificado y adoptar de buena fe las medidas razonables.";
-    currentPayload.jurisdiction = "AR-CCYC";
-  }
-  renderParamsForm();
-  updateCodeSnippet();
-  executeApiCall();
+  selectEndpoint('labeling', false);
+  const text = CANONICAL_CASES[caseKey];
+  document.getElementById('lbl-text').value = text;
+  labelingState.text = text;
+  proposeLabels();
 }
 
 // ---------------------------------------------------------------------
@@ -1335,11 +1233,38 @@ function currentApiBase() {
 // si la combinación es jurídicamente válida.
 // ---------------------------------------------------------------------
 
-function fieldBadge(determinedFields, field) {
-  if (!determinedFields) return '';
-  return determinedFields.includes(field)
-    ? '<span class="real-tag">reglas</span>'
-    : '<span class="mock-tag">manual</span>';
+function fieldBadge(proposal, field) {
+  if (!proposal) return '';
+  if ((proposal.determined_fields || []).includes(field)) return '<span class="real-tag">detectado</span>';
+  if ((proposal.default_fields || []).includes(field)) return '<span class="mock-tag">por defecto</span>';
+  return '';
+}
+
+function renderProlegPreview(preview) {
+  const el = document.getElementById('lbl-proleg-preview');
+  if (!el) return;
+  if (!preview) {
+    el.innerHTML = '';
+    return;
+  }
+  const w = preview.without_exception;
+  const e = preview.with_exception;
+  el.innerHTML = `
+    <div class="builder-card" style="border-color:var(--accent-primary);">
+      <h3>⚖ Vista previa PROLEG <span class="param-type">motor real, sin simular</span></h3>
+      <p style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:10px;">${preview.note}</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:180px;padding:10px;border-radius:6px;background:${w.proved ? '#ECFDF5' : '#FEF2F2'};border:1px solid ${w.proved ? '#A7F3D0' : '#FECACA'};">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:${w.proved ? '#065F46' : '#991B1B'};">Sin la excepción probada</div>
+          <div style="font-size:13px;margin-top:4px;">${w.proved ? '✅ La regla se aplica' : '❌ La regla no se aplica'}</div>
+        </div>
+        <div style="flex:1;min-width:180px;padding:10px;border-radius:6px;background:${e.proved ? '#ECFDF5' : '#FEF2F2'};border:1px solid ${e.proved ? '#A7F3D0' : '#FECACA'};">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:${e.proved ? '#065F46' : '#991B1B'};">Con la excepción probada</div>
+          <div style="font-size:13px;margin-top:4px;">${e.proved ? '✅ La regla se aplica igual' : '❌ La regla queda derrotada'}</div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function onLabelingFieldChange() {
@@ -1388,8 +1313,15 @@ async function proposeLabels() {
 
   labelingState.proposal = proposal;
 
-  if (proposal.statement_type) document.getElementById('lbl-statement_type').value = proposal.statement_type;
-  if (proposal.structure) document.getElementById('lbl-structure').value = proposal.structure;
+  // Siempre resetear (nunca dejar pegado el valor del artículo anterior)
+  // cuando el análisis no determina el campo — "" activa el placeholder
+  // "— elegí uno —", que fuerza a completar a mano en vez de heredar una
+  // etiqueta que en realidad corresponde a otro texto.
+  document.getElementById('lbl-statement_type').value = proposal.statement_type || '';
+  document.getElementById('lbl-structure').value = proposal.structure || '';
+  document.getElementById('lbl-deontic_modality').value = proposal.deontic_modality || 'ninguno';
+  document.getElementById('lbl-hohfeldian_position').value = proposal.hohfeldian_position || 'ninguno';
+  document.getElementById('lbl-addressee').value = proposal.addressee || '';
   if (proposal.antecedent_operator) document.getElementById('lbl-antecedent_operator').value = proposal.antecedent_operator;
   document.getElementById('lbl-exception_present').value = proposal.exception_present ? 'true' : 'false';
   if (proposal.exception_marker) document.getElementById('lbl-exception_marker').value = proposal.exception_marker;
@@ -1398,17 +1330,19 @@ async function proposeLabels() {
     document.getElementById('lbl-presumption_rebuttable').value = proposal.presumption_rebuttable ? 'true' : 'false';
   }
 
-  ['statement_type', 'structure', 'antecedent_operator', 'exception_present', 'presumption_rebuttable'].forEach(f => {
+  ['statement_type', 'structure', 'deontic_modality', 'hohfeldian_position', 'addressee', 'antecedent_operator', 'exception_present', 'presumption_rebuttable'].forEach(f => {
     const badgeEl = document.getElementById(`lbl-badge-${f}`);
-    if (badgeEl) badgeEl.innerHTML = fieldBadge(proposal.determined_fields, f);
+    if (badgeEl) badgeEl.innerHTML = fieldBadge(proposal, f);
   });
 
   onLabelingFieldChange();
+  renderProlegPreview(proposal.proleg_preview);
 
   const undetermined = proposal.undetermined_fields || [];
   notesEl.innerHTML = `
     <div style="font-size:11.5px;color:var(--text-muted);line-height:1.6;">
-      <strong>Determinado por reglas:</strong> ${(proposal.determined_fields || []).join(', ') || '(ninguno)'}<br>
+      <strong>Detectado por reglas:</strong> ${(proposal.determined_fields || []).join(', ') || '(ninguno)'}<br>
+      <strong>Completado por defecto (revisar):</strong> ${(proposal.default_fields || []).join(', ') || '(ninguno)'}<br>
       <strong>Sin determinar (completá a mano):</strong> ${undetermined.join(', ') || '(ninguno)'}
       ${(proposal.notes || []).length ? '<ul style="margin:6px 0 0 16px;">' + proposal.notes.map(n => `<li>${n}</li>`).join('') + '</ul>' : ''}
     </div>
@@ -1425,6 +1359,7 @@ function buildLabelingPayload() {
     statement_type: statementType,
     structure: document.getElementById('lbl-structure').value,
     deontic_modality: document.getElementById('lbl-deontic_modality').value,
+    hohfeldian_position: document.getElementById('lbl-hohfeldian_position').value,
     addressee: document.getElementById('lbl-addressee').value,
     antecedent_operator: document.getElementById('lbl-antecedent_operator').value,
     exception_present: excPresent,
@@ -1445,6 +1380,36 @@ function buildLabelingPayload() {
   return payload;
 }
 
+const LABELING_FIELD_LABELS_ES = {
+  text_span: 'Texto del artículo',
+  statement_type: 'Tipo de norma',
+  structure: 'Estructura',
+  deontic_modality: 'Deóntica (Von Wright)',
+  hohfeldian_position: 'Posición (Hohfeld)',
+  addressee: 'Destinatario',
+  antecedent_operator: 'Operador del antecedente',
+  exception_present: '¿Tiene excepción?',
+  exception_marker: 'Marcador de la excepción',
+  exception_scope: '¿Dónde está la excepción?',
+  generality_n_conditions: 'Cantidad de condiciones',
+  generality_has_enumeration: '¿Tiene una lista/enumeración?',
+  generality_enumeration_closed: '¿La lista es cerrada?',
+  presumption_rebuttable: '¿Admite prueba en contrario?',
+};
+
+function friendlyLabelingRequestError(status, bodyText) {
+  if (status === 422) {
+    try {
+      const parsed = JSON.parse(bodyText);
+      const fields = (parsed.detail || [])
+        .map(d => LABELING_FIELD_LABELS_ES[d.loc[d.loc.length - 1]] || d.loc[d.loc.length - 1])
+        .filter((v, i, arr) => arr.indexOf(v) === i);
+      if (fields.length) return `Completá estos campos antes de analizar: ${fields.join(', ')}.`;
+    } catch (e) { /* si no se puede interpretar, cae al mensaje genérico de abajo */ }
+  }
+  return `El analizador respondió con un error (código ${status}). Detalle: ${bodyText}`;
+}
+
 async function executeLabelingValidate(start) {
   const base = currentApiBase();
   const modeTag = document.getElementById('res-mode-tag');
@@ -1463,9 +1428,9 @@ async function executeLabelingValidate(start) {
 
     if (!res.ok) {
       const errBody = await res.text();
-      lastResponseData = { __error: true, message: `HTTP ${res.status} de ${base}/v1/statements/validate: ${errBody}` };
+      lastResponseData = { __error: true, message: friendlyLabelingRequestError(res.status, errBody) };
       modeTag.className = 'error-tag';
-      modeTag.innerText = `🔴 HTTP ${res.status}`;
+      modeTag.innerText = `🔴 Faltan datos`;
       statusBadge.innerText = `${res.status}`;
       renderResponse();
       return;
@@ -1495,6 +1460,59 @@ function loadLabelingExample() {
   selectEndpoint('labeling', false);
   document.getElementById('lbl-text').value = labelingState.text;
   proposeLabels();
+}
+
+// Selector de corpus + artículo real: conecta las funciones YA reales de
+// GET /v1/corpora/{corpus_id}/articles (lista, texto truncado) y
+// GET /v1/corpora/{corpus_id}/articles/{uid} (texto completo) con el
+// análisis, para no depender de que alguien pegue texto a mano.
+
+async function loadCorpusArticlesForLabeling() {
+  const corpusId = document.getElementById('lbl-corpus-id').value;
+  const articleSelect = document.getElementById('lbl-article-uid');
+  const status = document.getElementById('lbl-article-status');
+  const base = currentApiBase();
+
+  articleSelect.innerHTML = '<option value="">Cargando…</option>';
+  status.innerText = '';
+
+  try {
+    const res = await fetch(`${base}/v1/corpora/${encodeURIComponent(corpusId)}/articles?limit=100&offset=0`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const articles = data.articles || [];
+    articleSelect.innerHTML = articles.map(a => {
+      const preview = (a.text_raw || '').replace(/\s+/g, ' ').slice(0, 70);
+      return `<option value="${a.uid}">Art. ${a.number ?? '?'}${a.suffix || ''} — ${preview}…</option>`;
+    }).join('');
+    status.innerText = `${data.total} artículos en ${corpusId} (mostrando ${articles.length}).`;
+  } catch (e) {
+    articleSelect.innerHTML = '<option value="">(no se pudo cargar)</option>';
+    status.innerHTML = `<span style="color:#991B1B;">⚠️ No se pudo conectar al analizador. Revisá la dirección de conexión arriba. Detalle: ${e.message}</span>`;
+  }
+}
+
+async function loadArticleForLabeling() {
+  const corpusId = document.getElementById('lbl-corpus-id').value;
+  const uid = document.getElementById('lbl-article-uid').value;
+  const status = document.getElementById('lbl-article-status');
+  if (!uid) return;
+
+  const base = currentApiBase();
+  status.innerText = 'Cargando texto completo…';
+
+  try {
+    const res = await fetch(`${base}/v1/corpora/${encodeURIComponent(corpusId)}/articles/${encodeURIComponent(uid)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const article = await res.json();
+    document.getElementById('lbl-text').value = article.text_raw;
+    labelingState.text = article.text_raw;
+    status.innerText = `Artículo ${uid} cargado — analizando…`;
+    await proposeLabels();
+    status.innerText = `Artículo ${uid} analizado.`;
+  } catch (e) {
+    status.innerHTML = `<span style="color:#991B1B;">⚠️ No se pudo cargar el artículo. Detalle: ${e.message}</span>`;
+  }
 }
 
 // Caso de oro: el ejemplo completo del Apéndice A/B del paper PROLEG
@@ -1661,51 +1679,7 @@ function updateCodeSnippet() {
   const pre = document.getElementById('code-snippet-pre');
   const baseUrl = "https://api.datalexlab.com";
 
-  if (currentEndpoint === 'parse') {
-    const jsonBody = JSON.stringify(currentPayload, null, 2);
-    if (currentLang === 'curl') {
-      pre.innerText = `curl -X POST "${baseUrl}/v1/statements/parse" \\
-  -H "Content-Type: application/json" \\
-  -d '${JSON.stringify(currentPayload)}'`;
-    } else if (currentLang === 'python') {
-      pre.innerText = `import requests
-
-url = "${baseUrl}/v1/statements/parse"
-payload = ${jsonBody}
-
-response = requests.post(url, json=payload)
-data = response.json()
-print(data)`;
-    } else if (currentLang === 'javascript') {
-      pre.innerText = `const response = await fetch("${baseUrl}/v1/statements/parse", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(${jsonBody})
-});
-const data = await response.json();
-console.log(data);`;
-    }
-  } else if (currentEndpoint === 'search') {
-    const q = document.getElementById('param-q') ? document.getElementById('param-q').value : '';
-    const h = document.getElementById('param-hohfeld') ? document.getElementById('param-hohfeld').value : '';
-    const a = document.getElementById('param-addressee') ? document.getElementById('param-addressee').value : '';
-    let params = [];
-    if (q) params.push(`q=${encodeURIComponent(q)}`);
-    if (h) params.push(`hohfeldian_position=${h}`);
-    if (a) params.push(`addressee=${a}`);
-    const qs = params.length ? '?' + params.join('&') : '';
-
-    if (currentLang === 'curl') {
-      pre.innerText = `curl -X GET "${baseUrl}/v1/statements/search${qs}"`;
-    } else if (currentLang === 'python') {
-      pre.innerText = `import requests
-response = requests.get("${baseUrl}/v1/statements/search${qs}")
-print(response.json())`;
-    } else if (currentLang === 'javascript') {
-      pre.innerText = `const res = await fetch("${baseUrl}/v1/statements/search${qs}");
-const data = await res.json();`;
-    }
-  } else if (currentEndpoint === 'reasoning') {
+  if (currentEndpoint === 'reasoning') {
     const realBase = currentApiBase();
     const rulebaseId = document.getElementById('param-rulebase') ? document.getElementById('param-rulebase').value : REASONING_GOLDEN_CASE.rulebase_id;
     const party = document.getElementById('param-party') ? document.getElementById('param-party').value : 'plaintiff';
@@ -1929,14 +1903,6 @@ async function executeCorporaCall(start) {
   }
 }
 
-function resetResponseModeTag() {
-  const modeTag = document.getElementById('res-mode-tag');
-  modeTag.className = 'mock-tag';
-  modeTag.innerText = '⚠ Dato de ejemplo';
-  modeTag.title = 'Respuesta simulada en el navegador (MOCK_METRICS / MOCK_LIFT o heurística local), no proviene de un backend desplegado.';
-  document.getElementById('res-status-badge').innerText = '200 OK';
-}
-
 async function executeApiCall() {
   const start = performance.now();
 
@@ -1954,68 +1920,6 @@ async function executeApiCall() {
     await executeLabelingValidate(start);
     return;
   }
-
-  resetResponseModeTag();
-
-  if (currentEndpoint === 'parse') {
-    const text = currentPayload.text || "";
-    const isExc = /salvo|a menos que|sin perjuicio|pero en tal caso/i.test(text);
-    const hasIndet = /buena fe|orden público|justa causa|equidad/i.test(text);
-    const isJuez = /juez|tribunal|adjudicador/i.test(text);
-    
-    let deontic = "permiso";
-    let hohfeld = "potestad";
-    // statement_type real del esquema (src/models.py) es siempre "regla" acá
-    // — el matiz de la excepción va en `structure`, no en statement_type
-    // (que no tiene ningún valor "con_excepcion"; ese fue un bug corregido).
-    let stType = "regla";
-    let structure = isExc ? "supuesto_consecuencia_con_excepcion" : "supuesto_consecuencia";
-
-    if (/deberá|deben|tiene el deber/i.test(text)) {
-      deontic = "obligacion";
-      hohfeld = "deber";
-    } else if (/prohíbese|se prohíbe|es nulo/i.test(text)) {
-      deontic = "prohibicion";
-      hohfeld = "deber";
-    }
-
-    lastResponseData = {
-      original_text: text,
-      statements_count: 1,
-      _heuristica_no_ia: true,
-      statements: [
-        {
-          statement_id: 1,
-          text_span: text,
-          statement_type: stType,
-          structure: structure,
-          deontic_modality: deontic,
-          hohfeldian_position: hohfeld,
-          addressee: isJuez ? "juez" : "partes",
-          is_exception: isExc,
-          exception_marker: isExc ? "a menos que / salvo" : null,
-          burden_of_proof: isExc ? "La excepción deroga la regla por defecto: la carga de la prueba recae sobre quien alega la excepción." : null,
-          indeterminate_concepts: hasIndet ? ["buena_fe"] : [],
-          ontological_rationale: `Heurística de demo (regex, no IA): structure=${structure}. Deóntica: ${deontic}. Posición jurídica: ${hohfeld} dirigida a ${isJuez ? 'juez' : 'partes'}.`
-        }
-      ],
-      neurosymbolic_summary: {
-        has_defeasible_rules: isExc,
-        proleg_computable: true,
-        architecture: "Neurosymbolic LATIO v1.1"
-      }
-    };
-  } else if (currentEndpoint === 'summary') {
-    lastResponseData = MOCK_METRICS;
-  } else if (currentEndpoint === 'lift') {
-    lastResponseData = MOCK_LIFT;
-  } else {
-    lastResponseData = { status: "success", endpoint: currentEndpoint, results_count: 6 };
-  }
-
-  const duration = Math.round(performance.now() - start + 28);
-  document.getElementById('res-time-text').innerText = `${duration} ms`;
-  renderResponse();
 }
 
 function renderResponse() {
@@ -2100,7 +2004,8 @@ function renderResponse() {
         <div class="v-tags">
           <span class="v-tag vt-type">${n.statement_type}</span>
           <span class="v-tag vt-deontic">${n.structure}</span>
-          <span class="v-tag vt-hohfeld">DEÓNTICA: ${n.deontic_modality}</span>
+          <span class="v-tag vt-deontic">VON WRIGHT: ${n.deontic_modality}</span>
+          <span class="v-tag vt-hohfeld">HOHFELD: ${n.hohfeldian_position}</span>
           <span class="v-tag vt-dest">DESTINATARIO: ${n.addressee}</span>
           ${n.exception && n.exception.present ? '<span class="v-tag vt-exc">DERROTABLE (EXCEPCIÓN)</span>' : ''}
         </div>
@@ -2113,29 +2018,6 @@ function renderResponse() {
     return;
   }
 
-  if (currentEndpoint === 'parse' && lastResponseData.statements) {
-    tree.innerHTML = lastResponseData.statements.map(st => `
-      <div class="v-statement-card ${st.is_exception ? 'is-exc' : ''}">
-        <div class="v-tags">
-          <span class="v-tag vt-type">${st.statement_type}</span>
-          <span class="v-tag vt-hohfeld">HOHFELD: ${st.hohfeldian_position}</span>
-          <span class="v-tag vt-deontic">DEÓNTICA: ${st.deontic_modality}</span>
-          <span class="v-tag vt-dest">DESTINATARIO: ${st.addressee}</span>
-          ${st.is_exception ? '<span class="v-tag vt-exc">DERROTABLE (EXCEPCIÓN)</span>' : ''}
-        </div>
-        <div class="v-text">"${st.text_span}"</div>
-        <div style="font-size:12px;color:var(--text-dark-muted);">${st.ontological_rationale}</div>
-        ${st.burden_of_proof ? `<div class="v-burden">⚖ Carga probatoria (PROLEG): ${st.burden_of_proof}</div>` : ''}
-      </div>
-    `).join('');
-  } else {
-    tree.innerHTML = `
-      <div style="padding:14px;background:#0F1935;border-radius:6px;border:1px solid var(--border-dark);">
-        <p style="font-size:13px;color:#93C5FD;margin-bottom:8px;"><strong>Respuesta de Métricas Estructurales</strong></p>
-        <p style="font-size:12px;color:var(--text-dark-muted);line-height:1.6;">Los datos calculados están disponibles en la pestaña <strong>JSON Raw</strong>. Cambia de vista arriba para inspeccionar los campos numéricos.</p>
-      </div>
-    `;
-  }
 }
 
 function setResponseView(view) {

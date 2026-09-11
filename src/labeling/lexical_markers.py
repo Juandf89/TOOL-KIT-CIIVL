@@ -77,7 +77,66 @@ REMISION_LEAD_RE = re.compile(
 )
 REMISION_MAX_WORDS = 40
 
-# Nota: detección de enumeraciones (has_enumeration/enumeration_closed) se
-# deja para un paso posterior — el propio proyecto no midió evidencia de
-# qué tan confiable es un regex de listas para eso, y forzar un valor sin
-# esa evidencia repetiría el mismo error que motivó esta reescritura.
+# ---------------------------------------------------------------------------
+# definición — "se entiende por X...", "denomínase...", "es aquel/aquella
+# que..." son fórmulas de definición estándar en la redacción legal
+# continental, de baja ambigüedad (a diferencia de distinguir "regla" de
+# "principio", que sí se deja sin determinar).
+# ---------------------------------------------------------------------------
+
+DEFINICION_LEAD_RE = re.compile(
+    r"\bse\s+entiende(?:n)?\s+por\b|\bdenomín[ae]se\b|\bdefin[ei]ción\s+de\b"
+    r"|\bpara\s+(?:efectos|los\s+efectos)\s+de\s+(?:este|esta)\b.{0,40}\bse\s+entender"
+    r"|\bes\s+aquel(?:la)?\s+(?:persona|acto|contrato|cosa)?\s*que\b",
+    re.IGNORECASE,
+)
+
+# ---------------------------------------------------------------------------
+# deóntica (Von Wright) — obligación / prohibición / permiso. Orden importa:
+# la prohibición ("no podrá") es más específica que un permiso genérico
+# ("podrá"), así que se chequea primero.
+# ---------------------------------------------------------------------------
+
+DEONTIC_PROHIBICION_RE = re.compile(
+    r"\bproh[íi]bese\b|\bse\s+proh[íi]be\b|\bno\s+podr[áa](n)?\b|\bno\s+se\s+permit"
+    r"|\bes\s+nul[ao]\b|\bqueda(n)?\s+proh[íi]bid[ao]s?\b|\bno\s+se\s+admit",
+    re.IGNORECASE,
+)
+DEONTIC_OBLIGACION_RE = re.compile(
+    r"\bdeber[áa](n)?\b|\bestá(n)?\s+obligad[ao]s?\s+a\b|\btiene(n)?\s+el\s+deber\b"
+    r"|\bes\s+obligatori[ao]\b|\bestá(n)?\s+en\s+la\s+obligaci[óo]n\b",
+    re.IGNORECASE,
+)
+DEONTIC_PERMISO_RE = re.compile(
+    r"\bpodr[áa](n)?\b|\bestá(n)?\s+facultad[ao]s?\s+(?:a|para)\b"
+    r"|\btiene(n)?\s+derecho\s+a\b|\blibremente\b",
+    re.IGNORECASE,
+)
+
+# ---------------------------------------------------------------------------
+# addressee — a quién se dirige el mandato. "partes" es el default modal
+# del derecho privado (no un marcador léxico), por eso vive en rules.py como
+# default explícito, no acá.
+# ---------------------------------------------------------------------------
+
+ADDRESSEE_JUEZ_RE = re.compile(r"\bel\s+juez\b|\bel\s+tribunal\b|\bla\s+autoridad\s+judicial\b", re.IGNORECASE)
+ADDRESSEE_FUNCIONARIO_RE = re.compile(
+    r"\bel\s+notario\b|\bel\s+registrador\b|\bel\s+funcionario\b|\bel\s+oficial\s+del\s+registro\b",
+    re.IGNORECASE,
+)
+ADDRESSEE_TERCERO_RE = re.compile(r"\bun\s+tercero\b|\bterceros\b|\bla\s+contraparte\b", re.IGNORECASE)
+
+# ---------------------------------------------------------------------------
+# enumeración — usado solo para resolver structure de "definicion" cuando
+# hay lista explícita (a diferencia del intento anterior, acá no se decide
+# nada por sí solo: enumeration_closed se deja sin determinar salvo marcador
+# explícito, ver rules.py).
+# ---------------------------------------------------------------------------
+
+ENUMERATION_ITEM_RE = re.compile(r"(?:^|\n)\s*(?:[a-z]\)|\d+[\.\)]|-\s)", re.IGNORECASE | re.MULTILINE)
+ENUMERATION_CLOSED_RE = re.compile(
+    r"\b[uú]nicamente\b|\btaxativamente\b|\bsolo\s+en\s+los\s+siguientes\s+casos\b", re.IGNORECASE
+)
+ENUMERATION_OPEN_RE = re.compile(
+    r"\btales\s+como\b|\bentre\s+otros\b|\bpor\s+ejemplo\b", re.IGNORECASE
+)

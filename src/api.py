@@ -17,6 +17,7 @@ from src.models import (
     DeonticModality,
     ExceptionInfo,
     GeneralityProxies,
+    HohfeldianPosition,
     NormativeStatement,
     StatementType,
     Structure,
@@ -336,13 +337,13 @@ def get_corpus_article(corpus_id: str, uid: str):
 # etiquetado nunca reimplementa las reglas de compatibilidad — las manda
 # acá y Pydantic decide, con el motivo exacto si rechaza.
 #
-# Campos deliberadamente EXCLUIDOS del etiquetado propuesto:
-# `hohfeldian_position` (Hohfeld exige el correlato, que ni una regla local
-# ni un anotador humano sin contexto adicional tienen de forma confiable —
-# ver docs/limitaciones_conocidas.md §2) y `generality_level`/`derogability`
-# (son DERIVADOS por código real: `derive_generality()` y
-# `DEROGABILITY_MARKER_RE` en src/models.py). Este endpoint aplica esos
-# defaults/derivaciones reales en vez de pedirlos como input.
+# `hohfeldian_position` SÍ se acepta como input (default "ninguno") pero es
+# un correlato por defecto de la deóntica, no un análisis bilateral pleno
+# de Hohfeld — ver src/labeling/rules.py:_derive_hohfeld_from_deontic y
+# docs/limitaciones_conocidas.md §2 para el límite declarado. Lo que SIGUE
+# excluido del input porque son DERIVADOS por código real, no propuestos:
+# `generality_level` (`derive_generality()`) y `derogability_marker_detected`
+# (`DEROGABILITY_MARKER_RE`), ambos en src/models.py.
 # --------------------------------------------------------------------------
 
 class StatementDraftRequest(BaseModel):
@@ -350,6 +351,11 @@ class StatementDraftRequest(BaseModel):
     statement_type: StatementType
     structure: Structure
     deontic_modality: DeonticModality
+    # Correlato hohfeldiano por defecto de la deóntica (ver
+    # src/labeling/rules.py:_derive_hohfeld_from_deontic) — simplificación
+    # declarada, no un análisis bilateral completo (no identifica
+    # contraparte). "ninguno" si no aplica o no se determinó.
+    hohfeldian_position: HohfeldianPosition = "ninguno"
     addressee: Addressee
     antecedent_operator: AntecedentOperator
     exception_present: bool = False
@@ -398,7 +404,7 @@ def validate_statement(req: StatementDraftRequest):
             statement_type=req.statement_type,
             structure=req.structure,
             deontic_modality=req.deontic_modality,
-            hohfeldian_position="ninguno",
+            hohfeldian_position=req.hohfeldian_position,
             derogability=derogability,
             addressee=req.addressee,
             antecedent_operator=req.antecedent_operator,
