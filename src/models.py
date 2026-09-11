@@ -252,7 +252,10 @@ class NormativeStatement(StrictModel):
     time_limit: TimeLimit = Field(default_factory=TimeLimit)
     generality: GeneralityProxies
 
-    annotated_by: Literal["human", "llm", "llm+human"] = "human"
+    # "heuristica_local": propuesto por src/labeling/rules.py (reglas léxicas
+    # deterministas, sin LLM ni servicio externo) — distinto de
+    # statement_type="regla" (tipo de norma), no confundir.
+    annotated_by: Literal["human", "llm", "llm+human", "heuristica_local"] = "human"
     verified: bool = False
 
     @model_validator(mode="after")
