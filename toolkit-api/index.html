@@ -1029,7 +1029,7 @@ function renderParamsForm() {
       <div class="builder-card">
         <h3>Texto a analizar</h3>
         <textarea id="lbl-text" class="form-textarea" oninput="updateCodeSnippet()">${labelingState.text}</textarea>
-        <button class="btn-secondary-sm" style="margin-top:10px;" onclick="proposeLabels()">🏷 Analizar</button>
+        <button class="btn-execute" style="margin-top:10px;" onclick="proposeLabels()">Analizar artículo</button>
         <div id="lbl-proposal-notes" style="margin-top:10px;"></div>
       </div>
       <div class="builder-card">
@@ -1216,6 +1216,30 @@ function fieldBadge(proposal, field) {
   if ((proposal.determined_fields || []).includes(field)) return '<span class="real-tag">detectado</span>';
   if ((proposal.default_fields || []).includes(field)) return '<span class="mock-tag">por defecto</span>';
   return '';
+}
+
+// Limpia el formulario de etiquetado a un estado neutro "todavía sin
+// analizar" — se llama al cargar un artículo nuevo (o texto nuevo), para
+// que ningún campo quede mostrando la etiqueta del artículo ANTERIOR
+// mientras el usuario no aprieta "Analizar artículo".
+function resetLabelingForm() {
+  labelingState.proposal = null;
+  document.getElementById('lbl-statement_type').value = '';
+  document.getElementById('lbl-structure').value = '';
+  document.getElementById('lbl-deontic_modality').value = 'ninguno';
+  document.getElementById('lbl-hohfeldian_position').value = 'ninguno';
+  document.getElementById('lbl-addressee').value = '';
+  document.getElementById('lbl-antecedent_operator').value = 'ninguno_explicito';
+  document.getElementById('lbl-exception_present').value = 'false';
+  document.getElementById('lbl-exception_marker').value = '';
+  document.getElementById('lbl-exception_scope').value = 'interna';
+  ['statement_type', 'structure', 'deontic_modality', 'hohfeldian_position', 'addressee', 'antecedent_operator', 'exception_present', 'presumption_rebuttable'].forEach(f => {
+    const badgeEl = document.getElementById(`lbl-badge-${f}`);
+    if (badgeEl) badgeEl.innerHTML = '';
+  });
+  document.getElementById('lbl-proposal-notes').innerHTML = '';
+  renderProlegPreview(null);
+  onLabelingFieldChange();
 }
 
 function renderProlegPreview(preview) {
@@ -1434,12 +1458,6 @@ async function executeLabelingValidate(start) {
   }
 }
 
-function loadLabelingExample() {
-  selectEndpoint('labeling', false);
-  document.getElementById('lbl-text').value = labelingState.text;
-  proposeLabels();
-}
-
 // Selector de corpus + artículo real: conecta las funciones YA reales de
 // GET /v1/corpora/{corpus_id}/articles (lista, texto truncado) y
 // GET /v1/corpora/{corpus_id}/articles/{uid} (texto completo) con el
@@ -1485,9 +1503,8 @@ async function loadArticleForLabeling() {
     const article = await res.json();
     document.getElementById('lbl-text').value = article.text_raw;
     labelingState.text = article.text_raw;
-    status.innerText = `Artículo ${uid} cargado — analizando…`;
-    await proposeLabels();
-    status.innerText = `Artículo ${uid} analizado.`;
+    resetLabelingForm();
+    status.innerText = `Artículo ${uid} cargado. Hacé clic en "Analizar artículo" para procesarlo.`;
   } catch (e) {
     status.innerHTML = `<span style="color:#991B1B;">⚠️ No se pudo cargar el artículo. Detalle: ${e.message}</span>`;
   }
