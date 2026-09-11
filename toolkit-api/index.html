@@ -720,8 +720,7 @@ header {
   <p class="hero-desc">
     Elegí un código civil y un artículo real de los 8 disponibles (22.110 artículos), y el analizador calcula su
     tipo de norma, su modalidad deóntica (Von Wright), su posición jurídica (Hohfeld) y, cuando corresponde, muestra
-    en vivo cómo el motor de razonamiento derrotable (PROLEG) resolvería una excepción — con reglas deterministas,
-    sin inteligencia artificial ni costo.
+    en vivo cómo el motor de razonamiento derrotable (PROLEG) resolvería una excepción.
   </p>
 </div>
 
@@ -784,8 +783,7 @@ header {
       <h2 class="endpoint-title" id="current-title">Analizar un artículo</h2>
       <p class="endpoint-desc" id="current-desc">
         Elegí un código civil y un artículo real, o pegá tu propio texto. El analizador determina el tipo de norma,
-        su modalidad deóntica (Von Wright) y su posición jurídica (Hohfeld) con reglas deterministas — sin
-        inteligencia artificial.
+        su modalidad deóntica (Von Wright) y su posición jurídica (Hohfeld).
       </p>
     </div>
 
@@ -799,38 +797,20 @@ header {
     </button>
   </section>
 
-  <!-- Columna 3: Developer Console & Response -->
+  <!-- Columna 3: Resultado del análisis -->
   <aside class="col-console">
-    
-    <!-- Code Snippet Generator -->
-    <div class="console-card">
-      <div class="console-tabs-bar">
-        <div class="tab-buttons">
-          <button class="c-tab active" onclick="setLang('curl')">cURL</button>
-          <button class="c-tab" onclick="setLang('python')">Python</button>
-          <button class="c-tab" onclick="setLang('javascript')">JavaScript</button>
-        </div>
-        <button class="btn-copy-code" onclick="copySnippet()">Copiar</button>
-      </div>
-      <pre class="code-pre-box" id="code-snippet-pre"></pre>
-    </div>
 
-    <!-- Live Response Viewer -->
     <div class="console-card" style="flex:1;display:flex;flex-direction:column;">
       <div class="response-header-bar">
         <div class="res-meta">
-          <span class="badge-status" id="res-status-badge">200 OK</span>
-          <span class="res-time" id="res-time-text">34 ms</span>
           <span class="mock-tag" id="res-mode-tag" title="Todavía no ejecutaste una consulta contra el analizador.">Sin ejecutar</span>
-        </div>
-        <div class="view-switch">
-          <button class="v-btn active" id="btn-view-tree" onclick="setResponseView('tree')">Visual Tree</button>
-          <button class="v-btn" id="btn-view-json" onclick="setResponseView('json')">JSON Raw</button>
+          <span id="res-status-badge" style="display:none;"></span>
+          <span id="res-time-text" style="display:none;"></span>
         </div>
       </div>
 
       <div id="res-tree-view" class="visual-tree-container">
-        <!-- Renderizado visual de Statements -->
+        <!-- Renderizado visual del resultado -->
       </div>
       <pre id="res-json-view" class="code-pre-box" style="display:none;max-height:520px;"></pre>
     </div>
@@ -842,8 +822,6 @@ header {
 <script>
 // Estado de la consola
 let currentEndpoint = 'labeling';
-let currentLang = 'curl';
-let currentView = 'tree';
 let lastResponseData = null;
 
 // Estado del análisis de artículos — reglas léxicas deterministas
@@ -901,7 +879,7 @@ function selectEndpoint(ep, autoExec = true) {
     desc.innerText = 'Texto real, tal como aparece en la fuente oficial, paginado. Elegí un código y navegá sus artículos.';
   } else if (ep === 'labeling') {
     title.innerText = 'Analizar un artículo';
-    desc.innerText = 'Elegí un código civil y un artículo real, o pegá tu propio texto. El analizador determina el tipo de norma, su modalidad deóntica (Von Wright) y su posición jurídica (Hohfeld) con reglas deterministas — sin inteligencia artificial.';
+    desc.innerText = 'Elegí un código civil y un artículo real, o pegá tu propio texto. El analizador determina el tipo de norma, su modalidad deóntica (Von Wright) y su posición jurídica (Hohfeld).';
   }
 
   renderParamsForm();
@@ -1051,7 +1029,7 @@ function renderParamsForm() {
       <div class="builder-card">
         <h3>Texto a analizar</h3>
         <textarea id="lbl-text" class="form-textarea" oninput="updateCodeSnippet()">${labelingState.text}</textarea>
-        <button class="btn-secondary-sm" style="margin-top:10px;" onclick="proposeLabels()">🏷 Analizar (reglas deterministas, sin IA)</button>
+        <button class="btn-secondary-sm" style="margin-top:10px;" onclick="proposeLabels()">🏷 Analizar</button>
         <div id="lbl-proposal-notes" style="margin-top:10px;"></div>
       </div>
       <div class="builder-card">
@@ -1668,115 +1646,10 @@ function renderTraceSteps(trace) {
   }).join('');
 }
 
-function setLang(lang) {
-  currentLang = lang;
-  document.querySelectorAll('.c-tab').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  updateCodeSnippet();
-}
-
-function updateCodeSnippet() {
-  const pre = document.getElementById('code-snippet-pre');
-  const baseUrl = "https://api.datalexlab.com";
-
-  if (currentEndpoint === 'reasoning') {
-    const realBase = currentApiBase();
-    const rulebaseId = document.getElementById('param-rulebase') ? document.getElementById('param-rulebase').value : REASONING_GOLDEN_CASE.rulebase_id;
-    const party = document.getElementById('param-party') ? document.getElementById('param-party').value : 'plaintiff';
-    const goal = document.getElementById('param-goal') ? document.getElementById('param-goal').value : '';
-    let facts = [];
-    try { facts = JSON.parse(document.getElementById('param-facts') ? document.getElementById('param-facts').value : '[]'); } catch (e) { /* JSON inválido: se valida al ejecutar */ }
-    const body = { rulebase_id: rulebaseId, goal, party, facts };
-    const jsonBody = JSON.stringify(body, null, 2);
-
-    if (currentLang === 'curl') {
-      pre.innerText = `curl -X POST "${realBase}/v1/reasoning/prove" \\
-  -H "Content-Type: application/json" \\
-  -d '${JSON.stringify(body)}'`;
-    } else if (currentLang === 'python') {
-      pre.innerText = `import requests
-
-url = "${realBase}/v1/reasoning/prove"
-payload = ${jsonBody}
-
-response = requests.post(url, json=payload)
-data = response.json()
-print(data["proved"])`;
-    } else if (currentLang === 'javascript') {
-      pre.innerText = `const response = await fetch("${realBase}/v1/reasoning/prove", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(${jsonBody})
-});
-const data = await response.json();
-console.log(data.proved);`;
-    }
-  } else if (currentEndpoint === 'corpora') {
-    const realBase = currentApiBase();
-    if (currentLang === 'curl') {
-      pre.innerText = `curl -X GET "${realBase}/v1/corpora"`;
-    } else if (currentLang === 'python') {
-      pre.innerText = `import requests
-response = requests.get("${realBase}/v1/corpora")
-print(response.json())`;
-    } else if (currentLang === 'javascript') {
-      pre.innerText = `const res = await fetch("${realBase}/v1/corpora");
-const data = await res.json();`;
-    }
-  } else if (currentEndpoint === 'corpora-articles') {
-    const realBase = currentApiBase();
-    const corpusId = document.getElementById('param-corpus-id') ? document.getElementById('param-corpus-id').value : 'CO-CC';
-    const limit = document.getElementById('param-articles-limit') ? document.getElementById('param-articles-limit').value : 20;
-    const offset = document.getElementById('param-articles-offset') ? document.getElementById('param-articles-offset').value : 0;
-    const path = `/v1/corpora/${corpusId}/articles?limit=${limit}&offset=${offset}`;
-    if (currentLang === 'curl') {
-      pre.innerText = `curl -X GET "${realBase}${path}"`;
-    } else if (currentLang === 'python') {
-      pre.innerText = `import requests
-response = requests.get("${realBase}${path}")
-print(response.json())`;
-    } else if (currentLang === 'javascript') {
-      pre.innerText = `const res = await fetch("${realBase}${path}");
-const data = await res.json();`;
-    }
-  } else if (currentEndpoint === 'labeling') {
-    const realBase = currentApiBase();
-    const payload = buildLabelingPayload();
-    const jsonBody = JSON.stringify(payload, null, 2);
-    if (currentLang === 'curl') {
-      pre.innerText = `curl -X POST "${realBase}/v1/statements/validate" \\
-  -H "Content-Type: application/json" \\
-  -d '${JSON.stringify(payload)}'`;
-    } else if (currentLang === 'python') {
-      pre.innerText = `import requests
-
-url = "${realBase}/v1/statements/validate"
-payload = ${jsonBody}
-
-response = requests.post(url, json=payload)
-print(response.json())`;
-    } else if (currentLang === 'javascript') {
-      pre.innerText = `const response = await fetch("${realBase}/v1/statements/validate", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(${jsonBody})
-});
-const data = await response.json();`;
-    }
-  } else {
-    const path = `/v1/behavior/${currentEndpoint}`;
-    if (currentLang === 'curl') {
-      pre.innerText = `curl -X GET "${baseUrl}${path}"`;
-    } else if (currentLang === 'python') {
-      pre.innerText = `import requests
-response = requests.get("${baseUrl}${path}")
-print(response.json())`;
-    } else if (currentLang === 'javascript') {
-      pre.innerText = `const res = await fetch("${baseUrl}${path}");
-const data = await res.json();`;
-    }
-  }
-}
+// updateCodeSnippet() ya no genera nada (se retiró el panel de código para
+// desarrolladores) — queda como no-op para no tener que tocar cada campo
+// del formulario que todavía la llama en su oninput/onchange.
+function updateCodeSnippet() {}
 
 async function executeReasoningCall(start) {
   const base = currentApiBase();
@@ -2018,19 +1891,6 @@ function renderResponse() {
     return;
   }
 
-}
-
-function setResponseView(view) {
-  currentView = view;
-  document.getElementById('btn-view-tree').classList.toggle('active', view === 'tree');
-  document.getElementById('btn-view-json').classList.toggle('active', view === 'json');
-  document.getElementById('res-tree-view').style.display = view === 'tree' ? 'block' : 'none';
-  document.getElementById('res-json-view').style.display = view === 'json' ? 'block' : 'none';
-}
-
-function copySnippet() {
-  const text = document.getElementById('code-snippet-pre').innerText;
-  navigator.clipboard.writeText(text).then(() => alert('Código copiado al portapapeles.'));
 }
 
 window.addEventListener('keydown', (e) => {
