@@ -20,6 +20,8 @@ no tiene costo.
 
 from __future__ import annotations
 
+import unicodedata
+
 from src.labeling import lexical_markers as lex
 from src.labeling.schemas import LabelProposal, ProlegPreview, ProlegRunResult
 from src.models import COMPATIBILITY
@@ -73,23 +75,34 @@ def _detect_deontic_modality(text: str) -> str | None:
     return None
 
 
-def _derive_hohfeld_from_deontic(deontic_modality: str | None) -> str:
+def _derive_hohfeld_from_deontic(deontic_modality: str | None, addressee: str | None) -> str:
     """Correlato hohfeldiano por defecto de la modalidad deóntica detectada.
 
     Simplificación declarada: Hohfeld exige identificar a la CONTRAPARTE
     concreta (quien tiene el deber correlativo del derecho, o quien está
-    sujeto al ejercicio de la potestad) — algo que un texto normativo
-    aislado no siempre da. Esta derivación asigna la posición del
+    sujeto al ejercicio de la potestad) — algo que un texto
+    normativo aislado no siempre da. Esta derivación asigna la posición del
     DESTINATARIO del mandato (no de su contraparte), que es lo único que el
     propio enunciado permite fijar sin inventar quién más interviene:
-    obligación/prohibición -> deber (el destinatario debe/no debe actuar);
-    permiso -> potestad (el destinatario puede ejercer la facultad);
-    sin deóntica -> ninguno (definiciones, remisiones).
-    Ver docs/limitaciones_conocidas.md §2 para el límite de fondo."""
+    obligación/prohibición -> deber (el destinatario debe/no debe actuar).
+
+    "permiso" se bifurca porque colapsa dos casillas hohfeldianas DISTINTAS
+    (no una simplificación de una sola): una LIBERTAD/PRIVILEGIO (facultad
+    de actuar sin alterar la posición jurídica de nadie más — "podrá
+    dedicarse libremente a un empleo") no es lo mismo que una POTESTAD
+    (capacidad de alterar unilateralmente relaciones jurídicas ajenas — "el
+    juez podrá reducir la pena"). Se usa el destinatario ya detectado para
+    distinguirlas: permiso dirigido a juez/funcionario -> potestad (altera
+    la posición de otro); permiso dirigido a partes/tercero/sin marcador ->
+    privilegio (libertad civil ordinaria, el caso mayoritario).
+    Ver docs/limitaciones_conocidas.md §2 para el límite de fondo (falta de
+    correlatividad bilateral, un problema distinto y adicional a este)."""
     if deontic_modality in ("obligacion", "prohibicion"):
         return "deber"
     if deontic_modality == "permiso":
-        return "potestad"
+        if addressee in ("juez", "funcionario_o_notario"):
+            return "potestad"
+        return "privilegio"
     return "ninguno"
 
 
@@ -136,16 +149,28 @@ def _derive_structure(
 
 
 def build_proleg_preview(
-    exception_marker: str | None, exception_scope: str | None
+    exception_marker: str | None, exception_scope: str | None, statement_type: str | None = None
 ) -> ProlegPreview:
     """Instancia una RuleBase mínima y GENÉRICA a partir de la MISMA
     estructura ya detectada (regla + excepción) y corre el motor PROLEG
-    real (src/reasoning/engine.py) dos veces: una sin la excepción probada,
-    otra con ella. No fabrica contenido semántico del artículo — los
-    nombres de hecho ("antecedente_cumplido", "excepcion_probada") son
-    genéricos a propósito, para no simular una prueba jurídica que el
-    texto por sí solo no permite construir. Lo que demuestra es la
-    MECÁNICA de derrotabilidad, con el motor real, no un mock."""
+    real dos veces: una sin la excepción probada, otra con ella. No fabrica
+    contenido semántico del artículo — los nombres de hecho
+    ("antecedente_cumplido", "excepcion_probada") son genéricos a
+    propósito, para no simular una prueba jurídica que el texto por sí solo
+    no permite construir. Lo que demuestra es la MECÁNICA de
+    derrotabilidad, con el motor real, no un mock.
+
+    `statement_type` cambia el TEXTO de la nota, no el cálculo: en una
+    presunción, la "excepción" que el motor modela es en realidad la
+    prueba en contrario, que opera por desplazamiento de la CARGA
+    PROBATORIA (quien quiere desvirtuar la presunción debe probarlo) — una
+    figura procesal distinta de la excepción sustantiva ordinaria de una
+    regla (un hecho impeditivo que, probado, derrota la consecuencia). El
+    motor PROLEG usa el mismo mecanismo de regla+excepción para ambas
+    porque estructuralmente se comportan igual (algo se prueba salvo que
+    se pruebe lo contrario), pero la nota debe decir cuál de las dos
+    figuras jurídicas está mostrando, para no presentarlas como si fueran
+    la misma cosa."""
     rulebase = RuleBase(
         id="preview_derrotabilidad",
         description=(
@@ -178,6 +203,27 @@ def build_proleg_preview(
     )
     with_exception = prove("consecuencia_aplica", Party.PLAINTIFF, rulebase, with_exception_facts)
 
+    if statement_type == "presuncion":
+        note = (
+            "Vista previa estructural: usa el motor de razonamiento real "
+            "sobre una regla genérica con la misma forma detectada en el "
+            "artículo. En una presunción, esto modela la PRUEBA EN "
+            "CONTRARIO (desplazamiento de la carga de la prueba hacia "
+            "quien quiere desvirtuarla), no la derrota de una regla "
+            "sustantiva — son figuras procesales distintas aunque el "
+            "motor las calcule con el mismo mecanismo. No es un análisis "
+            "semántico del contenido específico del artículo."
+        )
+    else:
+        note = (
+            "Vista previa estructural: usa el motor de razonamiento real "
+            "sobre una regla genérica con la misma forma detectada en el "
+            "artículo (regla + excepción sustantiva). No es un análisis "
+            "semántico del contenido específico del artículo — muestra "
+            "que la excepción detectada, si se prueba, efectivamente "
+            "derrota la regla bajo el motor determinista."
+        )
+
     return ProlegPreview(
         rulebase_id=rulebase.id,
         without_exception=ProlegRunResult(
@@ -188,19 +234,19 @@ def build_proleg_preview(
             proved=with_exception.proved,
             trace_length=len(with_exception.trace),
         ),
-        note=(
-            "Vista previa estructural: usa el motor PROLEG real "
-            "(src/reasoning/engine.py) sobre una regla genérica con la "
-            "misma forma detectada en el artículo (regla + excepción). No "
-            "es un análisis semántico del contenido específico del "
-            "artículo — muestra que la excepción detectada, si se prueba, "
-            "efectivamente derrota la regla bajo el motor determinista."
-        ),
+        note=note,
     )
 
 
 def propose_from_text(text: str) -> LabelProposal:
-    text = text.strip()
+    # NFC: sin esto, el mismo texto en dos formas Unicode canónicamente
+    # equivalentes (p. ej. copiado desde macOS o extraído de OCR, que suelen
+    # producir NFD) puede no matchear los patrones léxicos (que usan tildes
+    # precompuestas) y dar un resultado distinto para el mismo enunciado —
+    # rompería la promesa de determinismo de este motor. El pipeline de
+    # ingesta (src/pipeline.py) ya normaliza a NFC los 8 corpus reales; esto
+    # cubre el otro punto de entrada: texto pegado directo por un usuario.
+    text = unicodedata.normalize("NFC", text).strip()
 
     determined: list[str] = []
     default: list[str] = []
@@ -229,15 +275,35 @@ def propose_from_text(text: str) -> LabelProposal:
             "paga el precio' sin 'deberá')."
         )
 
+    # addressee se detecta ACÁ (antes de derivar Hohfeld) porque
+    # _derive_hohfeld_from_deontic necesita saber si el "permiso" se
+    # dirige a un juez/funcionario (potestad) o a partes/tercero
+    # (privilegio) — ver docstring de esa función.
+    addressee = _detect_addressee(text)
+    if addressee is not None:
+        determined.append("addressee")
+    elif deontic_modality != "ninguno":
+        addressee = "partes"
+        default.append("addressee")
+        notes.append(
+            "addressee: sin marcador de juez/funcionario/tercero — se "
+            "asume 'partes' por defecto (mayoría del derecho privado); "
+            "revisar si el artículo se dirige a otro destinatario."
+        )
+    else:
+        undetermined.append("addressee")
+
     hohfeldian_position = _derive_hohfeld_from_deontic(
-        deontic_modality if "deontic_modality" in determined else None
+        deontic_modality if "deontic_modality" in determined else None,
+        addressee,
     )
     if "deontic_modality" in determined:
         default.append("hohfeldian_position")
         notes.append(
             "hohfeldian_position: correlato por defecto de la deóntica "
-            "detectada, no un análisis bilateral de Hohfeld (no identifica "
-            "contraparte) — ver docs/limitaciones_conocidas.md §2."
+            "detectada (y, si es 'permiso', del destinatario) — no un "
+            "análisis bilateral de Hohfeld (no identifica contraparte) — "
+            "ver docs/limitaciones_conocidas.md §2."
         )
     else:
         undetermined.append("hohfeldian_position")
@@ -290,20 +356,6 @@ def propose_from_text(text: str) -> LabelProposal:
                 f"({sorted(COMPATIBILITY.get(statement_type, set()))})."
             )
 
-    addressee = _detect_addressee(text)
-    if addressee is not None:
-        determined.append("addressee")
-    elif deontic_modality != "ninguno":
-        addressee = "partes"
-        default.append("addressee")
-        notes.append(
-            "addressee: sin marcador de juez/funcionario/tercero — se "
-            "asume 'partes' por defecto (mayoría del derecho privado); "
-            "revisar si el artículo se dirige a otro destinatario."
-        )
-    else:
-        undetermined.append("addressee")
-
     undetermined.append("generality")
     notes.append(
         "generality (n_conditions, indeterminate_concepts, etc.) queda "
@@ -312,7 +364,7 @@ def propose_from_text(text: str) -> LabelProposal:
 
     proleg_preview = None
     if exception_present:
-        proleg_preview = build_proleg_preview(exception_marker, exception_scope)
+        proleg_preview = build_proleg_preview(exception_marker, exception_scope, statement_type)
 
     return LabelProposal(
         statement_type=statement_type,

@@ -73,7 +73,9 @@ Structure = Literal[
 ]
 
 DeonticModality = Literal["obligacion", "prohibicion", "permiso", "ninguno"]
-HohfeldianPosition = Literal["deber", "derecho_subjetivo", "potestad", "sujecion", "inmunidad", "ninguno"]
+HohfeldianPosition = Literal[
+    "deber", "derecho_subjetivo", "privilegio", "potestad", "sujecion", "inmunidad", "ninguno",
+]
 Derogability = Literal["inderogable", "derogable_por_pacto", "indeterminada"]
 Addressee = Literal["partes", "juez", "funcionario_o_notario", "tercero", "indeterminado"]
 AntecedentOperator = Literal["si", "cuando", "siempre_que", "en_caso_de", "ninguno_explicito"]

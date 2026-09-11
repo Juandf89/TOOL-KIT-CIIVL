@@ -12,3 +12,5 @@ En América Latina el derecho se construye sobre códigos: reglas escritas con e
 1. **LLM**: Traduce hechos caóticos en lenguaje natural hacia hechos estructurados.
 2. **Motor de reglas (tipo PROLEG)**: Aplica reglas por defecto, excepciones y desplazamiento de la carga probatoria, garantizando inferencias auditables y explicables.
 3. **LATIO**: La taxonomía y ontología abierta que define las primitivas del lenguaje jurídico en la región.
+
+**Estado actual (2026-09-11):** la capa 1 (LLM) descrita arriba es la visión de arquitectura a futuro, no lo que corre hoy — LATIO Kit implementa el etiquetado estructurado con reglas léxicas deterministas locales (`src/labeling/`), sin ningún LLM ni servicio externo, sin costo. La capa 2 (motor PROLEG) sí está implementada y corre en `src/reasoning/`. Ver `docs/limitaciones_conocidas.md` para el detalle completo de qué está construido y qué es todavía aspiracional.

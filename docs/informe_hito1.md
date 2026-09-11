@@ -8,7 +8,22 @@ Resultados de la corrida en seco para Chile y Colombia, monotonicidad en los enc
 
 ---
 
-## ⚠️ Nota de gobernanza — discrepancia de alcance no reconciliada (2026-09-10)
+## ✅ Estado: histórico, reconciliado (actualización 2026-09-11)
+
+Este informe describe una corrida en seco (`dry_run`) sobre datos de alcance incierto (ver nota de
+2026-09-10 abajo, que documenta la discrepancia). Esa discrepancia **ya está resuelta**: existe una
+corrida real (`run_type: real_run`) sobre los 8 corpus completos, con `manifest_id:
+8corpus-real-2026-09-10`, `source_hash` y compuertas de calidad verificables por fuente en
+`reports/manifest.json` — ver `docs/notas_gobernanza.md` **Nota 0** para el detalle completo de la
+reconciliación (22.110 artículos reales, no los 21.957 de este informe ni del manifiesto viejo).
+
+**Ninguna cifra de este documento debe citarse como el estado actual del proyecto.** Se conserva como
+registro histórico de cómo se detectó y diagnosticó el problema, no como fuente de resultados vigentes
+— para eso, usar `reports/manifest.json` directamente.
+
+---
+
+## ⚠️ Nota de gobernanza — discrepancia de alcance, diagnosticada aquí y reconciliada después (2026-09-10)
 
 Este informe declara que la corrida en seco cubrió **únicamente Chile y Colombia**. Sin embargo,
 `reports/manifest.json` (mismo `pipeline_version: pipeline_v0.2`, `run_type: dry_run`) reporta

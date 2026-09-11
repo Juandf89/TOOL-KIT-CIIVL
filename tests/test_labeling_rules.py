@@ -8,6 +8,8 @@ esa honestidad no se rompa silenciosamente en un futuro refactor.
 
 from __future__ import annotations
 
+import unicodedata
+
 from fastapi.testclient import TestClient
 
 from src.api import app
@@ -103,11 +105,26 @@ def test_detecta_prohibicion_von_wright_y_deriva_deber_hohfeld():
     assert p.hohfeldian_position == "deber"
 
 
-def test_detecta_permiso_von_wright_y_deriva_potestad_hohfeld():
+def test_detecta_permiso_dirigido_a_partes_deriva_privilegio_no_potestad():
+    """"Permiso" a un particular es una LIBERTAD/PRIVILEGIO hohfeldiana (no
+    altera la posición jurídica de nadie más), distinta de una POTESTAD
+    (capacidad de alterar relaciones jurídicas ajenas) — confundirlas es un
+    error categorial, no una simplificación válida. Ver
+    _derive_hohfeld_from_deontic en src/labeling/rules.py."""
     p = propose_from_text(
         "La mujer casada de cualquier edad podrá dedicarse libremente al ejercicio de un empleo."
     )
     assert p.deontic_modality == "permiso"
+    assert p.hohfeldian_position == "privilegio"
+
+
+def test_detecta_permiso_dirigido_a_juez_deriva_potestad():
+    """"Permiso" dirigido a un juez/funcionario SÍ es una potestad: implica
+    la capacidad de alterar la posición jurídica de otra persona (aquí,
+    reducir la pena de alguien más) por un acto de voluntad calificado."""
+    p = propose_from_text("El juez podrá reducir la pena cuando concurran atenuantes.")
+    assert p.deontic_modality == "permiso"
+    assert p.addressee == "juez"
     assert p.hohfeldian_position == "potestad"
 
 
@@ -227,3 +244,75 @@ def test_hohfeldian_position_propuesto_fluye_real_hasta_validate():
     body = res.json()
     assert body["valid"] is True
     assert body["normalized"]["hohfeldian_position"] == "deber"
+
+
+def test_nfc_y_nfd_dan_el_mismo_resultado():
+    """Regresión: el mismo texto en dos formas Unicode canónicamente
+    equivalentes (NFC vs. NFD — común en texto pegado desde macOS o
+    extraído de OCR/PDF) debe dar el MISMO resultado. Antes de normalizar
+    a NFC en propose_from_text(), NFD rompía los patrones léxicos con
+    tildes precompuestas y producía un resultado distinto para el mismo
+    enunciado — contradecía la promesa de determinismo del motor."""
+    text_nfc = unicodedata.normalize(
+        "NFC", "Se prohíbe la venta de bienes de dominio público."
+    )
+    text_nfd = unicodedata.normalize("NFD", text_nfc)
+    assert text_nfc != text_nfd  # confirma que de verdad son representaciones distintas
+
+    p_nfc = propose_from_text(text_nfc)
+    p_nfd = propose_from_text(text_nfd)
+    assert p_nfc.deontic_modality == p_nfd.deontic_modality == "prohibicion"
+    assert p_nfc.hohfeldian_position == p_nfd.hohfeldian_position == "deber"
+    assert p_nfc.determined_fields == p_nfd.determined_fields
+
+
+def test_propose_rechaza_texto_vacio():
+    res = client.post("/v1/statements/propose", json={"text_span": ""})
+    assert res.status_code == 422
+
+
+def test_propose_rechaza_texto_mayor_a_4000_caracteres():
+    res = client.post("/v1/statements/propose", json={"text_span": "a" * 4001})
+    assert res.status_code == 422
+
+
+def test_validate_rechaza_texto_mayor_a_4000_caracteres():
+    """Regresión: antes, /v1/statements/validate no tenía max_length —
+    un cliente podía mandar un text_span de tamaño arbitrario (medido en
+    la revisión: 7.4 MB tardaban ~6.7s bloqueando un worker). Ahora usa
+    el mismo límite que /v1/statements/propose."""
+    payload = {
+        "text_span": "a" * 4001,
+        "statement_type": "regla",
+        "structure": "supuesto_consecuencia",
+        "deontic_modality": "ninguno",
+        "addressee": "partes",
+        "antecedent_operator": "ninguno_explicito",
+        "generality_n_conditions": 1,
+        "generality_has_enumeration": False,
+    }
+    res = client.post("/v1/statements/validate", json=payload)
+    assert res.status_code == 422
+
+
+def test_proleg_preview_nota_distingue_presuncion_de_excepcion_sustantiva():
+    """Una presunción y una regla con excepción sustantiva no son la misma
+    figura jurídica (desplazamiento de carga probatoria vs. derrota de la
+    regla) aunque el motor las calcule con el mismo mecanismo — la nota
+    visible tiene que decir cuál de las dos está mostrando."""
+    p_presuncion = propose_from_text(
+        "Se presume de derecho que el menor de diez años es incapaz, "
+        "salvo lo dispuesto en el artículo 45."
+    )
+    assert p_presuncion.statement_type == "presuncion"
+    note_presuncion = p_presuncion.proleg_preview.note.lower()
+    assert "prueba en contrario" in note_presuncion
+    assert "carga de la prueba" in note_presuncion
+
+    p_regla = propose_from_text(
+        "El deudor deberá restituir la cosa, salvo que haya perecido por caso fortuito."
+    )
+    assert p_regla.statement_type == "regla"
+    note_regla = p_regla.proleg_preview.note.lower()
+    assert "prueba en contrario" not in note_regla
+    assert "excepción sustantiva" in note_regla

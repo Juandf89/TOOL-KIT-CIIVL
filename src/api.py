@@ -347,7 +347,7 @@ def get_corpus_article(corpus_id: str, uid: str):
 # --------------------------------------------------------------------------
 
 class StatementDraftRequest(BaseModel):
-    text_span: str = Field(min_length=1)
+    text_span: str = Field(min_length=1, max_length=4000)
     statement_type: StatementType
     structure: Structure
     deontic_modality: DeonticModality

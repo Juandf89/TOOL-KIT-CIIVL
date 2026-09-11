@@ -18,17 +18,18 @@ TOOL-KIT-CIIVL/
 │   └── workflows/
 │       └── deploy.yml         # CI: despliega toolkit-api/ a GitHub Pages en cada push a main
 ├── config/
-│   └── corpus_registry.yaml   # Registro oficial de fuentes, licencias y reglas de parsing (scaffold) para 8 códigos + TEST-FIXTURE
+│   └── corpus_registry.yaml   # Registro de fuentes, licencias y reglas de parsing calibradas para los 8 códigos reales + TEST-FIXTURE
 ├── data/
-│   └── raw/fixture_test_corpus.md   # Corpus sintético de prueba (las 8 fuentes reales aún no tienen archivo crudo)
+│   └── raw/                   # Los 8 textos legales fuente (.md) + fixture_test_corpus.md (sintético, no real)
 ├── src/
 │   ├── __init__.py            # Módulo raíz de latio
 │   ├── models.py              # Modelos de datos Pydantic v2 (N1 a N5, esquema n3_v1.1, StrictModel base)
-│   ├── pipeline.py            # Pipeline determinista N0 -> N1 -> N4 (monotonicidad y remisiones) + CLI
+│   ├── pipeline.py            # Pipeline determinista N0 -> N1 -> N4 (segmentación y remisiones) + CLI
 │   ├── behavior.py            # Análisis de regularidades lógicas, lift de figuras y perfiles + CLI
+│   ├── labeling/               # Motor de etiquetado N3 por reglas léxicas deterministas (Von Wright, Hohfeld, PROLEG preview) — sin LLM, sin costo
 │   ├── reasoning/              # Motor de razonamiento derrotable (PROLEG): models.py, engine.py, rulesets/
-│   └── api.py                 # API FastAPI local (src/api.py) — no desplegada en api.datalexlab.com; expone /v1/reasoning/*
-├── tests/                     # Suite pytest: modelos, pipeline, behavior, motor de razonamiento, API (68 casos)
+│   └── api.py                 # API FastAPI local (src/api.py) — no desplegada en api.datalexlab.com; expone /v1/reasoning/*, /v1/corpora/*, /v1/statements/*
+├── tests/                     # Suite pytest: modelos, pipeline, behavior, motor de razonamiento, etiquetado, API
 ├── docs/
 │   ├── latio_manifiesto.md    # Manifiesto LATIO: La necesidad de arquitectura neurosimbólica
 │   ├── bitacora_ontologia_civil_law.md # Bitácora de diseño de la ontología del enunciado
@@ -39,7 +40,7 @@ TOOL-KIT-CIIVL/
 ├── reports/
 │   └── manifest.json          # Manifiesto de ejecución con hashes inmutables y compuertas
 └── toolkit-api/
-    ├── index.html              # LATIO Explorer / Consola interactiva (datos de demo en cliente)
+    ├── index.html              # LATIO Explorer — consola de análisis, hace llamadas reales a una API local (sin backend corriendo, muestra un error de conexión explícito)
     └── card-datalex.html       # Tarjeta de proyecto para incrustar en datalexlab.com
 ```
 
@@ -67,6 +68,8 @@ python -m src.pipeline CO-CC
 python -m src.pipeline TEST-FIXTURE
 ```
 Salida: `data/processed/<corpus_id>_{articles,referrals}.json` y `reports/<corpus_id>_run_report.json` (con el resultado de las 6 compuertas de calidad). `reports/manifest.json` consolida el resultado de las 8 fuentes reales de la corrida más reciente.
+
+**Importante:** `data/processed/` está excluido de git (son artefactos derivados, regenerables desde `data/raw/`) — en un clon nuevo del repo, esa carpeta no existe todavía. **Correr el pipeline para los 8 `corpus_id` es un paso obligatorio, no opcional**, antes de: (a) `python -m pytest tests/ -q` (`tests/test_api_corpora.py` abre esos archivos y sin ellos la recolección de la suite completa falla), y (b) usar la sección "Buscar en los códigos civiles" / "Analizar un artículo" de la consola contra un backend local.
 
 ### Ejecutar las Sondas de Comportamiento Lógico
 ```bash
@@ -99,12 +102,12 @@ python -m pytest tests/ -q
 ```
 
 ### Abrir el LATIO Explorer
-Abre `toolkit-api/index.html` en cualquier navegador web moderno para explorar de forma interactiva las regularidades de los 8 códigos y la radiografía de artículos. **Nota:** esta consola funciona hoy con datos de ejemplo generados en el cliente (`MOCK_METRICS`/`MOCK_LIFT`); no consulta un backend en vivo. `src/api.py` es una API FastAPI que puedes correr localmente (`uvicorn src.api:app --reload`), pero no está desplegada en `api.datalexlab.com`.
+Abre `toolkit-api/index.html` en cualquier navegador web moderno (o entrá a la versión publicada en GitHub Pages, ver más abajo) para elegir un código civil y un artículo real, analizarlo (tipo de norma, modalidad deóntica de Von Wright, posición jurídica de Hohfeld) y ver el motor de razonamiento PROLEG en acción cuando hay una excepción. **La consola hace llamadas reales** a `src/api.py` corriendo localmente (`uvicorn src.api:app --reload --port 8000`, sirviendo el HTML con `python -m http.server 5500` en vez de abrirlo con `file://`, para que CORS lo permita) — no hay datos simulados: sin ese backend corriendo, vas a ver un mensaje de error de conexión explícito, no una demo falsa. `src/api.py` todavía no está desplegado en ningún dominio público (`api.datalexlab.com` u otro) — la versión en GitHub Pages es solo el HTML/JS estático, y por eso muestra ese mismo error de conexión hasta que alguien corra la API localmente.
 
 ---
 
 ## 📜 Licencia y Comunidad
-Proyecto abierto para facultades de derecho, investigadores, jueces y desarrolladores de LegalTech en América Latina.
+Proyecto abierto para facultades de derecho, investigadores, jueces y desarrolladores de LegalTech en América Latina. El código está bajo licencia MIT (ver [`LICENSE`](LICENSE)). Los textos legales de `data/raw/`/`data/processed/` son normas oficiales de dominio público asumido por jurisdicción — no verificado formalmente contra los términos de cada portal fuente (ver el propio [`config/corpus_registry.yaml`](config/corpus_registry.yaml) para el detalle honesto de esa limitación).
 
 ---
 
@@ -117,7 +120,7 @@ El archivo `.github/workflows/deploy.yml` ya está configurado.
 1. En GitHub, ve a **Settings** > **Pages**.
 2. En **Build and deployment** > **Source**, selecciona **GitHub Actions**.
 3. Cada vez que hagas `git push`, tu consola interactiva se desplegará automáticamente en:
-   `https://juandf89.github.io/latio-kit/`
+   `https://juandf89.github.io/TOOL-KIT-CIIVL/`
 
 ### Opción B: Integración en Hostinger (datalexlab.com/latio)
 1. En **hPanel** de Hostinger, entra a `public_html/` y crea la carpeta `latio/`.

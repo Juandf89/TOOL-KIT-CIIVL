@@ -792,7 +792,7 @@ header {
     </div>
 
     <button class="btn-execute" onclick="executeApiCall()">
-      <span>Ejecutar Petición (Send Request)</span>
+      <span>Confirmar</span>
       <span style="opacity:0.6;font-size:12px;font-family:var(--font-mono)">Ctrl + ↵</span>
     </button>
   </section>
@@ -1076,6 +1076,7 @@ function renderParamsForm() {
             <option value="ninguno">ninguno</option>
             <option value="deber">deber</option>
             <option value="derecho_subjetivo">derecho_subjetivo</option>
+            <option value="privilegio">privilegio (libertad)</option>
             <option value="potestad">potestad</option>
             <option value="sujecion">sujeción</option>
             <option value="inmunidad">inmunidad</option>
@@ -1889,21 +1890,33 @@ function renderResponse() {
     }
     const n = data.normalized || {};
     const c = data.computed || {};
+    // Repite acá la misma distinción "detectado / por defecto" que ya se
+    // muestra en el formulario (fieldBadge()), para que no desaparezca
+    // justo en el resultado — donde más importa que el usuario sepa si
+    // "Hohfeld" es un correlato asumido o un marcador leído del texto.
+    const p = labelingState.proposal;
+    const confidenceSuffix = (field) => {
+      if (!p) return '';
+      if ((p.determined_fields || []).includes(field)) return ' (detectado)';
+      if ((p.default_fields || []).includes(field)) return ' (por defecto)';
+      return '';
+    };
     tree.innerHTML = `
       <div class="v-statement-card ${n.exception && n.exception.present ? 'is-exc' : ''}">
         <div class="v-tags">
-          <span class="v-tag vt-type">${n.statement_type}</span>
-          <span class="v-tag vt-deontic">${n.structure}</span>
-          <span class="v-tag vt-deontic">VON WRIGHT: ${n.deontic_modality}</span>
-          <span class="v-tag vt-hohfeld">HOHFELD: ${n.hohfeldian_position}</span>
-          <span class="v-tag vt-dest">DESTINATARIO: ${n.addressee}</span>
+          <span class="v-tag vt-type">${n.statement_type}${confidenceSuffix('statement_type')}</span>
+          <span class="v-tag vt-deontic">${n.structure}${confidenceSuffix('structure')}</span>
+          <span class="v-tag vt-deontic">VON WRIGHT: ${n.deontic_modality}${confidenceSuffix('deontic_modality')}</span>
+          <span class="v-tag vt-hohfeld">HOHFELD: ${n.hohfeldian_position}${confidenceSuffix('hohfeldian_position')}</span>
+          <span class="v-tag vt-dest">DESTINATARIO: ${n.addressee}${confidenceSuffix('addressee')}</span>
           ${n.exception && n.exception.present ? '<span class="v-tag vt-exc">DERROTABLE (EXCEPCIÓN)</span>' : ''}
         </div>
         <div class="v-text" style="font-style:normal;">"${n.text_span || ''}"</div>
-        <div style="font-size:12px;color:var(--text-dark-muted);">generality_level: ${c.generality_level} · derogability: ${n.derogability} · annotated_by: ${n.annotated_by}</div>
+        <div style="font-size:12px;color:var(--text-dark-muted);">generalidad: ${c.generality_level} · derogabilidad: ${n.derogability}</div>
         ${n.exception && n.exception.present ? `<div class="v-burden">⚖ Excepción: ${n.exception.marker} (scope: ${n.exception.scope})</div>` : ''}
+        ${(p && (p.default_fields || []).includes('hohfeldian_position')) ? '<p style="margin-top:8px;font-size:11px;color:var(--text-dark-muted);">⚠ La posición jurídica es un correlato por defecto de la deóntica detectada, no un análisis bilateral completo (no identifica a la contraparte).</p>' : ''}
       </div>
-      <p style="margin-top:10px;font-size:11.5px;color:var(--text-dark-muted);">✅ Validado contra el esquema Pydantic real (src/models.py) — esta aceptación o rechazo no es simulada.</p>
+      <p style="margin-top:10px;font-size:11.5px;color:var(--text-dark-muted);">✅ Esta aceptación o rechazo se validó contra el modelo ontológico real del proyecto — no es simulado.</p>
     `;
     return;
   }
