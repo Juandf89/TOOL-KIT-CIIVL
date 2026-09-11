@@ -1,0 +1,28 @@
+# No copiar al contexto de build lo que no necesita la imagen de la API.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+env/
+venv/
+*.DS_Store
+
+# El pipeline de extracción y sus fuentes NO viajan en la imagen de la API
+# (solo su resultado, data/processed/, que sí se copia explícitamente en el
+# Dockerfile) — ahorra ~7.5MB de texto legal crudo que la API nunca lee.
+data/raw/
+data/interim/
+
+# Tests, docs, y artefactos de gobernanza no ejecutables no le sirven a la
+# imagen en runtime.
+tests/
+docs/
+reports/*.json
+!reports/manifest.json
+.git/
+.github/
+.claude/
+toolkit-api/
+*.md
+requirements.txt
+requirements-dev.txt

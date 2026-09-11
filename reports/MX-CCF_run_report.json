@@ -1,36 +1,40 @@
 {
-  "corpus_id": "TEST-FIXTURE",
+  "corpus_id": "MX-CCF",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:16:29.101919+00:00",
-  "source_hash": "sha256:ccb4096995fda6ed7dcf9d71b9d6791beeaa3c1da44673b1c9a0dad283adf2f5",
+  "generated_at": "2026-09-11T00:48:43.018175+00:00",
+  "source_hash": "sha256:82f5f31649c5739eb732c8328306f2019f3613e29aedc0c0010b3b58670ab210",
   "segment_stats": {
-    "articles_parsed": 4,
-    "max_article_number": 4,
-    "rejected_non_monotonic": 0,
-    "furniture_lines_removed": 0,
-    "with_suffix": 0,
-    "with_editorial_notes": 0,
+    "articles_parsed": 2956,
+    "max_article_number": 3074,
+    "rejected_non_monotonic": 27,
+    "furniture_lines_removed": 1166,
+    "with_suffix": 25,
+    "with_editorial_notes": 544,
     "empty_body": 0,
-    "max_depth": 1,
+    "max_depth": 5,
     "level_types": [
+      "capitulo",
+      "libro",
+      "preliminar",
+      "seccion",
       "titulo"
     ]
   },
   "referral_stats": {
-    "edges_total": 2,
-    "edges_anaphoric": 1,
-    "edges_unresolved": 0,
-    "resolution_rate": 1.0,
-    "reflexive": 0
+    "edges_total": 516,
+    "edges_anaphoric": 152,
+    "edges_unresolved": 8,
+    "resolution_rate": 0.9845,
+    "reflexive": 2
   },
   "gates": [
     {
       "gate": "completitud",
       "metric": "artículos base / declarados en fuente",
-      "value": "4/4",
+      "value": "2931/3074",
       "threshold": "100%",
-      "status": "PASS",
-      "detail": "ausentes: 0 → []"
+      "status": "FAIL",
+      "detail": "ausentes: 143 → [93, 94, 95, 96, 97, 98, 398, 399, 400, 401, 402, 403]"
     },
     {
       "gate": "unicidad",
@@ -43,17 +47,17 @@
     {
       "gate": "consistencia_N4",
       "metric": "remisiones con destino existente",
-      "value": 1.0,
+      "value": 0.9845,
       "threshold": "≥ 0.98",
       "status": "PASS",
-      "detail": "sin resolver: 0"
+      "detail": "sin resolver: 8"
     },
     {
       "gate": "integridad_grafo",
       "metric": "aristas reflexivas",
-      "value": 0,
+      "value": 2,
       "threshold": "0",
-      "status": "PASS",
+      "status": "WARN",
       "detail": ""
     },
     {
@@ -67,9 +71,9 @@
     {
       "gate": "trazabilidad",
       "metric": "url + fecha de consulta + versión",
-      "value": "ausente",
+      "value": "presente",
       "threshold": "100%",
-      "status": "FAIL",
+      "status": "PASS",
       "detail": "fuente no oficial: solo válido para run_type=dry_run"
     }
   ]

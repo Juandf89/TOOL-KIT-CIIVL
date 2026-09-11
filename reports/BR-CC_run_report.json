@@ -1,36 +1,40 @@
 {
-  "corpus_id": "TEST-FIXTURE",
+  "corpus_id": "BR-CC",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:16:29.101919+00:00",
-  "source_hash": "sha256:ccb4096995fda6ed7dcf9d71b9d6791beeaa3c1da44673b1c9a0dad283adf2f5",
+  "generated_at": "2026-09-11T00:48:42.128482+00:00",
+  "source_hash": "sha256:fd78dcc59774b2b6b1b1cd5d02ade80f70073af390793c46ad269e24417d577b",
   "segment_stats": {
-    "articles_parsed": 4,
-    "max_article_number": 4,
-    "rejected_non_monotonic": 0,
+    "articles_parsed": 2067,
+    "max_article_number": 2046,
+    "rejected_non_monotonic": 1,
     "furniture_lines_removed": 0,
-    "with_suffix": 0,
-    "with_editorial_notes": 0,
+    "with_suffix": 46,
+    "with_editorial_notes": 124,
     "empty_body": 0,
-    "max_depth": 1,
+    "max_depth": 5,
     "level_types": [
+      "capitulo",
+      "libro",
+      "seccion",
+      "subseccion",
       "titulo"
     ]
   },
   "referral_stats": {
-    "edges_total": 2,
-    "edges_anaphoric": 1,
+    "edges_total": 0,
+    "edges_anaphoric": 0,
     "edges_unresolved": 0,
-    "resolution_rate": 1.0,
+    "resolution_rate": null,
     "reflexive": 0
   },
   "gates": [
     {
       "gate": "completitud",
       "metric": "artículos base / declarados en fuente",
-      "value": "4/4",
+      "value": "2021/2046",
       "threshold": "100%",
-      "status": "PASS",
-      "detail": "ausentes: 0 → []"
+      "status": "FAIL",
+      "detail": "ausentes: 25 → [789, 790, 791, 792, 793, 794, 795, 796, 797, 798, 799, 800]"
     },
     {
       "gate": "unicidad",
@@ -43,9 +47,9 @@
     {
       "gate": "consistencia_N4",
       "metric": "remisiones con destino existente",
-      "value": 1.0,
+      "value": null,
       "threshold": "≥ 0.98",
-      "status": "PASS",
+      "status": "FAIL",
       "detail": "sin resolver: 0"
     },
     {
@@ -67,9 +71,9 @@
     {
       "gate": "trazabilidad",
       "metric": "url + fecha de consulta + versión",
-      "value": "ausente",
+      "value": "presente",
       "threshold": "100%",
-      "status": "FAIL",
+      "status": "PASS",
       "detail": "fuente no oficial: solo válido para run_type=dry_run"
     }
   ]

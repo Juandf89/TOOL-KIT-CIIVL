@@ -700,6 +700,16 @@ header {
       <span>Mismo artículo · derecho derrotado</span>
     </div>
 
+    <div class="nav-section-title">Corpus Reales (real)</div>
+    <div class="preset-chip" onclick="loadCorporaList()">
+      <strong>📚 Los 8 corpus reales</strong>
+      <span>CL/CO/AR×2/BR/MX×2/PE · llama a una API real</span>
+    </div>
+    <div class="preset-chip" onclick="loadCorpusArticles('CO-CC')">
+      <strong>🇨🇴 Artículos de CO-CC</strong>
+      <span>Ley 57 de 1887 · texto real paginado</span>
+    </div>
+
     <div class="nav-section-title">Endpoints Disponibles</div>
     <div class="nav-item active" id="btn-ep-parse" onclick="selectEndpoint('parse')">
       <span class="badge-method badge-post">POST</span>
@@ -724,6 +734,14 @@ header {
     <div class="nav-item" id="btn-ep-reasoning" onclick="selectEndpoint('reasoning')">
       <span class="badge-method badge-post">POST</span>
       <span>/v1/reasoning/prove</span>
+    </div>
+    <div class="nav-item" id="btn-ep-corpora" onclick="selectEndpoint('corpora')">
+      <span class="badge-method badge-get">GET</span>
+      <span>/v1/corpora</span>
+    </div>
+    <div class="nav-item" id="btn-ep-corpora-articles" onclick="selectEndpoint('corpora-articles')">
+      <span class="badge-method badge-get">GET</span>
+      <span>/v1/corpora/{corpus_id}/articles</span>
     </div>
   </aside>
 
@@ -875,6 +893,16 @@ function selectEndpoint(ep, autoExec = true) {
     badge.innerText = 'POST';
     url.innerText = '/v1/reasoning/prove';
     desc.innerText = '🟢 Único endpoint de esta consola que llama a un backend real (src/reasoning/), no a datos de ejemplo. Motor de razonamiento derrotable tipo PROLEG (Satoh et al. 2010): reglas por defecto, excepciones y carga de la prueba. Requiere correr la API localmente — ver el aviso debajo.';
+  } else if (ep === 'corpora') {
+    badge.className = 'badge-method badge-get';
+    badge.innerText = 'GET';
+    url.innerText = '/v1/corpora';
+    desc.innerText = '🟢 Llama a un backend real (data/processed/ + reports/manifest.json), no a datos de ejemplo. Lista los 8 corpus legales reales ya extraídos (CL-CC, CO-CC, AR-CC, AR-CCYC, BR-CC, MX-CCF, MX-CDMX, PE-CC) con su recall y compuertas de calidad. Requiere correr la API localmente — ver el aviso debajo.';
+  } else if (ep === 'corpora-articles') {
+    badge.className = 'badge-method badge-get';
+    badge.innerText = 'GET';
+    url.innerText = '/v1/corpora/{corpus_id}/articles';
+    desc.innerText = '🟢 Llama a un backend real. Artículos genuinos extraídos por el pipeline desde data/processed/{corpus_id}_articles.json, paginados (limit/offset). Elegí un corpus_id y ejecutá — requiere correr la API localmente.';
   }
 
   renderParamsForm();
@@ -972,6 +1000,61 @@ function renderParamsForm() {
         <div class="param-row">
           <div class="param-label"><span>facts</span><span class="param-type">FactEntry[] · JSON</span></div>
           <textarea id="param-facts" class="form-textarea" style="font-family:var(--font-mono);font-size:12px;min-height:220px;" oninput="updateCodeSnippet()">[]</textarea>
+        </div>
+      </div>
+    `;
+  } else if (currentEndpoint === 'corpora') {
+    container.innerHTML = `
+      <div class="builder-card">
+        <h3>Conexión <span class="param-type">requiere backend local</span></h3>
+        <div class="param-row">
+          <div class="param-label"><span>API base URL</span><span class="param-type">string</span></div>
+          <input type="text" id="param-api-base" class="form-input" value="${getStoredApiBase()}" oninput="onReasoningBaseChange()" placeholder="http://127.0.0.1:8000">
+        </div>
+        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;">
+          Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita.
+        </p>
+      </div>
+      <div class="builder-card">
+        <h3>Parámetros de Consulta</h3>
+        <p style="color:var(--text-muted);font-size:13px;">Este endpoint no requiere parámetros. Ejecuta directamente para listar los 8 corpus reales con su recall y compuertas.</p>
+      </div>
+    `;
+  } else if (currentEndpoint === 'corpora-articles') {
+    container.innerHTML = `
+      <div class="builder-card">
+        <h3>Conexión <span class="param-type">requiere backend local</span></h3>
+        <div class="param-row">
+          <div class="param-label"><span>API base URL</span><span class="param-type">string</span></div>
+          <input type="text" id="param-api-base" class="form-input" value="${getStoredApiBase()}" oninput="onReasoningBaseChange()" placeholder="http://127.0.0.1:8000">
+        </div>
+        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;">
+          Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita.
+        </p>
+      </div>
+      <div class="builder-card">
+        <h3>Corpus & Paginación</h3>
+        <div class="param-row">
+          <div class="param-label"><span>corpus_id</span><span class="param-type">string · required</span></div>
+          <select id="param-corpus-id" class="form-select" onchange="updateCodeSnippet()">
+            <option value="CL-CC">CL-CC — Código Civil de Chile</option>
+            <option value="CO-CC" selected>CO-CC — Código Civil de Colombia</option>
+            <option value="AR-CC">AR-CC — Código Civil de Argentina (1869)</option>
+            <option value="AR-CCYC">AR-CCYC — Código Civil y Comercial (Argentina, 2015)</option>
+            <option value="BR-CC">BR-CC — Código Civil brasileiro</option>
+            <option value="MX-CCF">MX-CCF — Código Civil Federal de México</option>
+            <option value="MX-CDMX">MX-CDMX — Código Civil CDMX</option>
+            <option value="PE-CC">PE-CC — Código Civil de Perú</option>
+          </select>
+          <button class="btn-secondary-sm" onclick="refreshCorporaOptions()">🔄 Actualizar lista desde /v1/corpora</button>
+        </div>
+        <div class="param-row">
+          <div class="param-label"><span>limit</span><span class="param-type">int · default 50, máx 200</span></div>
+          <input type="number" id="param-articles-limit" class="form-input" value="20" min="1" max="200" oninput="updateCodeSnippet()">
+        </div>
+        <div class="param-row">
+          <div class="param-label"><span>offset</span><span class="param-type">int · default 0</span></div>
+          <input type="number" id="param-articles-offset" class="form-input" value="0" min="0" oninput="updateCodeSnippet()">
         </div>
       </div>
     `;
@@ -1112,6 +1195,44 @@ function loadReasoningCase256(withVictimario) {
   executeApiCall();
 }
 
+// ---------------------------------------------------------------------
+// Corpus Reales (real) — al igual que la sección de razonamiento, esta
+// hace fetch() de verdad contra src/api.py (/v1/corpora/*), que sirve
+// contenido genuino de data/processed/ + reports/manifest.json. Sin
+// MOCK_* acá tampoco: sin backend corriendo se muestra un error de
+// conexión explícito.
+// ---------------------------------------------------------------------
+
+function loadCorporaList() {
+  selectEndpoint('corpora');
+}
+
+function loadCorpusArticles(corpusId) {
+  selectEndpoint('corpora-articles', false);
+  const select = document.getElementById('param-corpus-id');
+  if (select) select.value = corpusId;
+  updateCodeSnippet();
+  executeApiCall();
+}
+
+async function refreshCorporaOptions() {
+  const select = document.getElementById('param-corpus-id');
+  if (!select) return;
+  const base = currentApiBase();
+  try {
+    const res = await fetch(`${base}/v1/corpora`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const current = select.value;
+    select.innerHTML = data
+      .map(c => `<option value="${c.corpus_id}">${c.corpus_id} — ${c.display_name}</option>`)
+      .join('');
+    if (data.some(c => c.corpus_id === current)) select.value = current;
+  } catch (e) {
+    alert(`No se pudo consultar /v1/corpora en ${base}.\n\n¿Está corriendo "uvicorn src.api:app --reload --port 8000"? ¿Serviste este HTML desde un origen permitido por CORS (no file://)?\n\nDetalle: ${e.message}`);
+  }
+}
+
 async function refreshRulebases() {
   const select = document.getElementById('param-rulebase');
   if (!select) return;
@@ -1245,6 +1366,34 @@ print(data["proved"])`;
 const data = await response.json();
 console.log(data.proved);`;
     }
+  } else if (currentEndpoint === 'corpora') {
+    const realBase = currentApiBase();
+    if (currentLang === 'curl') {
+      pre.innerText = `curl -X GET "${realBase}/v1/corpora"`;
+    } else if (currentLang === 'python') {
+      pre.innerText = `import requests
+response = requests.get("${realBase}/v1/corpora")
+print(response.json())`;
+    } else if (currentLang === 'javascript') {
+      pre.innerText = `const res = await fetch("${realBase}/v1/corpora");
+const data = await res.json();`;
+    }
+  } else if (currentEndpoint === 'corpora-articles') {
+    const realBase = currentApiBase();
+    const corpusId = document.getElementById('param-corpus-id') ? document.getElementById('param-corpus-id').value : 'CO-CC';
+    const limit = document.getElementById('param-articles-limit') ? document.getElementById('param-articles-limit').value : 20;
+    const offset = document.getElementById('param-articles-offset') ? document.getElementById('param-articles-offset').value : 0;
+    const path = `/v1/corpora/${corpusId}/articles?limit=${limit}&offset=${offset}`;
+    if (currentLang === 'curl') {
+      pre.innerText = `curl -X GET "${realBase}${path}"`;
+    } else if (currentLang === 'python') {
+      pre.innerText = `import requests
+response = requests.get("${realBase}${path}")
+print(response.json())`;
+    } else if (currentLang === 'javascript') {
+      pre.innerText = `const res = await fetch("${realBase}${path}");
+const data = await res.json();`;
+    }
   } else {
     const path = `/v1/behavior/${currentEndpoint}`;
     if (currentLang === 'curl') {
@@ -1334,6 +1483,57 @@ async function executeReasoningCall(start) {
   }
 }
 
+async function executeCorporaCall(start) {
+  const base = currentApiBase();
+  const modeTag = document.getElementById('res-mode-tag');
+  const statusBadge = document.getElementById('res-status-badge');
+  const timeText = document.getElementById('res-time-text');
+
+  let url;
+  if (currentEndpoint === 'corpora') {
+    url = `${base}/v1/corpora`;
+  } else {
+    const corpusId = document.getElementById('param-corpus-id') ? document.getElementById('param-corpus-id').value : 'CO-CC';
+    const limit = document.getElementById('param-articles-limit') ? document.getElementById('param-articles-limit').value : 20;
+    const offset = document.getElementById('param-articles-offset') ? document.getElementById('param-articles-offset').value : 0;
+    url = `${base}/v1/corpora/${encodeURIComponent(corpusId)}/articles?limit=${encodeURIComponent(limit)}&offset=${encodeURIComponent(offset)}`;
+  }
+
+  try {
+    const res = await fetch(url);
+    const duration = Math.round(performance.now() - start);
+    timeText.innerText = `${duration} ms`;
+
+    if (!res.ok) {
+      const errBody = await res.text();
+      lastResponseData = { __error: true, message: `HTTP ${res.status} de ${url}: ${errBody}` };
+      modeTag.className = 'error-tag';
+      modeTag.innerText = `🔴 HTTP ${res.status}`;
+      statusBadge.innerText = `${res.status}`;
+      renderResponse();
+      return;
+    }
+
+    lastResponseData = await res.json();
+    modeTag.className = 'real-tag';
+    modeTag.innerText = '🟢 Respuesta real (API local)';
+    modeTag.title = `Respuesta obtenida en vivo de ${url} — no es un dato de ejemplo.`;
+    statusBadge.innerText = `${res.status} OK`;
+    renderResponse();
+  } catch (e) {
+    const duration = Math.round(performance.now() - start);
+    timeText.innerText = `${duration} ms`;
+    lastResponseData = {
+      __error: true,
+      message: `No se pudo conectar a ${base}. ¿Corriste "uvicorn src.api:app --reload --port 8000"? ¿Serviste este HTML desde un origen permitido por CORS (no file://)? Detalle técnico: ${e.message}`
+    };
+    modeTag.className = 'error-tag';
+    modeTag.innerText = '🔴 Sin conexión';
+    statusBadge.innerText = 'ERROR';
+    renderResponse();
+  }
+}
+
 function resetResponseModeTag() {
   const modeTag = document.getElementById('res-mode-tag');
   modeTag.className = 'mock-tag';
@@ -1347,6 +1547,11 @@ async function executeApiCall() {
 
   if (currentEndpoint === 'reasoning') {
     await executeReasoningCall(start);
+    return;
+  }
+
+  if (currentEndpoint === 'corpora' || currentEndpoint === 'corpora-articles') {
+    await executeCorporaCall(start);
     return;
   }
 
@@ -1426,6 +1631,44 @@ function renderResponse() {
       <div style="font-size:11px;color:var(--text-dark-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;font-weight:700;">Traza de argumentación (${lastResponseData.trace.length} pasos)</div>
       ${renderTraceSteps(lastResponseData.trace)}
     `;
+    return;
+  }
+
+  if (currentEndpoint === 'corpora' || currentEndpoint === 'corpora-articles') {
+    if (lastResponseData && lastResponseData.__error) {
+      tree.innerHTML = `<div class="api-conn-error">⚠️ ${lastResponseData.message}</div>`;
+      return;
+    }
+
+    if (currentEndpoint === 'corpora') {
+      const corpora = Array.isArray(lastResponseData) ? lastResponseData : [];
+      tree.innerHTML = corpora.map(c => `
+        <div class="v-statement-card">
+          <div class="v-tags">
+            <span class="v-tag vt-type">${c.corpus_id}</span>
+            <span class="v-tag vt-hohfeld">${c.jurisdiction}</span>
+            <span class="v-tag ${c.recall >= 1 ? 'vt-deontic' : 'vt-dest'}">RECALL: ${(c.recall * 100).toFixed(1)}%</span>
+          </div>
+          <div class="v-text" style="font-style:normal;">${c.display_name}</div>
+          <div style="font-size:12px;color:var(--text-dark-muted);">artículos extraídos: ${c.articles_parsed} · esperados: ${c.expected_article_count}</div>
+        </div>
+      `).join('');
+    } else {
+      const data = lastResponseData || {};
+      const articles = data.articles || [];
+      tree.innerHTML = `
+        <div style="font-size:11px;color:var(--text-dark-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;font-weight:700;">${data.corpus_id} · ${data.total} artículos totales · mostrando ${articles.length} (offset ${data.offset})</div>
+        ${articles.map(a => `
+          <div class="v-statement-card">
+            <div class="v-tags">
+              <span class="v-tag vt-type">${a.uid}</span>
+              ${a.path && a.path.length ? `<span class="v-tag vt-hohfeld">${a.path.map(p => p.label || p.level_type).join(' › ')}</span>` : ''}
+            </div>
+            <div class="v-text">"${a.text_raw}${a.truncated ? '…' : ''}"</div>
+          </div>
+        `).join('')}
+      `;
+    }
     return;
   }
 

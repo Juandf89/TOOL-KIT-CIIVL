@@ -1,33 +1,37 @@
 {
-  "corpus_id": "TEST-FIXTURE",
+  "corpus_id": "PE-CC",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:16:29.101919+00:00",
-  "source_hash": "sha256:ccb4096995fda6ed7dcf9d71b9d6791beeaa3c1da44673b1c9a0dad283adf2f5",
+  "generated_at": "2026-09-11T00:48:44.785868+00:00",
+  "source_hash": "sha256:46d8ba98e1758ad50f2c1ad8dcb2bb74d8f92f0fd1ea0dc6930a36c65c412ed2",
   "segment_stats": {
-    "articles_parsed": 4,
-    "max_article_number": 4,
-    "rejected_non_monotonic": 0,
-    "furniture_lines_removed": 0,
-    "with_suffix": 0,
-    "with_editorial_notes": 0,
+    "articles_parsed": 2123,
+    "max_article_number": 2122,
+    "rejected_non_monotonic": 3,
+    "furniture_lines_removed": 312,
+    "with_suffix": 1,
+    "with_editorial_notes": 134,
     "empty_body": 0,
-    "max_depth": 1,
+    "max_depth": 5,
     "level_types": [
+      "capitulo",
+      "libro",
+      "seccion",
+      "subcapitulo",
       "titulo"
     ]
   },
   "referral_stats": {
-    "edges_total": 2,
+    "edges_total": 371,
     "edges_anaphoric": 1,
     "edges_unresolved": 0,
     "resolution_rate": 1.0,
-    "reflexive": 0
+    "reflexive": 4
   },
   "gates": [
     {
       "gate": "completitud",
       "metric": "artículos base / declarados en fuente",
-      "value": "4/4",
+      "value": "2122/2122",
       "threshold": "100%",
       "status": "PASS",
       "detail": "ausentes: 0 → []"
@@ -51,9 +55,9 @@
     {
       "gate": "integridad_grafo",
       "metric": "aristas reflexivas",
-      "value": 0,
+      "value": 4,
       "threshold": "0",
-      "status": "PASS",
+      "status": "WARN",
       "detail": ""
     },
     {
@@ -67,9 +71,9 @@
     {
       "gate": "trazabilidad",
       "metric": "url + fecha de consulta + versión",
-      "value": "ausente",
+      "value": "presente",
       "threshold": "100%",
-      "status": "FAIL",
+      "status": "PASS",
       "detail": "fuente no oficial: solo válido para run_type=dry_run"
     }
   ]

@@ -58,13 +58,15 @@ pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 ### Ejecutar el Pipeline de Segmentación
-El pipeline toma un `corpus_id` de `config/corpus_registry.yaml` como argumento obligatorio. Ninguna de las 8 fuentes reales tiene todavía su archivo crudo en `data/raw/` (ver `docs/notas_gobernanza.md`), así que el smoke test end-to-end usa el corpus sintético `TEST-FIXTURE`:
+El pipeline toma un `corpus_id` de `config/corpus_registry.yaml` como argumento obligatorio. Las 8 fuentes reales ya tienen su `raw_file` en `data/raw/` y su bloque `parsing` calibrado contra el texto real (ver `docs/notas_gobernanza.md` §0 para el recall exacto de cada una — entre 96% y 102%, salvo `AR-CCYC` al 33% por corrupción de OCR de la fuente, no por calibración):
 ```bash
-python -m src.pipeline TEST-FIXTURE
-# con una fuente real, una vez que exista su archivo en data/raw/:
 python -m src.pipeline CL-CC
+python -m src.pipeline CO-CC
+# ... o cualquiera de AR-CC, AR-CCYC, BR-CC, MX-CCF, MX-CDMX, PE-CC
+# smoke test sintético (no depende de ningún raw_file real):
+python -m src.pipeline TEST-FIXTURE
 ```
-Salida: `data/processed/<corpus_id>_{articles,referrals}.json` y `reports/<corpus_id>_run_report.json` (con el resultado de las 6 compuertas de calidad).
+Salida: `data/processed/<corpus_id>_{articles,referrals}.json` y `reports/<corpus_id>_run_report.json` (con el resultado de las 6 compuertas de calidad). `reports/manifest.json` consolida el resultado de las 8 fuentes reales de la corrida más reciente.
 
 ### Ejecutar las Sondas de Comportamiento Lógico
 ```bash

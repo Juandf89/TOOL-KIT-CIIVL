@@ -91,6 +91,106 @@ def test_monotonic_sequence_has_no_rejections():
 
 
 # ---------------------------------------------------------------------------
+# segment(): empaquetado múltiple por línea (BR-CC / MX-CDMX, ver
+# docs/notas_gobernanza.md Nota 4) — varios artículos derogados consecutivos
+# en una sola línea del raw_file, ej.
+# "Art. 789. (Revogado...) Art. 790. (Revogado...) Art. 791. (Revogado...)".
+# ---------------------------------------------------------------------------
+
+def _br_cc_cfg(expected: int = 3) -> dict:
+    return {
+        "jurisdiction": "BR",
+        "code_id": "CC",
+        "year_tag": "2002",
+        "parsing": {
+            "article_pattern": (
+                r"(?i)^\|?\s*Art\.?\s*(?P<num>\d{1,3}(?:\.\d{3})?)\s*[ºo°]?\.?\s*"
+                r"(?:-\s*(?P<suffix>[A-Z]))?\.?\s*"
+            ),
+            "levels": [],
+        },
+        "expected_article_count": expected,
+        "source": {"official": True},
+    }
+
+
+def test_packed_line_with_three_articles_is_split_into_three():
+    lines = [
+        "Art. 789. <u>(Revogado pela Lei) Vigência</u> "
+        "Art. 790. <u>(Revogado pela Lei) Vigência</u> "
+        "Art. 791. <u>(Revogado pela Lei) Vigência</u>",
+    ]
+    c = Corpus("X", _br_cc_cfg(expected=3), lines)
+    articles, stats = segment(c)
+
+    assert [a.number for a in articles] == [789, 790, 791]
+    assert stats["articles_parsed"] == 3
+    # cada artículo se queda con su propia anotación, no con la de sus vecinos
+    for a in articles:
+        assert a.text_raw.count("Revogado") == 1
+    assert stats["empty_body"] == 0
+
+
+def test_packed_line_preserves_tail_as_body_of_last_match():
+    lines = [
+        "Art. 1. <u>(Revogado)</u> Art. 2. <u>(Revogado)</u> Art. 3. Texto final del último.",
+    ]
+    c = Corpus("X", _br_cc_cfg(expected=3), lines)
+    articles, stats = segment(c)
+
+    assert [a.number for a in articles] == [1, 2, 3]
+    assert "Texto final del último" in articles[-1].text_raw
+    assert "Revogado" not in articles[-1].text_raw
+
+
+def test_packed_line_does_not_split_on_inline_article_citation():
+    # "el art. 29" aparece a mitad de frase, sin cierre de cláusula (.)>;:])
+    # justo antes: no debe tratarse como un artículo nuevo empaquetado.
+    lines = [
+        "Art. 33. O descendente conforme o disposto no art. 29, de acordo com o representante.",
+    ]
+    c = Corpus("X", _br_cc_cfg(expected=1), lines)
+    articles, stats = segment(c)
+
+    assert [a.number for a in articles] == [33]
+    assert stats["articles_parsed"] == 1
+    assert "art. 29" in articles[0].text_raw
+
+
+def test_packed_line_with_leading_optional_group_does_not_swallow_previous_marker():
+    # Variante estilo MX-CDMX: article_pattern admite un grupo opcional de
+    # paréntesis ANTES de la palabra clave ("(ADICIONADO...) ARTICULO 323").
+    # El "(DEROGADO...)" que cierra un artículo empaquetado no debe colarse
+    # como si fuera ese prefijo opcional del artículo siguiente.
+    cfg = {
+        "jurisdiction": "MX",
+        "code_id": "CCDMX",
+        "year_tag": "1928",
+        "parsing": {
+            "article_pattern": (
+                r"(?i)^(?:\([^)]*\)\s*){0,3}ARTICULO\s*(?P<num>\d+)\s*[°º]?\s*"
+                r"(?:-\s*(?P<suffix>[A-Z]|bis|ter))?[.\-\s]*"
+            ),
+            "levels": [],
+        },
+        "expected_article_count": 3,
+        "source": {"official": True},
+    }
+    lines = [
+        "ARTICULO 71.- (DEROGADO, G.O. 25 DE MAYO DE 2000) "
+        "ARTICULO 72.- (DEROGADO, G.O. 25 DE MAYO DE 2000) "
+        "ARTICULO 73.- (DEROGADO, G.O. 25 DE MAYO DE 2000)",
+    ]
+    c = Corpus("X", cfg, lines)
+    articles, stats = segment(c)
+
+    assert [a.number for a in articles] == [71, 72, 73]
+    assert stats["empty_body"] == 0
+    for a in articles:
+        assert "DEROGADO" in a.text_raw
+
+
+# ---------------------------------------------------------------------------
 # referrals(): numérica, anafórica y reflexiva
 # ---------------------------------------------------------------------------
 

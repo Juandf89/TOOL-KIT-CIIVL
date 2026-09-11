@@ -1,9 +1,79 @@
 {
-  "manifest_id": "ef5830aeeff0d456",
-  "run_type": "dry_run",
+  "manifest_id": "8corpus-real-2026-09-10",
+  "run_type": "real_run",
   "pipeline_version": "pipeline_v0.2",
   "schema_version": "n3_v1.1",
-  "generated_at": "2026-09-08T20:08:53+00:00",
-  "total_articles_evaluated": 21957,
-  "_governance_note": "DISCREPANCIA DE ALCANCE NO RECONCILIADA (2026-09-10, latio-implementador-datos): docs/informe_hito1.md declara que esta corrida en seco cubrió únicamente Chile y Colombia (CL-CC + CO-CC, ~5208 artículos declarados en config/corpus_registry.yaml), pero total_articles_evaluated=21957 aquí es consistente en cambio con la suma de las 8 fuentes del registro (~22246 artículos declarados). No se resuelve cuál de los dos documentos es correcto: no hay corpus_id, source_hash ni gates() registrados en este manifiesto que permitan verificarlo, y config/corpus_registry.yaml no tenía la clave `parsing` que src/pipeline.py exige (KeyError inmediato), por lo que el pipeline no podía producir esta cifra con el código tal como estaba al momento de generated_at. Este manifiesto no es reproducible por el código actual y su origen exacto no pudo verificarse desde el repositorio. Ver docs/notas_gobernanza.md, la nota agregada en docs/informe_hito1.md, y el hallazgo C-4 de reports/debate_revision_2026-09-10.md."
+  "generated_at": "2026-09-10T23:30:00+00:00",
+  "total_articles_evaluated": 22110,
+  "corpora": [
+    {
+      "corpus_id": "CL-CC",
+      "source_hash": "sha256:813188f15a847597292b469b6b6150ea5d322ea911ec93f38e91a5a0b956a3fb",
+      "articles_parsed": 2567,
+      "expected_article_count": 2524,
+      "recall": 1.017,
+      "gates": {"completitud": "PASS", "unicidad": "PASS", "consistencia_N4": "PASS", "integridad_grafo": "WARN", "cuerpo_no_vacio": "PASS", "trazabilidad": "PASS"}
+    },
+    {
+      "corpus_id": "CO-CC",
+      "source_hash": "sha256:35f5ad17c04e79d95539495802fb1519e1d7ea7777d4e4e24a1bf7283784cec1",
+      "articles_parsed": 2672,
+      "expected_article_count": 2684,
+      "recall": 0.9955,
+      "gates": {"completitud": "FAIL", "unicidad": "PASS", "consistencia_N4": "PASS", "integridad_grafo": "WARN", "cuerpo_no_vacio": "PASS", "trazabilidad": "PASS"}
+    },
+    {
+      "corpus_id": "AR-CC",
+      "source_hash": "sha256:a3f5931c7f5ba24d25eb04e6d901a052b760b61b434c2bcea022682610b60862",
+      "articles_parsed": 3989,
+      "expected_article_count": 4051,
+      "recall": 0.9847,
+      "gates": {"completitud": "FAIL", "unicidad": "PASS", "consistencia_N4": "PASS", "integridad_grafo": "PASS", "cuerpo_no_vacio": "PASS", "trazabilidad": "PASS"}
+    },
+    {
+      "corpus_id": "AR-CCYC",
+      "source_hash": "sha256:c00957ab1d71aeda65e396a8df13b626e8333cd374856b66afd87dc4985c513b",
+      "articles_parsed": 2674,
+      "expected_article_count": 2671,
+      "recall": 1.0011,
+      "gates": {"completitud": "PASS", "unicidad": "PASS", "consistencia_N4": "PASS", "integridad_grafo": "PASS", "cuerpo_no_vacio": "PASS", "trazabilidad": "PASS"},
+      "note": "Recall bajo (32.7%) hasta 2026-09-10: el raw_file original tenía corrupción de OCR distribuida en todo el documento. Reemplazado por el texto oficial de InfoLeg (HTML limpio, sin OCR) — ver config/corpus_registry.yaml bloque AR-CCYC y docs/notas_gobernanza.md §0. Único corpus de los 8 con las 6 compuertas en PASS."
+    },
+    {
+      "corpus_id": "BR-CC",
+      "source_hash": "sha256:fd78dcc59774b2b6b1b1cd5d02ade80f70073af390793c46ad269e24417d577b",
+      "articles_parsed": 2067,
+      "expected_article_count": 2046,
+      "recall": 1.0103,
+      "gates": {"completitud": "FAIL", "unicidad": "PASS", "consistencia_N4": "FAIL", "integridad_grafo": "PASS", "cuerpo_no_vacio": "PASS", "trazabilidad": "PASS"},
+      "note": "articles_parsed subió de 2058 a 2067 (+9) tras el fix de empaquetado múltiple por línea en segment() (2026-09-10, ver docs/notas_gobernanza.md Nota 4). Recupera el grupo Art. 779-788 (línea sin encabezado colgando delante); el grupo Art. 789-802 sigue sin recuperarse porque esa línea empieza con un encabezado de nivel a mitad de línea (\"Seção III Do Seguro de Pessoa Art. 789...\"), fuera de alcance de este fix. source_hash sin cambios (no se tocó el raw_file)."
+    },
+    {
+      "corpus_id": "MX-CCF",
+      "source_hash": "sha256:82f5f31649c5739eb732c8328306f2019f3613e29aedc0c0010b3b58670ab210",
+      "articles_parsed": 2956,
+      "expected_article_count": 3074,
+      "recall": 0.9616,
+      "gates": {"completitud": "FAIL", "unicidad": "PASS", "consistencia_N4": "PASS", "integridad_grafo": "WARN", "cuerpo_no_vacio": "PASS", "trazabilidad": "PASS"},
+      "note": "articles_parsed subió de 2955 a 2956 (+1) tras el fix de empaquetado múltiple por línea en segment() (2026-09-10). MX-CCF no estaba documentado con este límite en la calibración original, pero comparte el mismo article_pattern estilo ARTICULO con MX-CDMX y tenía al menos un caso residual del mismo patrón. source_hash sin cambios."
+    },
+    {
+      "corpus_id": "MX-CDMX",
+      "source_hash": "sha256:554e54ced4e0025a59228f97a68d4c91cd857e3152f3ab237e5d8b370d62b28b",
+      "articles_parsed": 3062,
+      "expected_article_count": 3074,
+      "recall": 0.9961,
+      "gates": {"completitud": "FAIL", "unicidad": "PASS", "consistencia_N4": "FAIL", "integridad_grafo": "WARN", "cuerpo_no_vacio": "PASS", "trazabilidad": "PASS"},
+      "note": "articles_parsed subió de 2993 a 3062 (+69) tras el fix de empaquetado múltiple por línea en segment() (2026-09-10, ver docs/notas_gobernanza.md Nota 4): recall pasa de 97.4% a 99.6%, el mayor salto de los 8 corpus. `completitud` queda en FAIL con solo 12 huecos residuales (antes ~81), documentados con evidencia en config/corpus_registry.yaml bloque MX-CDMX. source_hash sin cambios (no se tocó el raw_file)."
+    },
+    {
+      "corpus_id": "PE-CC",
+      "source_hash": "sha256:46d8ba98e1758ad50f2c1ad8dcb2bb74d8f92f0fd1ea0dc6930a36c65c412ed2",
+      "articles_parsed": 2123,
+      "expected_article_count": 2122,
+      "recall": 1.0005,
+      "gates": {"completitud": "PASS", "unicidad": "PASS", "consistencia_N4": "PASS", "integridad_grafo": "WARN", "cuerpo_no_vacio": "PASS", "trazabilidad": "PASS"}
+    }
+  ],
+  "_governance_note": "Primera corrida real del pipeline sobre los 8 corpus (2026-09-10). Reemplaza el manifiesto anterior (dry_run, total_articles_evaluated=21957), que quedó documentado como irreproducible y sin corpus_id/source_hash/gates verificables — ver docs/notas_gobernanza.md para el historial completo de esa discrepancia y cómo se cerró. Cada fila de `corpora` es reproducible ejecutando `python -m src.pipeline <corpus_id>` contra el `raw_file` correspondiente (config/corpus_registry.yaml) y comparando `source_hash` y `articles_parsed` contra `reports/<corpus_id>_run_report.json`. `completitud` en FAIL no significa error de calibración: en la mayoría de los casos son huecos de numeración reales del texto fuente (documentados con evidencia en el bloque `parsing` de cada corpus_id en config/corpus_registry.yaml). AR-CCYC, que hasta la corrida original era la excepción con recall bajo por OCR corrupto, se resolvió reemplazando su raw_file por el texto oficial de InfoLeg (HTML limpio, sin OCR) — sigue siendo el único corpus con las 6 compuertas en PASS. Actualización (2026-09-10, más tarde el mismo día): se corrigió el límite de empaquetado múltiple por línea en `segment()` (src/pipeline.py) — antes reconocía como máximo un artículo por línea (`re.match`, no múltiples matches); ahora reintenta `article_pattern` dentro de la misma línea, cerrando el artículo anterior y abriendo uno nuevo por cada match adicional, con una guarda para no confundir remisiones inline (\"...según el art. 29...\") con artículos nuevos. Se corrieron de nuevo los 8 corpus: BR-CC (+9, 2058→2067), MX-CDMX (+69, 2993→3062, recall 97.4%→99.6%) y MX-CCF (+1, 2955→2956) mejoraron; los otros 5 corpus quedaron sin cambios (CL-CC, CO-CC, AR-CC, AR-CCYC, PE-CC), confirmando que el fix no introdujo regresiones. `source_hash` no cambió para ningún corpus (no se tocaron los raw_file). El residual de MX-CDMX/BR-CC que sigue en FAIL es, ahora sí, mayormente huecos de numeración reales o encabezados de nivel a mitad de línea (fuera de alcance) — ver docs/notas_gobernanza.md Nota 4 para el detalle y el `note` de cada corpus_id arriba. Se corrigió además `type: livro` → `type: libro` en el bloque BR-CC de config/corpus_registry.yaml (normalización, no afecta `articles_parsed` ni `source_hash`) — ver el comentario en ese bloque."
 }

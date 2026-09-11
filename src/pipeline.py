@@ -80,9 +80,49 @@ class Article:
     editorial_notes: list[str] = field(default_factory=list)
     qa_flags: list[str] = field(default_factory=list)
 
+BOUNDARY_CHARS = ".)>;:]"
+
+def _find_next_article_boundary(text: str, unanchored_re: re.Pattern) -> int | None:
+    """Busca, dentro de `text`, la próxima posición donde vuelve a matchear
+    `article_pattern` (empaquetado múltiple por línea — ver docs/notas_gobernanza.md
+    Nota 4: BR-CC/MX-CDMX empaquetan varios artículos derogados consecutivos en una
+    sola línea del `raw_file`, ej. "Art. 789. (Revogado...) Art. 790. (Revogado...)").
+
+    `unanchored_re` es el mismo `article_pattern` sin el `^` inicial. No se usa
+    con `finditer` directamente: varios `article_pattern` del registro (p. ej.
+    MX-CDMX) permiten un grupo opcional de paréntesis ANTES de la palabra clave
+    ("(ADICIONADO...) ARTICULO 323..."), y `finditer` tomaría avariciosamente
+    el "(DEROGADO...)" que en realidad cierra el artículo ANTERIOR como si
+    fuera ese prefijo opcional del siguiente, perdiéndolo. En vez de eso, se
+    escanea `text` buscando un carácter de cierre de cláusula (`.)>;:]`,
+    típico de "</u>" o "(DEROGADO...)" justo antes del siguiente artículo) y
+    se exige que el patrón matchee EXACTAMENTE en la posición inmediatamente
+    posterior (sin espacios) — así el "(DEROGADO...)" que cierra el artículo
+    anterior nunca puede colarse como prefijo del siguiente. Se descarta
+    cualquier candidato sin ese cierre previo (típicamente una remisión
+    inline, ej. "...según lo dispuesto en el art. 29, de acuerdo con...",
+    que también matchea el patrón laxo de `article_pattern` pero no debe
+    tratarse como un artículo nuevo)."""
+    for k, ch in enumerate(text):
+        if ch not in BOUNDARY_CHARS:
+            continue
+        j = k + 1
+        while j < len(text) and text[j] in " \t":
+            j += 1
+        if j < len(text) and unanchored_re.match(text, j):
+            return j
+    return None
+
 def segment(c: Corpus) -> tuple[list[Article], dict]:
     p = c.cfg["parsing"]
     art_re = re.compile(p["article_pattern"])
+    # Copia sin el `^` inicial de article_pattern, usada solo para localizar
+    # (no para parsear) posibles artículos adicionales empaquetados más
+    # adelante en la misma línea — ver _find_next_article_boundary(). Todos
+    # los article_pattern del registro llevan el ancla como único `^` literal
+    # (justo tras el flag inline `(?i)` cuando existe), así que quitar la
+    # primera ocurrencia es seguro.
+    art_re_unanchored = re.compile(p["article_pattern"].replace("^", "", 1))
     final_re = re.compile(p["final_article_pattern"]) if p.get("final_article_pattern") else None
     levels = [(l["type"], re.compile(l["pattern"])) for l in p["levels"]]
     superseded = [re.compile(x) for x in p.get("superseded_block_markers", [])]
@@ -152,31 +192,77 @@ def segment(c: Corpus) -> tuple[list[Article], dict]:
         m = art_re.match(s)
         is_final = bool(final_re and final_re.match(s))
         if m or is_final:
-            if is_final:
-                num, suffix = last_num + 1, "FINAL"
-            else:
-                num = int(m.group("num"))
-                suffix = (m.groupdict().get("suffix") or "").strip(".oº° ").upper() or None
-                key = (num, suffix or "")
-                backward = num < last_num or (num == last_num and (key in seen_suffix or suffix is None))
-                if backward:
-                    rejected_non_monotonic += 1
-                    if last_num - num > INTERPOLATION_JUMP:
-                        in_superseded = True
-                    elif cur is not None:
-                        buf.append(s)
-                    continue
-                seen_suffix.add(key)
-            close()
-            in_superseded = False
-            uid = f"{c.cfg['jurisdiction']}-{c.cfg['code_id']}-{c.cfg['year_tag']}-ART-{num}"
-            if suffix:
-                uid += f"-{suffix}"
-            cur = Article(uid, num, suffix, [dict(n) for n in path], len(articles), "")
-            rest = s[m.end():].strip() if m else ""
-            if rest:
-                buf.append(rest)
-            last_num = max(last_num, num)
+            # remaining/cur_match/cur_is_final recorren, dentro de esta misma
+            # línea, todos los artículos que puedan estar empaquetados uno
+            # tras otro (ver _find_next_article_boundary): se cierra el
+            # artículo anterior y se abre uno nuevo por cada match adicional
+            # encontrado, en vez de reconocer como máximo uno por línea.
+            remaining = s
+            cur_match = m
+            cur_is_final = is_final
+            while True:
+                if cur_is_final:
+                    num, suffix = last_num + 1, "FINAL"
+                    match_end = final_re.match(remaining).end()
+                else:
+                    # .replace(".", "") tolera el separador de miles con punto que
+                    # usa BR-CC desde el Art. 1.000 en adelante ("Art. 1.992" ->
+                    # num="1.992"); no-op para el resto de los corpus, cuyo grupo
+                    # `num` nunca captura un punto literal.
+                    num = int(cur_match.group("num").replace(".", ""))
+                    suffix = (cur_match.groupdict().get("suffix") or "").strip(".oº° ").upper() or None
+                    key = (num, suffix or "")
+                    backward = num < last_num or (num == last_num and (key in seen_suffix or suffix is None))
+                    if backward:
+                        rejected_non_monotonic += 1
+                        if last_num - num > INTERPOLATION_JUMP:
+                            in_superseded = True
+                        elif cur is not None:
+                            # `remaining` (no `s`): en la primera vuelta del
+                            # while son la misma cadena, pero si el backward
+                            # jump ocurre en un match empaquetado posterior
+                            # dentro de la línea, solo se funde el tramo aún
+                            # no consumido — el resto ya se cerró como
+                            # artículo(s) previo(s).
+                            buf.append(remaining)
+                        break
+                    seen_suffix.add(key)
+                    match_end = cur_match.end()
+                close()
+                in_superseded = False
+                uid = f"{c.cfg['jurisdiction']}-{c.cfg['code_id']}-{c.cfg['year_tag']}-ART-{num}"
+                if suffix:
+                    uid += f"-{suffix}"
+                cur = Article(uid, num, suffix, [dict(n) for n in path], len(articles), "")
+                last_num = max(last_num, num)
+
+                tail = remaining[match_end:]
+                if cur_is_final:
+                    # El marcador de artículo final no se reintenta dentro de
+                    # la misma línea: lo que quede es cuerpo del artículo final.
+                    tail = tail.strip()
+                    if tail:
+                        buf.append(tail)
+                    break
+
+                boundary = _find_next_article_boundary(tail, art_re_unanchored)
+                if boundary is None:
+                    tail = tail.strip()
+                    if tail:
+                        buf.append(tail)
+                    break
+                body = tail[:boundary].strip()
+                if body:
+                    buf.append(body)
+                remaining = tail[boundary:]
+                cur_match = art_re.match(remaining)
+                cur_is_final = False
+                if cur_match is None:
+                    # No debería ocurrir (boundary vino de un match del mismo
+                    # patrón sin anclar), pero por seguridad no se cicla: el
+                    # resto se funde como cuerpo del artículo recién abierto.
+                    buf.append(remaining)
+                    break
             continue
 
         if not in_superseded and cur is not None:

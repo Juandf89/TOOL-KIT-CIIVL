@@ -1,0 +1,20 @@
+# Uso local: `docker compose up --build` desde la raíz del repo, luego
+# `curl http://localhost:8000/health`. No pensado para producción tal cual
+# (ver DEPLOYMENT.md) — es para verificar la imagen antes de subirla a
+# donde sea que se despliegue.
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Sin esto, la API usa el default de desarrollo (datalexlab.com +
+      # localhost:5500/8080) — suficiente para probar localmente contra el
+      # explorador servido con `python -m http.server 5500` en toolkit-api/.
+      - LATIO_ALLOWED_ORIGINS=
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3

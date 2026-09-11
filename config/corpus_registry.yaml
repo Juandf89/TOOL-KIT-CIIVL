@@ -41,6 +41,56 @@
 # no puede verificarse cuál de los dos es correcto sin volver a correr el
 # pipeline real contra las 8 fuentes.
 # ---------------------------------------------------------------------------
+#
+# ---------------------------------------------------------------------------
+# ANCHOR COMPARTIDO DESACOPLADO (latio-implementador-datos-CL-CC, 2026-09-10)
+# ---------------------------------------------------------------------------
+# El bloque `parsing` de CL-CC originalmente DEFINÍA el anchor YAML
+# `&parsing_generic_es_scaffold`, reutilizado por alias (`*parsing_generic_es_scaffold`)
+# en AR-CC, AR-CCYC, MX-CCF, MX-CDMX y PE-CC. Calibrar el contenido de ese
+# anchor directamente dentro del bloque CL-CC habría cambiado también, en
+# cascada, el parsing EFECTIVO de esas otras 5 fuentes — que otros agentes
+# están calibrando en paralelo contra sus propios raw_file en esta misma
+# ronda, sin tocar ninguna línea de sus bloques. Para evitar esa colisión, el
+# anchor se movió a este nodo de nivel superior, fuera del árbol de cualquier
+# corpus_id real: `load_registry()`/`run_corpus()` en src/pipeline.py indexan
+# siempre por `registry[corpus_id]` exacto (ver src/pipeline.py líneas
+# 53-54, 275-278), así que un nodo extra aquí no afecta a
+# `python -m src.pipeline <ID>` para ningún corpus, incluido este mismo.
+# El CONTENIDO de este nodo es una copia idéntica y SIN CAMBIOS del scaffold
+# original — sigue sin calibrar, tal como estaba, a la espera de que cada
+# agente responsable calibre su propio bloque (AR-CC/AR-CCYC/MX-CCF/MX-CDMX/
+# PE-CC pueden seguir usando este alias mientras no lo calibren, o
+# reemplazarlo por un mapping literal propio, igual que se hizo abajo con
+# CL-CC). El bloque `CL-CC.parsing` ya NO usa este anchor: es un mapping
+# literal, calibrado de forma independiente contra el texto real de
+# Código_Civil_Chileno.MD (ver comentario dentro del bloque CL-CC).
+_SHARED_SCAFFOLD_generic_es_SIN_CALIBRAR: &parsing_generic_es_scaffold
+  article_pattern: '(?i)^Art[íi]culo\s+(?P<num>\d+)\s*(?P<suffix>bis|ter|quater|quinquies|[A-Z]|[°ºª])?\.?\s*[-–—]?\s*'
+  final_article_pattern: '(?i)^Art[íi]culo\s+[Ff]inal\b'
+  levels:
+    - type: parte
+      pattern: '(?i)^PARTE\s+(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b'
+    - type: libro
+      pattern: '(?i)^LIBRO\s+(?P<ord>[IVXLCDM]+|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b'
+    - type: titulo
+      pattern: '(?i)^T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|PRELIMINAR)\b'
+    - type: capitulo
+      pattern: '(?i)^CAP[ÍI]TULO\s+(?P<ord>[IVXLCDM]+)\b'
+    - type: seccion
+      pattern: '(?i)^SECCI[ÓO]N\s+(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA)\b'
+    - type: parrafo
+      pattern: '(?i)^P[ÁA]RRAFO\s+(?P<ord>[IVXLCDM]+|\d+)\b'
+  superseded_block_markers:
+    - '(?i)^\(derogad[oa]'
+  editorial_markers:
+    - '(?i)\(modificad[oa]\s+por[^)]*\)'
+    - '(?i)\(adicionad[oa]\s+por[^)]*\)'
+    - '(?i)\(nota\s+de\s+vigencia[^)]*\)'
+  page_furniture:
+    - '^\d{1,4}$'
+    - '(?i)^p[áa]gina\s+\d+'
+# ---------------------------------------------------------------------------
 
 CL-CC:
   jurisdiction: CL
@@ -57,38 +107,122 @@ CL-CC:
     verified_by: Juan Pablo López Mejía
     license: "dominio público — texto oficial, sin restricción de uso conocida"
     retrieved_at: null  # TODO: requiere que el autor confirme la fecha real de captura
-  # --- SCAFFOLD de parsing, sin calibrar contra el texto fuente real (ver nota de cabecera) ---
-  parsing: &parsing_generic_es_scaffold
-    article_pattern: '(?i)^Art[íi]culo\s+(?P<num>\d+)\s*(?P<suffix>bis|ter|quater|quinquies|[A-Z]|[°ºª])?\.?\s*[-–—]?\s*'
+  # --- CALIBRADO contra Código_Civil_Chileno.MD real (latio-implementador-datos-CL-CC, 2026-09-10) ---
+  # Verificado línea por línea con grep/regex directamente contra el raw_file
+  # (12829 líneas). Ya NO usa el anchor compartido `&parsing_generic_es_scaffold`
+  # (ver nodo "_SHARED_SCAFFOLD_generic_es_SIN_CALIBRAR" arriba, antes de este
+  # bloque, y su comentario "ANCHOR COMPARTIDO DESACOPLADO"): este mapping es
+  # literal y propio de CL-CC, para no afectar en cascada a AR-CC/AR-CCYC/
+  # MX-CCF/MX-CDMX/PE-CC, que siguen (o dejan de seguir) ese alias por decisión
+  # de sus propios agentes.
+  #
+  # Hallazgos de la verificación:
+  #  - Encabezado de artículo real: "Artículo N. " — SIN prefijo Markdown "#"
+  #    (0 líneas "#...Artículo" en todo el archivo, a diferencia de CO-CC) y
+  #    SIN sufijo ordinal "o."/"º" pegado al número (0 casos: "8o.", "1º" NO
+  #    aparecen nunca como parte del número de artículo). Dos variantes reales
+  #    que el scaffold original no cubría:
+  #     (a) numeración compuesta con guion, de artículos insertados por leyes
+  #         de reforma (filiación, sociedad conyugal, cuidado personal, etc.):
+  #         "Artículo 225-2.", "Artículo 229-2.", "Artículo 548-1." a "-4.",
+  #         "Artículo 551-1./-2.", "Artículo 557-1." a "-3.", y "Artículo
+  #         1792-1." a "1792-27." (con un caso atípico de espacio real en el
+  #         propio archivo: "Artículo 1792- 5.", que el regex de abajo también
+  #         cubre con `[\s-]+`) — 37 artículos con este formato.
+  #     (b) sufijo "BIS"/"TER" pospuesto con espacio (no con guion ni pegado
+  #         al número): "Artículo 58 BIS.", "Artículo 58 TER." — 4 artículos.
+  #    El artículo final usa "Artículo FINAL." y ya lo cubría
+  #    final_article_pattern sin cambios.
+  #    Total real de encabezados "Artículo ..." en el archivo: 2567 (2566
+  #    numéricos/guion/BIS/TER + 1 "FINAL") contra expected_article_count:
+  #    2524. La diferencia (+43) es esperable, no un sobre-conteo: 2524 es el
+  #    número del último artículo de la numeración original de 1857 (ver
+  #    "Artículo 2524." seguido de "Título Final" / "Artículo FINAL." al
+  #    cierre del archivo), pero leyes posteriores insertaron artículos con
+  #    numeración "-N"/BIS/TER que se suman a esa numeración sin reemplazarla
+  #    (p.ej. los 27 artículos "1792-N" de la Ley 19.335 sobre participación
+  #    en los gananciales). No se fuerza el número a 2524: el recall real
+  #    esperado tras esta calibración es >100% de expected_article_count por
+  #    esta razón estructural, verificable en reports/CL-CC_run_report.json.
+  #  - Jerarquía real (LIBRO > Título > § — SIN CAPÍTULO/SECCIÓN/PARTE en todo
+  #    el archivo: 0 casos de los tres):
+  #     * "LIBRO PRIMERO"/"SEGUNDO"/"TERCERO"/"CUARTO" — 4 casos, cubierto sin
+  #       cambios por el patrón heredado del scaffold.
+  #     * "Título <romano>" — 98 casos, en minúscula-mixta ("Título I", no
+  #       "TÍTULO I"), MÁS dos excepciones atípicas de OCR/edición en mayúscula
+  #       completa y sin tilde: "TITULO PRELIMINAR" (línea 3) y "TITULO VIII"
+  #       (línea 958). El patrón de abajo cubre ambas formas gracias a (?i)
+  #       sobre la clase de caracteres [ÍI], verificado con Python re. También
+  #       existe "Título Final" al cierre del documento (añadido "FINAL" al
+  #       grupo `ord`, que el scaffold original no contemplaba).
+  #     * "§ N. <texto>" — 155 casos, símbolo de párrafo + número arábigo. LA
+  #       PALABRA "PARRAFO"/"PÁRRAFO" NO APARECE NUNCA en el archivo (0 casos):
+  #       se reemplazó por completo el patrón heredado (que buscaba
+  #       "PÁRRAFO N") por uno que matchea el símbolo "§" real.
+  #    Se eliminaron del scaffold los niveles "parte", "capitulo" y "seccion"
+  #    por no tener ningún caso real en este archivo (mantenerlos no rompía
+  #    nada, pero era ruido no verificado — un nivel jerárquico que nunca
+  #    matchea no debe quedar documentado como si existiera en esta fuente).
+  #  - Furniture de página: NO se encontró ningún patrón repetido de furniture
+  #    en este archivo — 0 líneas en negrita-cursiva Markdown (a diferencia
+  #    del "**_Ley 57 de 1887_**" de CO-CC), 0 líneas de solo dígitos (no hay
+  #    numeración de página como línea propia), 0 encabezados/pies de página
+  #    reconocibles. Las 3 apariciones de "página" en el archivo son texto
+  #    sustantivo de los artículos sobre testamentos militares/marítimos
+  #    (rúbrica "al principio y fin de cada página"), no furniture. Se deja
+  #    page_furniture vacío en vez de mantener patrones del scaffold que nunca
+  #    matchearían nada real en esta fuente (honestidad de calibración >
+  #    mantener ruido heredado).
+  #  - Notas editoriales inline: NO hay marcadores parentéticos tipo
+  #    "(modificado por...)" ni líneas "NOTA:" (0 casos de ambos formatos que
+  #    sí usa CO-CC). Lo que sí existe, verificado, son citas legislativas
+  #    sueltas SIN paréntesis, tanto intercaladas en el cuerpo de artículos
+  #    vigentes como formando el cuerpo completo de artículos derogados
+  #    (p.ej. "Artículo 29." con cuerpo íntegro "Derogado. L. 19.585"; 130
+  #    líneas del archivo contienen la palabra "Derogado", 39 de ellas citan
+  #    exactamente "L. 19.585"). Estos artículos derogados SÍ cuentan dentro
+  #    de expected_article_count: siguen siendo encabezados de artículo
+  #    numerados secuencialmente, no un bloque a descartar. Por eso
+  #    superseded_block_markers queda vacío (lista []) en vez de heredar el
+  #    patrón del scaffold original ("^\(derogad[oa]", que en este archivo no
+  #    matchea nunca — 0 casos de "(Derogado" con paréntesis — así que no
+  #    hacía daño, pero tampoco hacía nada real): usarlo como plantilla para
+  #    detectar "Derogado" a secas (sin paréntesis) habría sido un error real,
+  #    porque el pipeline salta por completo las líneas marcadas como
+  #    "superseded" (ver segment() en src/pipeline.py, rama `in_superseded`),
+  #    lo que habría vaciado el cuerpo de decenas de artículos derogados
+  #    legítimos y los habría marcado incorrectamente como "empty_body". En su
+  #    lugar, esas citas de ley sueltas se capturan como editorial_markers
+  #    (abajo) para extraerlas a editorial_notes sin destruir el resto del
+  #    cuerpo del artículo.
+  parsing:
+    article_pattern: '(?i)^Art[íi]culo\s+(?P<num>\d+)(?:[\s-]+(?P<suffix>\d+|BIS|TER|QUATER|QUINQUIES))?\.?\s*'
     final_article_pattern: '(?i)^Art[íi]culo\s+[Ff]inal\b'
     levels:
-      - type: parte
-        pattern: '(?i)^PARTE\s+(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b'
       - type: libro
         pattern: '(?i)^LIBRO\s+(?P<ord>[IVXLCDM]+|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b'
       - type: titulo
-        pattern: '(?i)^T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|PRELIMINAR)\b'
-      - type: capitulo
-        pattern: '(?i)^CAP[ÍI]TULO\s+(?P<ord>[IVXLCDM]+)\b'
-      - type: seccion
-        pattern: '(?i)^SECCI[ÓO]N\s+(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA)\b'
+        pattern: '(?i)^T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|PRELIMINAR|FINAL)\b'
       - type: parrafo
-        pattern: '(?i)^P[ÁA]RRAFO\s+(?P<ord>[IVXLCDM]+|\d+)\b'
-    superseded_block_markers:
-      - '(?i)^\(derogad[oa]'
+        pattern: '^§\s*(?P<ord>\d+)\.?'
+    superseded_block_markers: []
     editorial_markers:
-      - '(?i)\(modificad[oa]\s+por[^)]*\)'
-      - '(?i)\(adicionad[oa]\s+por[^)]*\)'
-      - '(?i)\(nota\s+de\s+vigencia[^)]*\)'
-    page_furniture:
-      - '^\d{1,4}$'
-      - '(?i)^p[áa]gina\s+\d+'
-    # TODO: calibrar (o descartar) estos patrones contra Código_Civil_Chileno.MD real
-    # antes de confiar en segment()/gates() para esta fuente. Nota: roman_to_int()
-    # en pipeline.py solo resuelve ordinales masculinos (WORD_ORD: PRIMERO..QUINTO);
-    # los ordinales femeninos capturados arriba (PRIMERA, SEGUNDA...) quedarán con
-    # ordinal_int=None — limitación conocida del scaffold, no corregida aquí porque
-    # pipeline.py es propiedad de otro agente en esta ronda.
+      - '(?i)\bL\.\s*\d[\d.]*\s*(,?\s*Art\.\s*\d+[ºo°]?)?'
+      - '(?i)\bD\.F\.L\.\s*N[ºo°]?\s*[\d.,]+'
+      - '(?i)\bL\.\s+de\s+Matrimonio\b'
+    page_furniture: []
+    # Pendiente (no bloqueante para expected_article_count): roman_to_int() en
+    # src/pipeline.py solo resuelve ordinales masculinos (WORD_ORD:
+    # PRIMERO..QUINTO) — como los 4 "LIBRO" de este archivo usan justamente
+    # esa forma masculina, ordinal_int sí resuelve bien para "libro" aquí; no
+    # aplica a "titulo" (usa números romanos) ni a "parrafo" (usa dígitos
+    # arábigos vía roman_to_int, que devolverá None para "1","2"... porque
+    # espera números romanos, no arábigos — limitación conocida y compartida
+    # del pipeline, no de este bloque; no se corrige aquí porque
+    # src/pipeline.py es propiedad de otro agente en esta ronda). La compuerta
+    # consistencia_N4 (resolución de remisiones) es una limitación conocida y
+    # compartida del pipeline (NUM_REF/ANA_REF solo numéricas/anafóricas) y
+    # queda fuera del alcance de esta calibración.
   codification_scope:
     included:
     - Código Civil, texto de trabajo
@@ -112,35 +246,97 @@ CO-CC:
     verified_by: Juan Pablo López Mejía
     license: "dominio público — texto oficial, sin restricción de uso conocida"
     retrieved_at: null  # TODO: requiere que el autor confirme la fecha real de captura
-  # --- SCAFFOLD de parsing, sin calibrar contra el texto fuente real (ver nota de cabecera) ---
-  # Variante co_eva: texto decimonónico transcrito (Ley 57 de 1887); se asume
-  # numeración "ARTICULO N." con indicador ordinal ("1o.") ocasional y anotaciones
-  # editoriales de vigencia típicas del Gestor Normativo colombiano. Sin calibrar.
+  # --- CALIBRADO contra data/raw/ley_57_de_1887.md (2026-09-10, ronda de calibración) ---
+  # Fuente: Markdown OCR/PDF del Gestor Normativo (Función Pública). Hallazgos:
+  #  - El marcador "## " de encabezado Markdown es INCONSISTENTE: ~45% de los
+  #    "ARTICULO N" y ~15% de los encabezados de nivel (LIBRO/TITULO/CAPITULO)
+  #    llevan "## " delante, el resto no. article_pattern y los level patterns
+  #    aceptan un prefijo "#{1,3}" opcional para cubrir ambas formas.
+  #  - El grupo `suffix` original incluía la alternativa `[A-Z]` sin exigir que
+  #    fuera contigua al número/indicador ordinal. Como los títulos de artículo
+  #    van en MAYÚSCULAS justo después (p.ej. "ARTICULO 8o. FUERZA DE LA
+  #    COSTUMBRE."), ese `[A-Z]` capturaba la primera letra del título como si
+  #    fuera un sufijo real (bug que explicaba with_suffix: 1590/1606 en el
+  #    scaffold). Verificado con grep sobre todo el corpus: NO existen artículos
+  #    con sufijo real bis/ter/letra en este texto (2684 "ARTICULO N" == 2684
+  #    esperados, sin numeración compuesta). Se deja bis|ter con lookahead
+  #    negativo (sin espacio de separación, para no comerse palabras como
+  #    "TERMINACION") como salvaguarda a futuro, pero se retira `[A-Z]` suelto.
+  #  - BUG DE PÉRDIDA DE DATOS en el scaffold: `superseded_block_markers` tenía
+  #    '(?i)^\(derogad[oa]' que en este corpus NO marca un bloque derogado
+  #    completo, sino una nota parentética suelta en medio de un artículo
+  #    vigente (p.ej. línea 865: "(Derogado por el Art.61 de la Ley 1996 de
+  #    2019)" dentro del Art. 127, entre los incisos 3o) y 4o); línea 8455,
+  #    ídem dentro del Art. 1061). Con el patrón activo, segment() marcaba
+  #    in_superseded=True y DESCARTABA los incisos siguientes del artículo
+  #    hasta el próximo Art./nivel — se perdía texto vigente real. Se deja
+  #    superseded_block_markers vacío: no se detectó en el corpus ningún bloque
+  #    (LIBRO/TITULO/rango de artículos) genuinamente derogado en bloque que
+  #    deba saltarse completo; las derogaciones aquí son puntuales (por
+  #    artículo o por inciso) y se documentan vía editorial_markers en vez de
+  #    provocar un salto de segmentación.
+  #  - furniture_lines_removed: 0 en el scaffold porque `^\d{1,4}$` no
+  #    coincidía con nada: el furniture real va envuelto en negrita-cursiva
+  #    Markdown ("**_Ley 57 de 1887_**", "**_EVA - Gestor Normativo_**",
+  #    "**_Departamento Administrativo de la Función Pública_**") y los
+  #    números de página como "**_2_**", no como números sueltos.
+  #  - Anomalía real (no corregible por regex, documentada, no forzada): el
+  #    texto incrusta citas literales de DECRETOS reglamentarios con su propia
+  #    numeración de artículos reiniciada desde "1o" (p.ej. tras el Art. 1080
+  #    aparece "ARTICULO 1o", "2o", "3o", "4o" de un decreto citado, y tras el
+  #    Art. 1082 aparece otro tramo "ARTICULO 59"…"67" de otro decreto citado,
+  #    antes de retomar el Art. 1081/1083 del Código Civil). El guard existente
+  #    de pipeline.py (INTERPOLATION_JUMP=50, no forma parte de este bloque de
+  #    parsing) ya descarta correctamente estos tramos como
+  #    rejected_non_monotonic sin contaminar el artículo CC en curso — se deja
+  #    así, es responsabilidad del pipeline, no del parsing config.
+  #  - El propio raw_file no contiene los artículos 1-7 (el documento arranca
+  #    directamente en "ARTICULO 8o."): faltante real de la fuente, no bug de
+  #    parsing — quedará reflejado como "ausentes" en la compuerta de
+  #    completitud.
+  #  - Título de capítulo partido en dos líneas de nivel consecutivas (p.ej.
+  #    "## CAPITULO III." seguido de "## EFECTOS DE LA LEY" en la línea
+  #    siguiente) no se corrige aquí: exigiría que segment() (pipeline.py, de
+  #    otro agente en esta ronda) fusione dos líneas de nivel consecutivas: el
+  #    label del nodo "capitulo" queda con el numeral pero sin el título
+  #    descriptivo. No afecta el conteo de artículos.
   parsing:
-    article_pattern: '(?i)^Art[íi]?culo\s+(?P<num>\d+)[oº°]?\.?\s*(?P<suffix>bis|ter|[A-Z])?\.?\s*[-–—]?\s*'
-    final_article_pattern: '(?i)^Art[íi]?culo\s+[Ff]inal\b'
+    article_pattern: '(?i)^(?:#{1,3}\s*)?Art[íi]?culo\s+(?P<num>\d+)\s*[°ºo]?\.?\s*(?:(?P<suffix>bis|ter)(?![A-Za-zÁÉÍÓÚÑáéíóúñ]))?\.?\s*[-–—]?\s*'
+    final_article_pattern: '(?i)^(?:#{1,3}\s*)?Art[íi]?culo\s+[Ff]inal\b'
     levels:
       - type: libro
-        pattern: '(?i)^LIBRO\s+(?P<ord>[IVXLCDM]+|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b'
+        pattern: '(?i)^(?:#{1,3}\s*)?LIBRO\s+(?P<ord>[IVXLCDM]+|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b'
       - type: titulo
-        pattern: '(?i)^T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|PRELIMINAR)\b'
+        pattern: '(?i)^(?:#{1,3}\s*)?T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|PRELIMINAR)\b'
       - type: capitulo
-        pattern: '(?i)^CAP[ÍI]TULO\s+(?P<ord>[IVXLCDM]+)\b'
+        pattern: '(?i)^(?:#{1,3}\s*)?CAP[ÍI]TULO\s+(?P<ord>[IVXLCDM]+)\b'
       - type: seccion
-        pattern: '(?i)^SECCI[ÓO]N\s+(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA)\b'
-    superseded_block_markers:
-      - '(?i)^\(derogad[oa]'
-      - '(?i)^Ley\s+153\s+de\s+1887'  # ver M-4 del debate: fuente conexa excluida del corpus
+        pattern: '(?i)^(?:#{1,3}\s*)?SECCI[ÓO]N\s+(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA)\b'
+    superseded_block_markers: []
     editorial_markers:
-      - '(?i)\(modificad[oa]\s+por[^)]*\)'
-      - '(?i)\(adicionad[oa]\s+por[^)]*\)'
-      - '(?i)nota\s+de\s+vigencia[^.]*\.?'
-      - '(?i)jurisprudencia\s+vigencia[^.]*\.?'
+      - '(?i)NOTA:?\s+[^.]*\.'
+      - '(?i)\([^)]*(?:EXEQUIBLE|INEXEQUIBLE|[Mm]odificad[oa]|[Dd]eclarad[oa]|[Dd]erogad[oa]|[Aa]dicionad[oa]|[Ss]ubrogad[oa])[^)]*\)'
+      # OJO: NO usar '[^.]*\.' (hasta el próximo punto) aquí — "art." es una
+      # abreviatura con su propio punto interno, y cuando el cuerpo sólo tiene
+      # UN punto real más adelante (p.ej. Art. 320: "Derogado por el art. 65,
+      # Ley 153 de 1887 Podrá entablar la demanda...crianza.", sin punto entre
+      # la cita y el texto sustantivo que sigue), un patrón así se come TODO
+      # el cuerpo del artículo de un salto (bug detectado y corregido en esta
+      # calibración: producía empty_body en CO-CC-1873-ART-320). En su lugar,
+      # se acota el lazy-match a la forma real de la cita legal ("... de
+      # <año>", "C.P.C", "Procedimiento Civil" o "Código ...").
+      - '(?i)Derogado\s+por\s+(?:el\s+)?(?:art(?:[íi]culo)?\.?|literal)\s+.*?(?:de\s+\d{4}\b|C\.\s?P\.\s?C\.?|Procedimiento\s+Civil\b|C[óo]digo[^,.]{0,30})'
+      - '(?i)Subrogado\s+por\s+(?:el\s+)?art(?:[íi]culo)?\.?\s+.*?(?:de\s+\d{4}\b|C\.\s?P\.\s?C\.?|Procedimiento\s+Civil\b|C[óo]digo[^,.]{0,30})'
+      - '(?i)Modificado\s+por\s+(?:el\s+)?art(?:[íi]culo)?\.?\s+.*?(?:de\s+\d{4}\b|C\.\s?P\.\s?C\.?|Procedimiento\s+Civil\b|C[óo]digo[^,.]{0,30})'
     page_furniture:
-      - '^\d{1,4}$'
-    # TODO: calibrar contra ley_57_de_1887.md real; esta fuente además carece de
-    # version_date (ver M-8 del debate de revisión), lo cual queda fuera del
-    # alcance de esta corrección (solo se agregó retrieved_at, no version_date).
+      - '^\*\*_Ley 57 de 1887_\*\*\s*$'
+      - '^\*\*_EVA - Gestor Normativo_\*\*\s*$'
+      - '^\*\*_Departamento Administrativo de la Función Pública_\*\*\s*$'
+      - '^\*\*_[0-9]+_\*\*\s*$'
+      - '^_<u>Fecha y hora de creaci[oó]n:.*</u>_\s*$'
+    # NOTA: esta fuente además carece de version_date (ver M-8 del debate de
+    # revisión), lo cual queda fuera del alcance de esta calibración (solo
+    # se calibró `parsing`, no se agregó version_date).
   codification_scope:
     included:
     - Código Civil, texto codificado vigente
@@ -164,8 +360,80 @@ AR-CC:
     verified_by: Juan Pablo López Mejía
     license: "dominio público — texto oficial, sin restricción de uso conocida"
     retrieved_at: null  # TODO: requiere que el autor confirme la fecha real de captura
-  # --- SCAFFOLD de parsing (idéntico al de CL-CC, mismo adapter generic_es), sin calibrar ---
-  parsing: *parsing_generic_es_scaffold
+  # --- Calibrado contra data/raw/codido_civil_argentino.md (verificado línea por
+  #     línea con Read/Grep + Python re, no asumido idéntico a otros corpus) ---
+  # Marcador de artículo: "Art.N.- texto" (NUNCA "Artículo N"/"ARTICULO N").
+  # Variantes reales encontradas en el archivo:
+  #   * "Arts.N" (typo con "s") en 7 artículos derogados consecutivos (arts.
+  #     3577-3583, ley 23.264) — sin aceptar la "s" no matchean.
+  #   * "Art. N" con espacio antes del número — 1 caso (Art. 1631).
+  #   * "## Art.N" con prefijo Markdown "##" — 1 caso real (Art.220, línea 1425).
+  #     Confirma la advertencia de la consigna sobre prefijo #/## inconsistente
+  #     en el marcador de artículo.
+  #   * El sufijo ordinal pegado tipo "1ro."/"2do." SÍ aparece muchísimo, pero
+  #     como numeración de incisos DENTRO del cuerpo del artículo (nunca como
+  #     marcador de artículo), y no puede confundirse con el grupo `suffix`
+  #     porque el patrón exige el prefijo literal "Art." antes.
+  #   * Sufijos reales de artículo (grupo `suffix`): "bis" (18 casos, incl. una
+  #     vez "Bis" mayúscula), "ter" (1), "quater" (1). "quinquies" no aparece;
+  #     se deja como alternativa defensiva no verificada.
+  # Recall real alcanzable: el archivo tiene ~81 huecos de numeración genuinos
+  # (artículos ausentes del texto crudo, sin ningún placeholder "derogado" —
+  # p.ej. 23-29, 364-376, 690-698, 764-817, 1510, 1604, 3799-3809). No es un
+  # problema de regex: es contenido real faltante, probablemente por pérdida de
+  # páginas en la conversión PDF->Markdown — de hecho el bloque de arts. 667-689
+  # y 784-800 aparece DUPLICADO dos y tres veces en el archivo mientras que el
+  # Título XIII completo y gran parte del Título XVI "Del pago" desaparecieron.
+  # Ningún ajuste de article_pattern puede recuperar texto que no está en el
+  # archivo. Además los artículos 342 y 343 SÍ existen pero están pegados en la
+  # MISMA línea física que el 341 ("Art.341.- Derogado... Art.342.- Derogado...
+  # Art.343.- Derogado...", línea 2059): segment() en pipeline.py usa
+  # art_re.match() anclado al inicio de línea, así que un artículo a mitad de
+  # línea nunca puede matchear sin importar el regex (limitación de
+  # pipeline.py, no de este bloque de config; pipeline.py es propiedad de otro
+  # agente en esta ronda — ver nota equivalente en el scaffold de CL-CC).
+  # Techo realista de recall con el pipeline actual: ~3988/4051 (~98.4%).
+  # Niveles reales (más profundos que en otros corpus, tal como advierte la
+  # consigna): LIBRO > SECCIÓN > (PARTE, opcional, solo en Libro Segundo) >
+  # TÍTULO > CAPÍTULO. El formato Markdown de cada nivel es muy inconsistente
+  # dentro del propio archivo: "**LIBRO PRIMERO**", "**LIBRO** **<u>SEGUNDO</u>**",
+  # "## **Libro Primero**" y "Libro Primero" sin ningún marcado conviven todos.
+  # "Capítulo" tiene dos formas: "CAPÍTULO" completa (solo 2 apariciones, al
+  # inicio del Libro Primero) y "Cap. N - <texto>" abreviada (~180 apariciones,
+  # la forma dominante en el resto del código) — ambas cubiertas abajo. Un caso
+  # usa ordinal en palabra ("Cap. Unico") en vez de número romano, por eso se
+  # agregó UNICO/ÚNICO a la alternativa de `ord` de capitulo.
+  # No se encontraron bloques "(derogado..." tipo CL-CC (0 casos) ni furniture
+  # de página (0 líneas de solo dígitos, 0 encabezados/pies repetidos reales —
+  # las repeticiones frecuentes de "LIBRO PRIMERO"/"SECCIÓN PRIMERA" entre
+  # artículos NO son furniture: son la jerarquía completa reafirmada antes de
+  # cada Título nuevo, un patrón real del documento, no ruido de conversión).
+  # Se dejan esas dos listas vacías en vez de heredar patrones del scaffold que
+  # nunca matchearían nada real en esta fuente.
+  # Notas editoriales reales: "(Ver Ley N)" / "(Vease ley N art. N)" /
+  # "(Ver leyes N y N)" — paréntesis con cita de ley modificatoria posterior.
+  parsing:
+    article_pattern: '(?i)^#{0,2}\s*Arts?\.\s*(?P<num>\d+)\s*(?P<suffix>bis|ter|quater|quinquies)?\.?\s*[-–—]?\s*'
+    final_article_pattern: '(?i)^Art[íi]culo\s+[Ff]inal\b'
+    levels:
+      - type: libro
+        pattern: '(?i)^#{0,3}\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*LIBRO\b\s*\*{0,3}\s*(?:</u>)?\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*(?P<ord>[IVXLCDM]+|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b'
+      - type: seccion
+        pattern: '(?i)^#{0,3}\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*SECCI[ÓO]N\b\s*\*{0,3}\s*(?:</u>)?\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA)\b'
+      - type: parte
+        pattern: '(?i)^#{0,3}\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*PARTE\b\s*\*{0,3}\s*(?:</u>)?\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA)\b'
+      - type: titulo
+        pattern: '(?i)^#{0,3}\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*T[ÍI]TULO\b\s*\*{0,3}\s*(?:</u>)?\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*(?P<ord>[IVXLCDM]+|PRELIMINAR)\b'
+      - type: capitulo
+        pattern: '(?i)^#{0,3}\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*(?:CAP[IÍ]TULO|CAP\.)\s*\*{0,3}\s*(?:</u>)?\s*\*{0,3}\s*(?:<u>)?\s*\*{0,3}\s*(?P<ord>[IVXLCDM]+|UNICO|ÚNICO)\b'
+    superseded_block_markers: []
+    editorial_markers:
+      - '(?i)\((?:ver|v[eé]ase)\s+ley(?:es)?\s+[^)]*\)'
+    page_furniture: []
+    # TODO calibración futura: quedan ~81 artículos no recuperables por huecos
+    # reales del archivo fuente (ver nota arriba) y 2 artículos (342, 343)
+    # técnicamente presentes en el texto pero inalcanzables porque comparten
+    # línea física con el 341 y pipeline.py matchea solo al inicio de línea.
   codification_scope:
     included:
     - Código Civil 1869
@@ -180,17 +448,54 @@ AR-CCYC:
   year_tag: '2015'
   display_name: Código Civil y Comercial de la Nación (Argentina, 2015)
   adapter: generic_es
-  raw_file: ar_ccyc_2015.txt
+  raw_file: ar_ccyc_2015.md
   source:
     official: true
-    url: https://oas.org/dil//esp/Codigo_Civil_de_la_Republica_Argentina.pdf
+    url: https://servicios.infoleg.gob.ar/infolegInternet/anexos/235000-239999/235975/texact.htm
     version_date: '2015-02-05'
-    note: Anexo I de la Ley 26.994.
+    note: >-
+      Texto actualizado (Anexo I de la Ley 26.994), InfoLeg — Ministerio de
+      Justicia. Reemplaza la fuente anterior (PDF/OCR con corrupción
+      distribuida en todo el documento, recall real ~33%) por HTML oficial
+      limpio del organismo de información legislativa nacional, descargado
+      2026-09-10 y convertido a Markdown con un script propio (strip de
+      etiquetas HTML, decodificación de entidades, sin OCR de por medio).
+      Verificado: 2674 menciones de "ARTICULO N" en el tramo Anexo I, sin
+      huecos de numeración en el rango 1-2671.
     verified_by: Juan Pablo López Mejía
     license: "dominio público — texto oficial, sin restricción de uso conocida"
     retrieved_at: null  # TODO: requiere que el autor confirme la fecha real de captura
-  # --- SCAFFOLD de parsing (idéntico al de CL-CC, mismo adapter generic_es), sin calibrar ---
-  parsing: *parsing_generic_es_scaffold
+  # --- Parsing CALIBRADO contra el ar_ccyc_2015.md NUEVO (fuente InfoLeg,
+  # reemplaza la calibración anterior que era contra el PDF/OCR corrupto —
+  # ver source.note arriba). Verificado 2026-09-10 con grep/lectura directa.
+  # Marcador real: "ARTICULO N°.- Título. Texto" en texto plano (sin negrita
+  # Markdown, a diferencia del ar_ccyc_2015.md anterior — es HTML→texto
+  # limpio, no un PDF con formato inventado por la conversión).
+  # Niveles reales: LIBRO + ordinal en palabra española (PRIMERO..SEXTO,
+  # roman_to_int()/WORD_ORD de pipeline.py ya los resuelve); TITULO + romano
+  # o "PRELIMINAR"; CAPITULO + número ARÁBIGO (no romano); SECCION + número
+  # arábigo + ordinal femenino "ª" (se captura solo el dígito). No existe
+  # nivel "PARTE" independiente en esta fuente (0 casos) — se omite.
+  # Sufijos reales: 3 casos de "bis" ("ARTICULO 700 bis:", "ARTICULO 1204
+  # bis.-", "ARTICULO 1221 bis.-" — terminador inconsistente, dos-puntos en
+  # un caso, punto-guion en los otros dos).
+  # Sin furniture de página (0 líneas de número de página o cabecera
+  # repetida) — es una página HTML única, no un PDF paginado.
+  parsing:
+    article_pattern: '(?i)^ARTICULO\s+(?P<num>\d+)\s*(?P<suffix>bis|ter|quater|quinquies)?\s*[°º]?\s*[.:]?-?\s*'
+    final_article_pattern: '(?i)^ARTICULO\s+[Ff]inal\b'
+    levels:
+      - type: libro
+        pattern: '(?i)^LIBRO\s+(?P<ord>PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO|SEXTO)\b'
+      - type: titulo
+        pattern: '(?i)^T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|PRELIMINAR)\b'
+      - type: capitulo
+        pattern: '(?i)^CAP[ÍI]TULO\s+(?P<ord>\d+)\b'
+      - type: seccion
+        pattern: '(?i)^SECCI[ÓO]N\s+(?P<ord>\d+)[ªa]?\b'
+    superseded_block_markers: []
+    editorial_markers: []
+    page_furniture: []
   codification_scope:
     included:
     - Anexo I de la Ley 26.994
@@ -214,14 +519,42 @@ BR-CC:
     verified_by: Juan Pablo López Mejía
     license: "dominio público — texto oficial, sin restricción de uso conocida"
     retrieved_at: null  # TODO: requiere que el autor confirme la fecha real de captura
-  # --- SCAFFOLD de parsing, sin calibrar contra el texto fuente real (ver nota de cabecera) ---
+  # --- Parsing CALIBRADO contra data/raw/L10406compilada.md real (2026-09-10) ---
+  # Verificado línea por línea con grep/lectura directa del raw_file, no es una suposición.
+  # Hallazgo dominante: desde el Art. 1.000 en adelante, el número usa punto
+  # como separador de miles ("Art. 1.992") — el scaffold original solo
+  # capturaba "\d+" y perdía TODO artículo >= 1000 (963/2046 = 47% de recall
+  # inicial; 1037 números con punto de miles medidos por grep, ~coincide con
+  # los 1090 "ausentes" de la compuerta completitud). `num` ahora captura
+  # "1.992" completo (punto incluido); src/pipeline.py:158 ya hace
+  # `.replace(".", "")` antes de int() para tolerarlo (no-op para el resto
+  # de los corpus, que nunca capturan un punto literal en `num`).
+  # Otros hallazgos: Art. 1-9 llevan indicador ordinal "o" separado por
+  # espacio y SIN punto final ("Art. 1 o Toda pessoa..."); Art. 10+ llevan
+  # punto sin ordinal ("Art. 10."); sufijos de enmienda tipo "-A" existen
+  # ("Art. 421-A", "Art. 1.080-A"). Filas de tabla Markdown para artículos
+  # revogados en bloque ("|Art. 757.<br>(Revogado pela Lei nº15.040, de
+  # 2024)|Vigência|") son minoritarias (21 casos) y se toleran con el `|`
+  # inicial opcional; el contenido de la celda queda como cuerpo del
+  # artículo, lo cual es aceptable (no vacío, informa la derogación).
+  # Residual (mejorado 2026-09-10, ver src/pipeline.py segment() y
+  # docs/notas_gobernanza.md Nota 4): 2 líneas del documento empaquetan
+  # varios artículos consecutivos en una sola línea (ej. Art. 789 a Art. 802
+  # en la línea 2833). segment() ahora reintenta article_pattern dentro de
+  # la misma línea (ver _find_next_article_boundary en src/pipeline.py) y
+  # recupera la mayoría de ese grupo; el residual que queda es solo el caso
+  # en que la línea empieza con un encabezado de nivel a mitad de línea
+  # (ej. "Seção III Do Seguro de Pessoa Art. 789...") — ese primer match
+  # sigue sin reconocerse porque el texto previo al primer "Art." no forma
+  # parte de article_pattern, límite deliberadamente fuera de alcance de
+  # este fix (no se tocan encabezados de nivel a mitad de línea).
   parsing: &parsing_generic_pt_scaffold
-    article_pattern: '(?i)^Art\.\s*(?P<num>\d+)[ºo°]?\s*(?:-(?P<suffix>[A-Z]))?\.?\s*'
+    article_pattern: '(?i)^\|?\s*Art\.?\s*(?P<num>\d{1,3}(?:\.\d{3})?)\s*[ºo°]?\.?\s*(?:-\s*(?P<suffix>[A-Z]))?\.?\s*'
     final_article_pattern: '(?i)^Art\.\s*[Ff]inal\b'
     levels:
       - type: parte
         pattern: '(?i)^PARTE\s+(?P<ord>[IVXLCDM]+|GERAL|ESPECIAL)\b'
-      - type: livro
+      - type: libro
         pattern: '(?i)^LIVRO\s+(?P<ord>[IVXLCDM]+|PRIMEIRO|SEGUNDO|TERCEIRO|QUARTO|QUINTO)\b'
       - type: titulo
         pattern: '(?i)^T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+)\b'
@@ -240,14 +573,27 @@ BR-CC:
     page_furniture:
       - '^\d{1,4}$'
       - '(?i)^p[áa]gina\s+\d+'
-    # TODO: calibrar contra L10406compilada.md real. Nota: el `level_type` "livro"
-    # usado arriba no está en el Literal LevelType de src/models.py (que solo
-    # define "libro", en español) — se deja documentado como incompatibilidad de
-    # esquema conocida, ya que corregir models.py/pipeline.py queda fuera de esta
-    # tarea (esos archivos están a cargo de otro agente en esta ronda). Además,
-    # roman_to_int()/WORD_ORD en pipeline.py solo reconoce ordinales en español
-    # (PRIMERO, SEGUNDO...), por lo que "PRIMEIRO", "SEGUNDO" (pt) no resolverán
-    # a ordinal_int — limitación conocida, no corregida aquí.
+    # Nota (resuelta 2026-09-10): el nivel arriba usaba `type: livro`
+    # (portugués), que no está en el Literal LevelType de src/models.py
+    # (que solo define "libro", en español) — incompatibilidad de esquema
+    # que no rompía este pipeline liviano hoy (extract/segment/referrals/
+    # gates no instancia ArticleRecord de Pydantic), pero habría roto la
+    # construcción de un ArticleRecord real el día que exista N2/N3 para
+    # BR-CC. Se normalizó a `type: libro` aquí en vez de agregar "livro" al
+    # Literal de models.py, por dos razones: (1) consistencia interna — los
+    # otros 3 niveles de este mismo bloque (titulo/capitulo/seccion) ya
+    # usaban el nombre canónico en español pese a que su `pattern` matchea
+    # texto en portugués (TÍTULO/CAPÍTULO/SEÇÃO); dejar "livro" como
+    # excepción era inconsistente con el propio bloque. (2) LevelType es una
+    # taxonomía ESTRUCTURAL compartida entre los 8 corpus LATAM (el objetivo
+    # del proyecto es comparar estructura entre códigos, no solo dentro de
+    # uno) — el texto real en portugués se preserva íntegro en `label`
+    # (la línea cruda "LIVRO I", etc.), así que no se pierde información al
+    # normalizar `level_type`. Agregar sinónimos por idioma al Literal
+    # (livro, buch, book...) habría bifurcado esa taxonomía sin necesidad.
+    # roman_to_int()/WORD_ORD en pipeline.py sigue sin reconocer ordinales
+    # en portugués (PRIMEIRO, SEGUNDO...), por lo que esos quedarán con
+    # ordinal_int=None — limitación compartida, no corregida en esta ronda.
   codification_scope:
     included:
     - Código Civil 2002
@@ -271,8 +617,86 @@ MX-CCF:
     verified_by: Juan Pablo López Mejía
     license: "dominio público — texto oficial, sin restricción de uso conocida"
     retrieved_at: null  # TODO: requiere que el autor confirme la fecha real de captura
-  # --- SCAFFOLD de parsing (idéntico al de CL-CC, mismo adapter generic_es), sin calibrar ---
-  parsing: *parsing_generic_es_scaffold
+  # --- Parsing CALIBRADO contra data/raw/codigo_civil_federal_de_mexico.md real (2026-09-10) ---
+  # Verificado línea por línea con grep/lectura directa del raw_file, no es una suposición.
+  # Hallazgos clave:
+  #  - El marcador real de artículo es negrita Markdown "**Artículo N.-**", NO texto plano
+  #    "Artículo N" como asumía el scaffold heredado de CL-CC (ese patrón nunca hacía match
+  #    porque re.match() ancla en col. 0 y la línea real empieza con "**", no con "A").
+  #    Prefijo de heading ("#", "##") INCONSISTENTE delante del "**" en artículos derogados
+  #    puntuales (p.ej. línea ~378 "## **Artículo 56.-** (Se deroga)."), se tolera opcional.
+  #  - Sufijo ordinal "1o.-".."9o.-" pegado al número (o == "o" de "primero") — se captura
+  #    en el grupo suffix pero pipeline.py lo strip()ea con ".oº° " y queda en None, correcto:
+  #    no debe tratarse como artículo compuesto real.
+  #  - Sufijos reales SÍ existen en este corpus (a diferencia de lo asumido para otros):
+  #    4 "Bis" (28, 138, 1549, 1934) y una serie de 12 artículos con sufijo de letra
+  #    "2448 A" .. "2448 L" (arrendamiento de fincas urbanas). Se capturan con
+  #    bis|ter|quater|quinquies|sexies|[a-z] + lookahead para no comerse la primera letra
+  #    del cuerpo cuando no hay sufijo real.
+  #  - Terminador tras número/sufijo es INCONSISTENTE: a veces el guión va dentro de la
+  #    negrita ("**Artículo 1o.-**"), a veces fuera ("**Artículo 157.** - (Se deroga)."),
+  #    a veces no hay guión ("**Artículo 2448 G.** El arrendador..."). Se consume de forma
+  #    genérica con [*\-–—\s]* tras el punto en vez de asumir un único formato fijo.
+  #  - page_furniture: cabecera/pie de página repetidos ~355 veces (uno por página del PDF
+  #    origen): "**<u>CÓDIGO CIVIL FEDERAL</u>**", "_Última Reforma DOF 17-01-2024_",
+  #    la línea de la Cámara de Diputados (a veces como párrafo, a veces como tabla
+  #    Markdown con espacios comidos: "CÁMARA DEDIPUTADOS DELH. CONGRESO..."), y el folio
+  #    "N de 368". Todo esto se excluye para que no contamine el cuerpo de los artículos.
+  #  - ANOMALÍA REAL DE OCR (no corregible por regex, no forzada): en 14 saltos de página
+  #    el conversor PDF→MD confundió una imagen/marca de agua con texto y la volcó como
+  #    "<!-- Start of picture text -->\nSRL.<br>Waa W é<br>= Bex a<br>ae\n<!-- End of picture
+  #    text -->", que en 5 de esos 14 casos cae justo donde debían ir los encabezados de
+  #    artículo, borrándolos del origen: faltan por completo (no truncados, no reformateados,
+  #    ausentes) los artículos 93-98, 398-409, 1494-1501, 2483-2489 y 2912-2920 (42 artículos).
+  #    Verificado leyendo el texto circundante: el cuerpo de esos artículos falta o aparece
+  #    a mitad de frase después del bloque OCR corrupto. Esto es pérdida de la fuente, no
+  #    del parser — no se puede recuperar sin volver a un PDF/OCR mejor.
+  #  - LÍMITE ESTRUCTURAL de segment() (no de este parsing block): art_re.match() opera por
+  #    línea física, así que cuando el Markdown fusiona varios artículos derogados en una
+  #    sola línea, solo el primer "**Artículo N" de esa línea se convierte en Article; el
+  #    resto queda como texto dentro del cuerpo del primero (o se pierde si la línea ni
+  #    siquiera empieza con "**Artículo"). Dos casos reales: línea ~923 fusiona 149 y 150
+  #    (se pierde 1); línea ~5521 (Título Octavo "De los Derechos de Autor", derogado en
+  #    bloque DOF 14-01-1948) fusiona los 12 artículos 1181-1192 en una sola línea que
+  #    además empieza con "_Título derogado..." y no con "**Artículo", así que los 12 se
+  #    pierden enteros (ni contaminan el artículo anterior: cur ya es None ahí). Total: 13
+  #    artículos perdidos por esta causa. No se puede arreglar desde parsing_pattern/
+  #    page_furniture (que solo puede BORRAR líneas completas, no partirlas) sin tocar
+  #    segment() en pipeline.py, que pertenece a otro agente en esta ronda.
+  #  - Techo de recall alcanzable calibrando solo regex: 3074 - 42 (OCR) - 13 (fusión de
+  #    línea) = 3019 artículos (~98.2%). Confirmado empíricamente: ver resultado real del
+  #    pipeline más abajo.
+  parsing:
+    article_pattern: '(?i)^#{0,4}\s*\*{0,2}\s*art[íi]culo\s+(?P<num>\d+)\s*(?P<suffix>(?:bis|ter|quater|quinquies|sexies|[a-z])(?=[.\s*]|$))?\.?\s*[*\-–—\s]*'
+    final_article_pattern: '(?i)^Art[íi]culo\s+[Ff]inal\b'
+    levels:
+      - type: preliminar
+        pattern: '(?i)^#{0,4}\s*\*{0,2}\s*Disposiciones\s+Preliminares\b'
+      - type: libro
+        pattern: '(?i)^\|?\s*#{0,4}\s*\*{0,2}\s*LIBRO\s+(?P<ord>[IVXLCDM]+|[A-ZÁÉÍÓÚÑ]+(?:\s+[A-ZÁÉÍÓÚÑ]+)?)\b'
+      - type: titulo
+        pattern: '(?i)^#{0,4}\s*\*{0,2}\s*T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|PRELIMINAR|[A-ZÁÉÍÓÚÑ]+(?:\s+[A-ZÁÉÍÓÚÑ]+)?)\b'
+      - type: capitulo
+        pattern: '(?i)^#{0,4}\s*\*{0,2}\s*CAP[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|[ÚU]NICO)\b'
+      - type: seccion
+        pattern: '(?i)^#{0,4}\s*\*{0,2}\s*SECCI[ÓO]N\s+(?P<ord>[IVXLCDM]+|[A-ZÁÉÍÓÚÑ]+(?:\s+[A-ZÁÉÍÓÚÑ]+)?)\b'
+    superseded_block_markers:
+      - '(?i)^\(se\s+derog[oó]\)?\s*$'
+    editorial_markers:
+      - '(?i)_[^_]{0,300}?(reformad[oa]|derogad[oa]|adicionad[oa]|reforma\b|fe de erratas)[^_]{0,300}?_'
+      - '(?i)\*\*Nota:\*\*[^\n]*'
+    page_furniture:
+      - '(?i)^\*\*<u>C[ÓO]DIGO CIVIL FEDERAL</u>\*\*\s*$'
+      - '(?i)^_[ÚU]ltima Reforma DOF[^_]*_\s*$'
+      - '(?i)^\*\*C[ÁA]MARA DE\s?DIPUTADOS DEL\s?H\. CONGRESO DE LA\s?UNI[ÓO]N\*\*'
+      - '(?i)^\|\s*\*\*C[ÁA]MARA DE\s?DIPUTADOS'
+      - '^\|-+\|\s*$'
+      - '(?i)^\|Secretar[íi]a'
+      - '^\d{1,4} de 368\s*$'
+      - '<!--\s*(Start|End) of picture text\s*-->'
+    # TODO: si se recalibra el pipeline para soportar múltiples artículos por línea física
+    # (ver nota arriba sobre segment()), revisar de nuevo los 13 artículos perdidos por
+    # fusión de línea (149-150, 1181-1192) — no son pérdida de fuente, son recuperables.
   codification_scope:
     included:
     - Código Civil Federal
@@ -296,8 +720,65 @@ MX-CDMX:
     verified_by: Juan Pablo López Mejía
     license: "dominio público — texto oficial, sin restricción de uso conocida"
     retrieved_at: null  # TODO: requiere que el autor confirme la fecha real de captura
-  # --- SCAFFOLD de parsing (idéntico al de CL-CC, mismo adapter generic_es), sin calibrar ---
-  parsing: *parsing_generic_es_scaffold
+  # --- Parsing CALIBRADO contra data/raw/Codigo_Civil_Mexico_DF.md real (2026-09-10) ---
+  # Verificado línea por línea con grep/lectura directa del raw_file (el agente
+  # original de este bloque se cortó por rate-limit antes de escribir nada; lo
+  # calibré directamente, retomando desde el alias sin tocar).
+  # Marcador real: "ARTICULO N°.- texto" (sin acento en "ARTICULO", sin negrita
+  # Markdown, a diferencia de MX-CCF que comparte linaje textual pero SÍ usa
+  # negrita — no asumir que ambos códigos se parsean igual).
+  # Hallazgo dominante: 93 artículos llevan hasta 3 notas de reforma entre
+  # paréntesis PEGADAS delante del marcador en la misma línea, ej.
+  # "(REFORMADO, G.O. 25 DE MAYO DE 2000) ARTICULO 1°.-" — el patrón previo
+  # (heredado del scaffold genérico, anclado a "ARTICULO" en col. 0) no
+  # matcheaba ninguno de estos 93 (entre ellos el Art. 1 y el Art. 14, que
+  # aparecían en la lista de "ausentes"). Se agregó un prefijo opcional
+  # "(?:\([^)]*\)\s*){0,3}" que tolera hasta 3 notas consecutivas.
+  # No se encontraron sufijos BIS/TER/letra reales en este corpus (0 casos,
+  # a diferencia de MX-CCF que sí tiene "2448 A".."2448 L").
+  # Furniture real: pie de página "INSTITUTO DE INVESTIGACIONES LEGISLATIVAS"
+  # (362 veces) y encabezado "**CONGRESO DE LA CIUDAD DE MÉXICO**" (366 veces).
+  # Niveles: LIBRO/TITULO/CAPITULO con ordinales en palabra española
+  # (PRIMERO, DECIMOQUINTO) — roman_to_int()/WORD_ORD de pipeline.py ya los
+  # resuelve (a diferencia del portugués de BR-CC). No se detectó SECCIÓN
+  # como nivel propio en este corpus (si existe, es minoritario y quedó
+  # fuera del recall verificado).
+  # Recall final: 2993/3074 (97.4%). Residual no resuelto, mismo límite
+  # arquitectónico que BR-CC: varios artículos derogados consecutivos
+  # quedan empaquetados en una sola línea del raw_file (ej. "ARTICULO 71.-
+  # (DEROGADO...) ARTICULO 72.- (DEROGADO...) ARTICULO 73.- (DEROGADO...)"
+  # todo en una línea) — el pipeline solo reconoce un artículo por línea
+  # (re.match, no re.finditer en src/pipeline.py), así que solo el primero
+  # de cada grupo se captura. Un caso adicional minoritario (Art. 146) lleva
+  # un prefijo "N. DE E. ..." sin paréntesis antes de la nota de reforma,
+  # variante no cubierta por el prefijo "(?:\([^)]*\)\s*){0,3}".
+  parsing:
+    article_pattern: '(?i)^(?:\([^)]*\)\s*){0,3}ARTICULO\s*(?P<num>\d+)\s*[°º]?\s*(?:-\s*(?P<suffix>[A-Z]|bis|ter))?[.\-\s]*'
+    final_article_pattern: '(?i)^ARTICULO\s+[Ff]inal\b'
+    levels:
+      - type: libro
+        pattern: '(?i)^LIBRO\s+(?P<ord>[IVXLCDM]+|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b'
+      - type: titulo
+        pattern: '(?i)^T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO|SEXTO|S[EÉ]PTIMO|OCTAVO|NOVENO|D[EÉ]CIMO(?:\s*(?:PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO|SEXTO|S[EÉ]PTIMO|OCTAVO|NOVENO))?|PRELIMINAR)\b'
+      - type: capitulo
+        pattern: '(?i)^CAP[ÍI]TULO\s+(?P<ord>[IVXLCDM]+)\b'
+      - type: seccion
+        pattern: '(?i)^SECCI[ÓO]N\s+(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA)\b'
+    superseded_block_markers: []
+    editorial_markers:
+      - '(?i)^N\.\s*DE\s*E\..*'
+      - '(?i)\((?:REFORMADO|ADICIONADO|F\.\s*DE\s*E\.)[^)]*\)'
+    # "(DEROGADO...)" se deja FUERA de editorial_markers a propósito: en ~200
+    # artículos derogados esa nota es el CUERPO ENTERO del artículo — si se
+    # extrae como nota editorial y se strip()ea del cuerpo (pipeline.py:110),
+    # el cuerpo queda vacío y dispara qa_flag "empty_body" en cada uno
+    # (regresión real detectada al calibrar: empty_body pasó de 0 a 202).
+    # Se deja como texto de cuerpo visible, igual que el criterio ya usado
+    # para los stubs "Derogado por..." de CO-CC.
+    page_furniture:
+      - '^INSTITUTO DE INVESTIGACIONES LEGISLATIVAS\s*$'
+      - '^\*\*CONGRESO DE LA CIUDAD DE M[ÉE]XICO\*\*\s*$'
+      - '^\d{1,4}$'
   codification_scope:
     included:
     - Código Civil para el Distrito Federal
@@ -320,8 +801,106 @@ PE-CC:
     verified_by: Juan Pablo López Mejía
     license: "dominio público — texto oficial, sin restricción de uso conocida"
     retrieved_at: null  # TODO: requiere que el autor confirme la fecha real de captura
-  # --- SCAFFOLD de parsing (idéntico al de CL-CC, mismo adapter generic_es), sin calibrar ---
-  parsing: *parsing_generic_es_scaffold
+  # --- Parsing CALIBRADO contra data/raw/CODIGO_CIVIL_peruano.md real (2026-09-10) ---
+  # Se rompe el alias al scaffold *parsing_generic_es_scaffold porque ese patrón
+  # (`^Art[íi]culo\s+(?P<num>\d+)...`, ancla estricta al inicio de línea) no
+  # matchea NADA en este archivo: cada artículo real viene precedido de
+  # marcado Markdown (`### **<u>...`) que el scaffold no contempla.
+  #
+  # Hallazgos de la inspección línea por línea (ver Grep/Read directos sobre
+  # el raw_file, no verificados de oídas):
+  #   1. Encabezado de artículo casi siempre "### **<u>Artículo N.- Título</u>**",
+  #      pero el prefijo "###" es INCONSISTENTE: 26 artículos reales (ej. L.545,
+  #      815, 3399, 6169, 11677-11745, 12985 "Artículo 2117") aparecen SIN los
+  #      "###" — solo "**<u>Artículo N.-...". article_pattern hace el prefijo de
+  #      almohadillas/negrita/subrayado todo opcional para cubrir ambos casos.
+  #   2. Los artículos derogados sin contenido (1906-1922, Título XI) quedan como
+  #      placeholder "**<u>Artículo N.-</u> (*)**" seguido de una nota de vigencia
+  #      en línea aparte — el número se conserva en la numeración oficial, así que
+  #      SÍ deben contar para expected_article_count (confirmado: sin este rango
+  #      quedaban huecos en la secuencia 1-2122).
+  #   3. Sufijo de subartículo: solo aparece UNA vez en todo el corpus
+  #      ("Artículo 141-A.- Formalidad", L.1107), con guion antes de la letra
+  #      (no "bis/ter" como en otras familias hispanas). El grupo suffix exige
+  #      el guion inmediatamente antes de la letra para no confundirse con el
+  #      separador "N.- Título" (ambigüedad que menciona el contexto de esta
+  #      tarea: "sufijo ordinal pegado al número").
+  #   4. Falsos positivos evitados a propósito: notas editoriales al pie también
+  #      usan encabezado "### **(*) Artículo vigente/derogado/sustituido..." —
+  #      llevan "(*)" ENTRE "**" y "Artículo", así que no matchean article_pattern
+  #      (que exige "Artículo" inmediatamente tras el marcado opcional). Verificado
+  #      contra las 39 líneas "### ...Artículo..." que no son artículos reales.
+  #   5. Anomalía real de OCR/edición no normalizable por regex: L.7069 es un
+  #      artículo (1080) con el encabezado duplicado/mezclado 4 veces en una sola
+  #      línea ("### **Artículo 1080.** -E **<u>Artículo 1080.-</u>** <u>Artículo
+  #      1080.-Aaa</u> **<u>Artículo 1080.- Obligación de devolver la prenda</u>**").
+  #      article_pattern matchea la primera ocurrencia (num=1080) correctamente;
+  #      el resto de la línea queda como ruido en el cuerpo del artículo — no se
+  #      intenta "limpiar" eso con regex adicional porque el texto fuente en sí
+  #      está corrupto en ese punto, no es un problema de calibración del patrón.
+  #      Igualmente L.4181/4183 duplica el encabezado de "Artículo 594.-" (uno sin
+  #      formato, uno con) — el segundo es rechazado por la deduplicación por
+  #      (num, suffix) que ya trae pipeline.py (rejected_non_monotonic), sin
+  #      pérdida del artículo real.
+  #   6. Los 10 artículos del Título Preliminar usan numeración ROMANA
+  #      ("Artículo I.-" … "Artículo X.-"). pipeline.py hace `int(m.group("num"))`
+  #      sin fallback para romanos, así que se los deja FUERA de article_pattern
+  #      a propósito (\d+ estricto): matchean nada, no rompen el pipeline, y no
+  #      se cuentan contra expected_article_count porque ese valor (2122) es
+  #      exactamente el máximo de artículo arábigo real (confirmado: números
+  #      únicos 1..2122 sin huecos una vez aplicado este patrón). Limitación
+  #      compartida de pipeline.py (num: int), no corregida aquí porque ese
+  #      archivo es de otro agente en esta ronda — igual que la nota ya dejada
+  #      en el scaffold de CL-CC sobre roman_to_int()/WORD_ORD.
+  #   7. Jerarquía real: LIBRO (##, romano I-X) > SECCIÓN (##, ordinal femenino
+  #      PRIMERA..SEXTA — el scaffold genérico solo traía hasta QUINTA y además
+  #      la rankeaba DEBAJO de capítulo; aquí SECCIÓN va entre LIBRO y TÍTULO,
+  #      que es como aparece de verdad: "LIBRO I" -> "SECCION PRIMERA" -> "TITULO
+  #      I" -> "CAPITULO PRIMERO") > TÍTULO (###, romano I-XV, más "UNICO" y
+  #      "PRELIMINAR"/"FINAL" como casos especiales) > CAPÍTULO (###, ordinal
+  #      masculino PRIMERO..DECIMO más "UNICO") > SUB-CAPITULO (###, romano
+  #      I-VI; nivel real no contemplado en el scaffold, aparece dentro de
+  #      Propiedad/Copropiedad/Compraventa/Mandato/Depósito). "PARTE" y
+  #      "PARRAFO" del scaffold genérico no existen como encabezado en este
+  #      corpus — se quitan para no arriesgar falsos positivos (p.ej. notas que
+  #      empiezan con "Párrafo agregado por..." como encabezado ###).
+  #   8. Furniture real: solo números de página sueltos en línea propia
+  #      ("^\d{1,4}$", confirmado 1-312). No hay cabecera/pie repetido tipo
+  #      "CODIGO CIVIL" por página — se mantiene el patrón "página N" del
+  #      scaffold como defensivo aunque no se haya observado, por si el OCR
+  #      lo usa en algún tramo no muestreado.
+  #   9. final_article_pattern: no existe un marcador "Artículo Final" en este
+  #      corpus (el "TITULO FINAL" cierra con el artículo 2122 numerado normal,
+  #      no con un artículo especial) — se deja null.
+  #
+  # Resultado tras calibrar (ver reports/PE-CC_run_report.json,
+  # corrida real de `python -m src.pipeline PE-CC`): segment_stats
+  # .articles_parsed == 2122 == expected_article_count, compuerta
+  # "completitud" en PASS. La compuerta "consistencia_N4" se ignora a
+  # propósito (limitación compartida y conocida del pipeline, no depende
+  # de esta calibración — ver instrucciones de la ronda).
+  parsing:
+    article_pattern: '(?i)^#{0,6}\s*\*{0,2}\s*(?:<u>)?\s*Art[íi]culo\s+(?P<num>\d+)(?:\s*[-–—]\s*(?P<suffix>bis|ter|quater|quinquies|[A-Z]))?\.?\s*[-–—]?\s*'
+    final_article_pattern: null
+    levels:
+      - type: libro
+        pattern: '(?i)^#{0,6}\s*\*{0,2}\s*(?:<u>)?\s*LIBRO\s+(?P<ord>[IVXLCDM]+|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO)\b'
+      - type: seccion
+        pattern: '(?i)^#{0,6}\s*\*{0,2}\s*(?:<u>)?\s*SECCI[ÓO]N\s+(?P<ord>[IVXLCDM]+|PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA|SEXTA)\b'
+      - type: titulo
+        pattern: '(?i)^#{0,6}\s*\*{0,2}\s*(?:<u>)?\s*T[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|UNICO|PRELIMINAR|FINAL)\b'
+      - type: capitulo
+        pattern: '(?i)^#{0,6}\s*\*{0,2}\s*(?:<u>)?\s*CAP[ÍI]TULO\s+(?P<ord>[IVXLCDM]+|PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO|SEXTO|SEPTIMO|OCTAVO|NOVENO|DECIMO|UNICO)\b'
+      - type: subcapitulo
+        pattern: '(?i)^#{0,6}\s*\*{0,2}\s*(?:<u>)?\s*SUB-CAP[ÍI]TULO\s+(?P<ord>[IVXLCDM]+)\b'
+    superseded_block_markers: []
+    editorial_markers:
+      - '(?i)\(\*+\)\s*(?:Art[íi]culo|P[áa]rrafo|Inciso)\s+[^.]*?\.'
+      - '(?i)Nota:\s*[^.]*?\.(?:\s*[^.]*?\.)?'
+      - '(?i)CONCORDANCIA:\s*[^*<]*'
+    page_furniture:
+      - '^\d{1,4}\s*$'
+      - '(?i)^p[áa]gina\s+\d+'
   codification_scope:
     included:
     - Código Civil 1984

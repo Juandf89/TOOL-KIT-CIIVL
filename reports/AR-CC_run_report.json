@@ -1,24 +1,27 @@
 {
-  "corpus_id": "TEST-FIXTURE",
+  "corpus_id": "AR-CC",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:16:29.101919+00:00",
-  "source_hash": "sha256:ccb4096995fda6ed7dcf9d71b9d6791beeaa3c1da44673b1c9a0dad283adf2f5",
+  "generated_at": "2026-09-11T00:48:40.407091+00:00",
+  "source_hash": "sha256:a3f5931c7f5ba24d25eb04e6d901a052b760b61b434c2bcea022682610b60862",
   "segment_stats": {
-    "articles_parsed": 4,
-    "max_article_number": 4,
-    "rejected_non_monotonic": 0,
+    "articles_parsed": 3989,
+    "max_article_number": 4051,
+    "rejected_non_monotonic": 50,
     "furniture_lines_removed": 0,
-    "with_suffix": 0,
-    "with_editorial_notes": 0,
+    "with_suffix": 20,
+    "with_editorial_notes": 28,
     "empty_body": 0,
-    "max_depth": 1,
+    "max_depth": 4,
     "level_types": [
+      "capitulo",
+      "libro",
+      "seccion",
       "titulo"
     ]
   },
   "referral_stats": {
-    "edges_total": 2,
-    "edges_anaphoric": 1,
+    "edges_total": 185,
+    "edges_anaphoric": 85,
     "edges_unresolved": 0,
     "resolution_rate": 1.0,
     "reflexive": 0
@@ -27,10 +30,10 @@
     {
       "gate": "completitud",
       "metric": "artículos base / declarados en fuente",
-      "value": "4/4",
+      "value": "3969/4051",
       "threshold": "100%",
-      "status": "PASS",
-      "detail": "ausentes: 0 → []"
+      "status": "FAIL",
+      "detail": "ausentes: 82 → [23, 24, 25, 26, 27, 28, 29, 342, 343, 364, 365, 366]"
     },
     {
       "gate": "unicidad",
@@ -67,9 +70,9 @@
     {
       "gate": "trazabilidad",
       "metric": "url + fecha de consulta + versión",
-      "value": "ausente",
+      "value": "presente",
       "threshold": "100%",
-      "status": "FAIL",
+      "status": "PASS",
       "detail": "fuente no oficial: solo válido para run_type=dry_run"
     }
   ]

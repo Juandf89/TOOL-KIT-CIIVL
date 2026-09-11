@@ -45,6 +45,25 @@ oficial (funcionpublica.gov.co y suin-juriscol.gov.co devolvieron error de
 certificado TLS al momento de escribir esto); si se detecta una divergencia
 con el Diario Oficial, corregir aquí y en los tests.
 
+ACTUALIZACIÓN (2026-09-10, tras conectar el pipeline a los 8 corpus reales):
+se comparó `CO-CC-1873-ART-256` contra el N0 real extraído en
+`data/processed/CO-CC_articles.json` (`docs/notas_gobernanza.md` Nota 5).
+El inciso 1 coincide PALABRA POR PALABRA con `data/raw/ley_57_de_1887.md` —
+la regla `derecho_de_visitas_progenitor` está respaldada por el corpus real
+del proyecto, no solo por fuentes externas. El inciso 2 y el parágrafo
+(régimen de abuelos + excepción de victimario, es decir las reglas
+`regimen_visitas_abuelos`, `justifica_regulacion` (ambas ramas),
+`es_victimario_absoluto` y `es_condenado_violencia_o_sexual` (ambas ramas))
+NO tienen contraparte en `CO-CC-1873-ART-256` tal como está en el corpus:
+`ley_57_de_1887.md` es, aparentemente, la codificación original de 1887 sin
+la reforma de 2022 incorporada. Esas 4 reglas siguen citando el texto
+vigente hoy (verificado externamente, ver arriba), pero **no** el N0 oficial
+de este proyecto — quedan marcadas explícitamente como tales en su
+`source_note` (sufijo "— NO respaldado por el corpus del proyecto (N0
+pre-reforma 2022)"), para que nadie las confunda con contenido verificado
+contra `data/processed/`. No se retiran del ruleset (son la ley vigente
+real) ni se fuerza que "coincidan" con un N0 desactualizado.
+
 Estructura lógica (dos derechos por defecto que comparten la misma
 excepción absoluta):
 
@@ -88,6 +107,14 @@ _SOURCE_NOTE = (
     "(régimen de visitas) — verificado 2026-09-10 contra fuentes "
     "independientes coincidentes, no contra el Diario Oficial."
 )
+# Sufijo para las reglas derivadas del inciso 2 / parágrafo (reforma 2022):
+# CO-CC-1873-ART-256 en data/processed/CO-CC_articles.json (el N0 real del
+# proyecto) es la codificación de 1887 SIN esa reforma — ver la actualización
+# 2026-09-10 en el docstring del módulo y docs/notas_gobernanza.md Nota 5.
+_NOT_IN_PROJECT_CORPUS = (
+    " — NO respaldado por el corpus del proyecto (N0 pre-reforma 2022); "
+    "cita el texto vigente hoy, verificado externamente, no data/processed/."
+)
 
 RULEBASE = RuleBase(
     id="co-civil-256-visitas",
@@ -112,19 +139,19 @@ RULEBASE = RuleBase(
                 "justifica_regulacion",
             ],
             source_uid=_SOURCE_UID,
-            source_note=_SOURCE_NOTE + " — inciso 2.",
+            source_note=_SOURCE_NOTE + " — inciso 2." + _NOT_IN_PROJECT_CORPUS,
         ),
         Rule(
             head="justifica_regulacion",
             body=["progenitores_niegan_relacion"],
             source_uid=_SOURCE_UID,
-            source_note=_SOURCE_NOTE + " — inciso 2 (rama: negación del vínculo).",
+            source_note=_SOURCE_NOTE + " — inciso 2 (rama: negación del vínculo)." + _NOT_IN_PROJECT_CORPUS,
         ),
         Rule(
             head="justifica_regulacion",
             body=["caso_justifica_interes_superior"],
             source_uid=_SOURCE_UID,
-            source_note=_SOURCE_NOTE + " — inciso 2 (rama: interés superior del NNA).",
+            source_note=_SOURCE_NOTE + " — inciso 2 (rama: interés superior del NNA)." + _NOT_IN_PROJECT_CORPUS,
         ),
         Rule(
             head="es_victimario_absoluto",
@@ -133,19 +160,19 @@ RULEBASE = RuleBase(
                 "es_victima_o_hermano_del_solicitante",
             ],
             source_uid=_SOURCE_UID,
-            source_note=_SOURCE_NOTE + " — parágrafo, segunda frase (\"en ningún caso\").",
+            source_note=_SOURCE_NOTE + " — parágrafo, segunda frase (\"en ningún caso\")." + _NOT_IN_PROJECT_CORPUS,
         ),
         Rule(
             head="es_condenado_violencia_o_sexual",
             body=["condena_ejecutoriada_violencia_intrafamiliar"],
             source_uid=_SOURCE_UID,
-            source_note=_SOURCE_NOTE + " — parágrafo, primera frase (rama: violencia intrafamiliar).",
+            source_note=_SOURCE_NOTE + " — parágrafo, primera frase (rama: violencia intrafamiliar)." + _NOT_IN_PROJECT_CORPUS,
         ),
         Rule(
             head="es_condenado_violencia_o_sexual",
             body=["condena_ejecutoriada_delito_sexual"],
             source_uid=_SOURCE_UID,
-            source_note=_SOURCE_NOTE + " — parágrafo, primera frase (rama: delito sexual).",
+            source_note=_SOURCE_NOTE + " — parágrafo, primera frase (rama: delito sexual)." + _NOT_IN_PROJECT_CORPUS,
         ),
     ],
     exceptions=[

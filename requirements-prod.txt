@@ -1,0 +1,14 @@
+# Versiones exactas verificadas para despliegue (a diferencia de requirements.txt,
+# que usa rangos >= para desarrollo). Congeladas contra lo que corrió realmente
+# en este entorno al preparar el despliegue (2026-09-11):
+#   pip show fastapi pydantic pyyaml a2wsgi -> ver versiones abajo
+#   uvicorn --version                        -> uvicorn 0.35.0 (Python 3.12)
+# Repinnear con el mismo comando si se actualiza cualquiera de las cinco.
+fastapi==0.141.1
+uvicorn[standard]==0.35.0
+pydantic==2.13.5
+pyyaml==6.0.3
+# Solo necesario para el despliegue en Hostinger (passenger_wsgi.py) — envuelve
+# la app ASGI de FastAPI como WSGI para Phusion Passenger. No hace falta en
+# local/Docker (ahí corre uvicorn directo contra la app ASGI).
+a2wsgi==1.10.10
