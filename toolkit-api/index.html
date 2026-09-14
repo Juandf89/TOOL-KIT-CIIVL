@@ -11,10 +11,11 @@
 /* Paleta armonizada con datalexlab.com (verificada 2026-09-11 contra las
    tarjetas/páginas de "Auditoría automatizada SECOP II" y "Grafo de
    Jurisprudencia Constitucional"): Merriweather + Plus Jakarta Sans,
-   gradiente indigo-600→cyan-500, superficies slate. --bg-dark*/--border-dark
-   quedan para la columna de consola técnica (un registro visual "developer
-   console" deliberadamente distinto, común en herramientas de API — no
-   forman parte del sistema de marca de DataLex Lab en sí). */
+   gradiente indigo-600 a cyan-500, superficies slate. --bg-dark y
+   --border-dark quedan para la columna de consola técnica (un registro
+   visual "developer console" deliberadamente distinto, común en
+   herramientas de API — no forman parte del sistema de marca de DataLex
+   Lab en sí). */
 :root {
   --bg-page: #F8FAFC;
   --bg-card: #FFFFFF;
@@ -586,6 +587,13 @@ header {
 @media(max-width: 1100px) {
   .studio-layout { grid-template-columns: 1fr; }
   .col-nav, .col-builder, .col-console { border: none; border-bottom: 1px solid var(--border-light); }
+  /* En una sola columna, el formulario de análisis y su resultado van
+     PRIMERO — la lista de ejemplos/atajos (col-nav) es secundaria y no
+     debe obligar a hacer scroll por ella antes de llegar a la herramienta
+     principal (incluido el botón "Confirmar"). */
+  .col-builder { order: 1; max-height: none; overflow-y: visible; }
+  .col-console { order: 2; max-height: none; overflow-y: visible; }
+  .col-nav { order: 3; max-height: none; overflow-y: visible; }
 }
 
 /* Demo data banner */
