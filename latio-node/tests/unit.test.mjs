@@ -1,0 +1,257 @@
+// tests/unit.test.mjs — subconjunto representativo de
+// tests/test_labeling_rules.py, tests/test_reasoning.py,
+// tests/test_reasoning_co_256.py y tests/test_models.py (Python), portado
+// a node:test. No es un clon 1:1 de los 92 tests originales (ver
+// cross_validate.mjs para la verificación exhaustiva contra el oráculo
+// Python real) — es la red de seguridad rápida para correr en cada cambio
+// sin depender de que el repo Python esté disponible.
+
+import test from "node:test";
+import assert from "node:assert/strict";
+
+import { proposeFromText } from "../server/labeling/rules.mjs";
+import { prove } from "../server/reasoning/engine.mjs";
+import { RULEBASES } from "../server/reasoning/rulesets/index.mjs";
+import { FactBase, FactEntry, Party, FactAction } from "../server/reasoning/models.mjs";
+import {
+  ValidationError,
+  makeExceptionInfo,
+  makePresumptionInfo,
+  makeGeneralityProxies,
+  makeNormativeStatement,
+} from "../server/models.mjs";
+
+// ---------------------------------------------------------------------
+// labeling/rules — espejo de tests/test_labeling_rules.py
+// ---------------------------------------------------------------------
+
+test("antecedent_operator: siempre_que detectado", () => {
+  const p = proposeFromText("Siempre que el comprador pague el precio, el vendedor entrega la cosa.");
+  assert.equal(p.antecedentOperator, "siempre_que");
+  assert.ok(p.determinedFields.includes("antecedent_operator") || p.determinedFields.includes("antecedentOperator"));
+});
+
+test("antecedent_operator: ausencia de marcador es ninguno_explicito, no undetermined", () => {
+  const p = proposeFromText("El comprador debe pagar el precio en el plazo estipulado.");
+  assert.equal(p.antecedentOperator, "ninguno_explicito");
+});
+
+test("excepcion: interna sin referencia a otro articulo", () => {
+  const p = proposeFromText("El deudor debe restituir la cosa, salvo que haya perecido por caso fortuito.");
+  assert.equal(p.exceptionPresent, true);
+  assert.equal(p.exceptionMarker, "salvo que");
+  assert.equal(p.exceptionScope, "interna");
+});
+
+test("excepcion: por_remision con referencia numerica", () => {
+  const p = proposeFromText("El plazo corre desde la notificación, salvo lo dispuesto en el artículo 45.");
+  assert.equal(p.exceptionPresent, true);
+  assert.equal(p.exceptionScope, "por_remision");
+});
+
+test("excepcion: sin marcador, exception_present false", () => {
+  const p = proposeFromText("El comprador debe pagar el precio en el plazo estipulado.");
+  assert.equal(p.exceptionPresent, false);
+  assert.equal(p.exceptionMarker, null);
+  assert.equal(p.exceptionScope, null);
+});
+
+test("presuncion de derecho: irrebuttable", () => {
+  const p = proposeFromText("Se presume de derecho que el menor de diez años es incapaz.");
+  assert.equal(p.statementType, "presuncion");
+  assert.equal(p.presumptionRebuttable, false);
+  assert.equal(p.structure, "supuesto_consecuencia");
+});
+
+test("presuncion legal: rebuttable", () => {
+  const p = proposeFromText("Se presume la buena fe del poseedor.");
+  assert.equal(p.statementType, "presuncion");
+  assert.equal(p.presumptionRebuttable, true);
+});
+
+test("remision corta al inicio detectada", () => {
+  const p = proposeFromText("Lo dispuesto en el artículo 120 se aplica a este contrato.");
+  assert.equal(p.statementType, "remision");
+  assert.equal(p.structure, "remision_pura");
+});
+
+// ---------------------------------------------------------------------
+// reasoning/engine — caso de oro Apéndice B (jp-civil-612-sublease-demo)
+// ---------------------------------------------------------------------
+
+function appendixBFactbase() {
+  const entries = [];
+  for (const fact of [
+    "agreement_of_lease_contract",
+    "agreement_of_sublease_contract",
+    "handover_to_lessee",
+    "handover_to_sublessee",
+    "using_leased_thing",
+    "manifestation_cancellation",
+  ]) {
+    entries.push(new FactEntry({ action: FactAction.ADMISSION, fact, party: Party.DEFENDANT }));
+  }
+  for (const fact of ["approval_of_sublease", "approval_before_cancellation"]) {
+    entries.push(new FactEntry({ action: FactAction.ALLEGE, fact, party: Party.DEFENDANT }));
+    entries.push(new FactEntry({ action: FactAction.PROVIDE_EVIDENCE, fact, party: Party.DEFENDANT }));
+  }
+  entries.push(new FactEntry({ action: FactAction.ALLEGE, fact: "fact_of_nonabuse_of_confidence", party: Party.DEFENDANT }));
+  entries.push(new FactEntry({ action: FactAction.PROVIDE_EVIDENCE, fact: "fact_of_nonabuse_of_confidence", party: Party.DEFENDANT }));
+  entries.push(new FactEntry({ action: FactAction.PLAUSIBLE, fact: "fact_of_nonabuse_of_confidence", party: null }));
+  entries.push(new FactEntry({ action: FactAction.ALLEGE, fact: "fact_of_abuse_of_confidence", party: Party.PLAINTIFF }));
+  entries.push(new FactEntry({ action: FactAction.PROVIDE_EVIDENCE, fact: "fact_of_abuse_of_confidence", party: Party.PLAINTIFF }));
+  entries.push(new FactEntry({ action: FactAction.PLAUSIBLE, fact: "fact_of_abuse_of_confidence", party: null }));
+  return new FactBase({ entries });
+}
+
+test("apendice B: contract_end se prueba para plaintiff", () => {
+  const rulebase = RULEBASES["jp-civil-612-sublease-demo"];
+  const result = prove("contract_end", Party.PLAINTIFF, rulebase, appendixBFactbase());
+  assert.equal(result.proved, true);
+  assert.equal(result.goal, "contract_end");
+  assert.equal(result.party, Party.PLAINTIFF);
+  assert.ok(result.trace.length > 0);
+});
+
+test("apendice B: cancellation_due_to_sublease se prueba directamente", () => {
+  const rulebase = RULEBASES["jp-civil-612-sublease-demo"];
+  const result = prove("cancellation_due_to_sublease", Party.PLAINTIFF, rulebase, appendixBFactbase());
+  assert.equal(result.proved, true);
+});
+
+test("apendice B: get_approval_of_sublease falla (alegado pero no admitido ni plausible)", () => {
+  const rulebase = RULEBASES["jp-civil-612-sublease-demo"];
+  const result = prove("get_approval_of_sublease", Party.DEFENDANT, rulebase, appendixBFactbase());
+  assert.equal(result.proved, false);
+  assert.ok(result.trace.some((s) => s.kind === "failed_ultimate_fact"));
+});
+
+test("apendice B: nonabuse_of_confidence derrotado por abuse_of_confidence", () => {
+  const rulebase = RULEBASES["jp-civil-612-sublease-demo"];
+  const factbase = appendixBFactbase();
+
+  const isolated = prove("nonabuse_of_confidence", Party.DEFENDANT, rulebase, factbase);
+  assert.equal(isolated.proved, false);
+  assert.ok(isolated.trace.some((s) => s.kind === "defense_succeeded"));
+
+  const abuse = prove("abuse_of_confidence", Party.PLAINTIFF, rulebase, factbase);
+  assert.equal(abuse.proved, true);
+});
+
+// ---------------------------------------------------------------------
+// reasoning: CO-256 visitas
+// ---------------------------------------------------------------------
+
+test("CO-256: derecho de visitas del progenitor sin excepcion se prueba", () => {
+  const rulebase = RULEBASES["co-civil-256-visitas"];
+  const factbase = new FactBase({
+    entries: [
+      new FactEntry({ action: FactAction.ADMISSION, fact: "no_tiene_cuidado_personal_hijos", party: Party.DEFENDANT }),
+    ],
+  });
+  const result = prove("derecho_de_visitas_progenitor", Party.PLAINTIFF, rulebase, factbase);
+  assert.equal(result.proved, true);
+});
+
+test("CO-256: derecho de visitas derrotado por victimario condenado (excepcion absoluta)", () => {
+  const rulebase = RULEBASES["co-civil-256-visitas"];
+  const excepcion = [
+    "condena_ejecutoriada_violencia_intrafamiliar",
+    "es_victima_o_hermano_del_solicitante",
+  ].flatMap((fact) => [
+    new FactEntry({ action: FactAction.ALLEGE, fact, party: Party.DEFENDANT }),
+    new FactEntry({ action: FactAction.PROVIDE_EVIDENCE, fact, party: Party.DEFENDANT }),
+    new FactEntry({ action: FactAction.PLAUSIBLE, fact, party: null }),
+  ]);
+  const factbase = new FactBase({
+    entries: [
+      new FactEntry({ action: FactAction.ADMISSION, fact: "no_tiene_cuidado_personal_hijos", party: Party.DEFENDANT }),
+      ...excepcion,
+    ],
+  });
+  const result = prove("derecho_de_visitas_progenitor", Party.PLAINTIFF, rulebase, factbase);
+  assert.equal(result.proved, false);
+});
+
+// ---------------------------------------------------------------------
+// models.mjs — espejo parcial de tests/test_models.py
+// ---------------------------------------------------------------------
+
+test("ExceptionInfo: present=True exige scope", () => {
+  assert.throws(() => makeExceptionInfo({ present: true, scope: null }), ValidationError);
+});
+
+test("ExceptionInfo: present=False no admite marker ni scope", () => {
+  assert.throws(() => makeExceptionInfo({ present: false, marker: "salvo que" }), ValidationError);
+});
+
+test("PresumptionInfo: irrebuttable no admite burden_shifts_to distinto de ninguno", () => {
+  assert.throws(
+    () => makePresumptionInfo({ rebuttable: false, burdenShiftsTo: "partes" }),
+    ValidationError
+  );
+});
+
+test("GeneralityProxies: has_enumeration=True exige enumeration_closed", () => {
+  assert.throws(
+    () => makeGeneralityProxies({ nConditions: 1, hasEnumeration: true, enumerationClosed: null }),
+    ValidationError
+  );
+});
+
+test("NormativeStatement: combinacion ilegal statement_type/structure", () => {
+  assert.throws(() => {
+    makeNormativeStatement({
+      statementId: 0,
+      spanType: "articulo_completo",
+      textSpan: "x",
+      statementType: "definicion",
+      structure: "supuesto_consecuencia",
+      deonticModality: "ninguno",
+      hohfeldianPosition: "ninguno",
+      derogability: "indeterminada",
+      addressee: "partes",
+      antecedentOperator: "ninguno_explicito",
+      exception: makeExceptionInfo(),
+      generality: makeGeneralityProxies({ nConditions: 0 }),
+    });
+  }, ValidationError);
+});
+
+test("NormativeStatement: span_type distinto de articulo_completo exige span_index", () => {
+  assert.throws(() => {
+    makeNormativeStatement({
+      statementId: 0,
+      spanType: "parrafo",
+      textSpan: "x",
+      statementType: "regla",
+      structure: "supuesto_consecuencia",
+      deonticModality: "obligacion",
+      hohfeldianPosition: "ninguno",
+      derogability: "indeterminada",
+      addressee: "partes",
+      antecedentOperator: "ninguno_explicito",
+      exception: makeExceptionInfo(),
+      generality: makeGeneralityProxies({ nConditions: 1 }),
+    });
+  }, ValidationError);
+});
+
+test("NormativeStatement: caso valido calcula generality_level y derogability_marker_detected", () => {
+  const stmt = makeNormativeStatement({
+    statementId: 0,
+    spanType: "articulo_completo",
+    textSpan: "No podrán renunciar las partes a este derecho.",
+    statementType: "regla",
+    structure: "supuesto_consecuencia",
+    deonticModality: "prohibicion",
+    hohfeldianPosition: "ninguno",
+    derogability: "inderogable",
+    addressee: "partes",
+    antecedentOperator: "ninguno_explicito",
+    exception: makeExceptionInfo(),
+    generality: makeGeneralityProxies({ nConditions: 1 }),
+  });
+  assert.equal(stmt.generalityLevel, "intermedia");
+  assert.equal(stmt.derogabilityMarkerDetected, true);
+});

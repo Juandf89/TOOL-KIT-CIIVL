@@ -16,3 +16,6 @@ data/interim/
 # Variables de entorno locales (nunca versionar credenciales)
 .env
 *.env
+
+# Puerto Node.js (latio-node/) — dependencias instalables vía npm install
+latio-node/node_modules/

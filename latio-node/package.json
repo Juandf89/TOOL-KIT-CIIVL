@@ -1,0 +1,20 @@
+{
+  "name": "latio-node",
+  "version": "1.0.0",
+  "description": "DataLex Lab · LATIO API — port a Node.js/Express del motor PROLEG y el etiquetado léxico, para Hostinger Node.js Web App (plan Business, sin Python).",
+  "type": "module",
+  "main": "server/app.mjs",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node server/app.mjs",
+    "test": "node --test tests/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
