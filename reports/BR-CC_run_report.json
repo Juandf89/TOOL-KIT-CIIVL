@@ -1,7 +1,7 @@
 {
   "corpus_id": "BR-CC",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:48:42.128482+00:00",
+  "generated_at": "2026-09-14T14:42:57.503704+00:00",
   "source_hash": "sha256:fd78dcc59774b2b6b1b1cd5d02ade80f70073af390793c46ad269e24417d577b",
   "segment_stats": {
     "articles_parsed": 2067,

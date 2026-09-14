@@ -1,7 +1,7 @@
 {
   "corpus_id": "PE-CC",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:48:44.785868+00:00",
+  "generated_at": "2026-09-14T14:42:59.878242+00:00",
   "source_hash": "sha256:46d8ba98e1758ad50f2c1ad8dcb2bb74d8f92f0fd1ea0dc6930a36c65c412ed2",
   "segment_stats": {
     "articles_parsed": 2123,

@@ -8,4 +8,11 @@ venv/
 *.DS_Store
 data/raw/*.pdf
 data/interim/
-data/processed/
+
+# Tooling interno de desarrollo (prompts de agentes de Claude Code), no
+# parte del producto — se mantiene local, no se publica.
+.claude/
+
+# Variables de entorno locales (nunca versionar credenciales)
+.env
+*.env

@@ -1,7 +1,7 @@
 {
   "corpus_id": "MX-CDMX",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:48:43.900188+00:00",
+  "generated_at": "2026-09-14T14:42:59.130417+00:00",
   "source_hash": "sha256:554e54ced4e0025a59228f97a68d4c91cd857e3152f3ab237e5d8b370d62b28b",
   "segment_stats": {
     "articles_parsed": 3062,

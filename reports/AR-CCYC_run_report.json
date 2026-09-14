@@ -1,7 +1,7 @@
 {
   "corpus_id": "AR-CCYC",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:48:41.348251+00:00",
+  "generated_at": "2026-09-14T14:42:56.713590+00:00",
   "source_hash": "sha256:c00957ab1d71aeda65e396a8df13b626e8333cd374856b66afd87dc4985c513b",
   "segment_stats": {
     "articles_parsed": 2674,

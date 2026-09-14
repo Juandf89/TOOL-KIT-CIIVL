@@ -1,0 +1,4646 @@
+[
+  {
+    "source": "MX-CCF-1928-ART-7",
+    "target": "MX-CCF-1928-ART-6",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-23",
+    "target": "MX-CCF-1928-ART-435",
+    "raw_reference": "artículo 435",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-25",
+    "target": "MX-CCF-1928-ART-123",
+    "raw_reference": "artículo 123",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-25",
+    "target": "MX-CCF-1928-ART-2736",
+    "raw_reference": "artículo 2736",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-31",
+    "target": "MX-CCF-1928-ART-29",
+    "raw_reference": "artículo 29",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-31",
+    "target": "MX-CCF-1928-ART-29",
+    "raw_reference": "artículo 29",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-36",
+    "target": "MX-CCF-1928-ART-35",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-37",
+    "target": "MX-CCF-1928-ART-36",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-38",
+    "target": "MX-CCF-1928-ART-41",
+    "raw_reference": "artículo 41",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-42",
+    "target": "MX-CCF-1928-ART-41",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-58",
+    "target": "MX-CCF-1928-ART-60",
+    "raw_reference": "artículo 60",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-60",
+    "target": "MX-CCF-1928-ART-44",
+    "raw_reference": "artículo 44",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-67",
+    "target": "MX-CCF-1928-ART-65",
+    "raw_reference": "artículo 65",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-69",
+    "target": "MX-CCF-1928-ART-58",
+    "raw_reference": "artículo 58",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-71",
+    "target": "MX-CCF-1928-ART-70",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-73",
+    "target": "MX-CCF-1928-ART-15",
+    "raw_reference": "artículo 15",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-74",
+    "target": "MX-CCF-1928-ART-55",
+    "raw_reference": "artículo 55",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-76",
+    "target": "MX-CCF-1928-ART-58",
+    "raw_reference": "artículo 58",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-85",
+    "target": "MX-CCF-1928-ART-81",
+    "raw_reference": "artículo 81",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-86",
+    "target": "MX-CCF-1928-ART-87",
+    "raw_reference": "artículo siguiente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-87",
+    "target": "MX-CCF-1928-ART-86",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-92",
+    "target": "MX-CCF-1928-ART-83",
+    "raw_reference": "artículo 83",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-92",
+    "target": "MX-CCF-1928-ART-189",
+    "raw_reference": "artículos 189",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-92",
+    "target": "MX-CCF-1928-ART-185",
+    "raw_reference": "artículo 185",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-99",
+    "target": "MX-CCF-1928-ART-92",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-100",
+    "target": null,
+    "raw_reference": "artículo 98",
+    "resolution": "unresolved",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-102",
+    "target": "MX-CCF-1928-ART-44",
+    "raw_reference": "artículo 44",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-103",
+    "target": "MX-CCF-1928-ART-103",
+    "raw_reference": "Artículo 103",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-103",
+    "target": "MX-CCF-1928-ART-102",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-104",
+    "target": null,
+    "raw_reference": "artículo 98",
+    "resolution": "unresolved",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-113",
+    "target": null,
+    "raw_reference": "artículo 98",
+    "resolution": "unresolved",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-115",
+    "target": "MX-CCF-1928-ART-272",
+    "raw_reference": "artículo 272",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-125",
+    "target": "MX-CCF-1928-ART-119",
+    "raw_reference": "artículo 119",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-125",
+    "target": "MX-CCF-1928-ART-71",
+    "raw_reference": "artículos 71",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-129",
+    "target": "MX-CCF-1928-ART-119",
+    "raw_reference": "artículo 119",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-133",
+    "target": "MX-CCF-1928-ART-132",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-136",
+    "target": "MX-CCF-1928-ART-348",
+    "raw_reference": "artículos 348",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-156",
+    "target": "MX-CCF-1928-ART-450",
+    "raw_reference": "artículo 450",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-197",
+    "target": "MX-CCF-1928-ART-188",
+    "raw_reference": "artículo 188",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-235",
+    "target": "MX-CCF-1928-ART-156",
+    "raw_reference": "artículo 156",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-235",
+    "target": null,
+    "raw_reference": "artículos 97",
+    "resolution": "unresolved",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-243",
+    "target": "MX-CCF-1928-ART-156",
+    "raw_reference": "artículo 156",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-246",
+    "target": "MX-CCF-1928-ART-156",
+    "raw_reference": "artículo 156",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-247",
+    "target": "MX-CCF-1928-ART-156",
+    "raw_reference": "artículo 156",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-258",
+    "target": "MX-CCF-1928-ART-282",
+    "raw_reference": "artículo 282",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-260",
+    "target": "MX-CCF-1928-ART-422",
+    "raw_reference": "artículos 422",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-260",
+    "target": "MX-CCF-1928-ART-259",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-264",
+    "target": "MX-CCF-1928-ART-159",
+    "raw_reference": "artículo 159",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-264",
+    "target": "MX-CCF-1928-ART-158",
+    "raw_reference": "artículos 158",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-265",
+    "target": "MX-CCF-1928-ART-264",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-267",
+    "target": "MX-CCF-1928-ART-164",
+    "raw_reference": "Artículo 164",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-267",
+    "target": "MX-CCF-1928-ART-168",
+    "raw_reference": "Artículo 168",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-267",
+    "target": "MX-CCF-1928-ART-323-TER",
+    "raw_reference": "artículo 323",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-273",
+    "target": "MX-CCF-1928-ART-288",
+    "raw_reference": "Artículo 288",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-273",
+    "target": "MX-CCF-1928-ART-272",
+    "raw_reference": "Artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-277",
+    "target": "MX-CCF-1928-ART-267",
+    "raw_reference": "artículo 267",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-279",
+    "target": "MX-CCF-1928-ART-267",
+    "raw_reference": "artículo 267",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-283",
+    "target": null,
+    "raw_reference": "artículo 94",
+    "resolution": "unresolved",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-284",
+    "target": "MX-CCF-1928-ART-422",
+    "raw_reference": "artículos 422",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-302",
+    "target": "MX-CCF-1928-ART-1635",
+    "raw_reference": "artículo 1635",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-306",
+    "target": "MX-CCF-1928-ART-305",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-316",
+    "target": "MX-CCF-1928-ART-315",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-323",
+    "target": "MX-CCF-1928-ART-164",
+    "raw_reference": "artículo 164",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-323",
+    "target": "MX-CCF-1928-ART-322",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-323-TER",
+    "target": "MX-CCF-1928-ART-47",
+    "raw_reference": "artículo 47",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-323-TER",
+    "target": "MX-CCF-1928-ART-323-TER",
+    "raw_reference": "Artículo 323",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-323-TER",
+    "target": "MX-CCF-1928-ART-6",
+    "raw_reference": "artículo 6",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-331",
+    "target": "MX-CCF-1928-ART-450",
+    "raw_reference": "artículo 450",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-333",
+    "target": "MX-CCF-1928-ART-332",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-334",
+    "target": "MX-CCF-1928-ART-158",
+    "raw_reference": "artículo 158",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-342",
+    "target": "MX-CCF-1928-ART-341",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-343",
+    "target": "MX-CCF-1928-ART-361",
+    "raw_reference": "artículo 361",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-348",
+    "target": "MX-CCF-1928-ART-347",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-350",
+    "target": "MX-CCF-1928-ART-348",
+    "raw_reference": "artículos 348",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-358",
+    "target": "MX-CCF-1928-ART-354",
+    "raw_reference": "artículo 354",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-384",
+    "target": "MX-CCF-1928-ART-382",
+    "raw_reference": "artículo 382",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-386",
+    "target": "MX-CCF-1928-ART-385",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-391",
+    "target": "MX-CCF-1928-ART-390",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-391",
+    "target": "MX-CCF-1928-ART-390",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-392",
+    "target": "MX-CCF-1928-ART-391",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-410-B",
+    "target": "MX-CCF-1928-ART-397",
+    "raw_reference": "artículo 397",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-416",
+    "target": null,
+    "raw_reference": "artículo 94",
+    "resolution": "unresolved",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-423",
+    "target": "MX-CCF-1928-ART-422",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-430",
+    "target": "MX-CCF-1928-ART-23",
+    "raw_reference": "artículo 23",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-444",
+    "target": "MX-CCF-1928-ART-283",
+    "raw_reference": "artículo 283",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-444-BIS",
+    "target": "MX-CCF-1928-ART-323-TER",
+    "raw_reference": "artículos 323",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-449",
+    "target": "MX-CCF-1928-ART-413",
+    "raw_reference": "artículo 413",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-464",
+    "target": "MX-CCF-1928-ART-450",
+    "raw_reference": "artículo 450",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-466",
+    "target": "MX-CCF-1928-ART-450",
+    "raw_reference": "artículo 450",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-467",
+    "target": "MX-CCF-1928-ART-466",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-470",
+    "target": "MX-CCF-1928-ART-414",
+    "raw_reference": "artículo 414",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-471",
+    "target": "MX-CCF-1928-ART-470",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-474",
+    "target": "MX-CCF-1928-ART-457",
+    "raw_reference": "artículo 457",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-478",
+    "target": "MX-CCF-1928-ART-477",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-490",
+    "target": "MX-CCF-1928-ART-483",
+    "raw_reference": "artículo 483",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-490",
+    "target": "MX-CCF-1928-ART-484",
+    "raw_reference": "artículo 484",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-494",
+    "target": "MX-CCF-1928-ART-323-TER",
+    "raw_reference": "artículos 323",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-495",
+    "target": "MX-CCF-1928-ART-483",
+    "raw_reference": "artículo 483",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-496",
+    "target": "MX-CCF-1928-ART-497",
+    "raw_reference": "artículo siguiente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-501",
+    "target": "MX-CCF-1928-ART-500",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-502",
+    "target": "MX-CCF-1928-ART-500",
+    "raw_reference": "artículo 500",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-504",
+    "target": "MX-CCF-1928-ART-590",
+    "raw_reference": "artículo 590",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-504",
+    "target": "MX-CCF-1928-ART-159",
+    "raw_reference": "artículo 159",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-504",
+    "target": "MX-CCF-1928-ART-503",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-505",
+    "target": "MX-CCF-1928-ART-450",
+    "raw_reference": "artículo 450",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-507",
+    "target": "MX-CCF-1928-ART-504",
+    "raw_reference": "artículo 504",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-509",
+    "target": "MX-CCF-1928-ART-508",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-520",
+    "target": "MX-CCF-1928-ART-523",
+    "raw_reference": "artículo 523",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-521",
+    "target": "MX-CCF-1928-ART-520",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-527",
+    "target": "MX-CCF-1928-ART-528",
+    "raw_reference": "artículo siguiente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-531",
+    "target": "MX-CCF-1928-ART-528",
+    "raw_reference": "artículo 528",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-532",
+    "target": "MX-CCF-1928-ART-531",
+    "raw_reference": "artículo precedente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-535",
+    "target": "MX-CCF-1928-ART-492",
+    "raw_reference": "artículo 492",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-543",
+    "target": "MX-CCF-1928-ART-450",
+    "raw_reference": "artículo 450",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-544",
+    "target": "MX-CCF-1928-ART-450",
+    "raw_reference": "Artículo 450",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-546",
+    "target": "MX-CCF-1928-ART-537",
+    "raw_reference": "artículo 537",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-547",
+    "target": "MX-CCF-1928-ART-546",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-551",
+    "target": "MX-CCF-1928-ART-537",
+    "raw_reference": "artículo 537",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-555",
+    "target": "MX-CCF-1928-ART-554",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-558",
+    "target": "MX-CCF-1928-ART-557",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-560",
+    "target": "MX-CCF-1928-ART-557",
+    "raw_reference": "artículos 557",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-561",
+    "target": "MX-CCF-1928-ART-450",
+    "raw_reference": "artículo 450",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-562",
+    "target": "MX-CCF-1928-ART-437",
+    "raw_reference": "artículo 437",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-570",
+    "target": "MX-CCF-1928-ART-569",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-573",
+    "target": "MX-CCF-1928-ART-564",
+    "raw_reference": "artículo 564",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-574",
+    "target": "MX-CCF-1928-ART-573",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-577",
+    "target": "MX-CCF-1928-ART-423",
+    "raw_reference": "artículo 423",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-582",
+    "target": "MX-CCF-1928-ART-568",
+    "raw_reference": "artículo 568",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-582",
+    "target": "MX-CCF-1928-ART-561",
+    "raw_reference": "artículo 561",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-588",
+    "target": "MX-CCF-1928-ART-587",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-589",
+    "target": "MX-CCF-1928-ART-159",
+    "raw_reference": "artículo 159",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-591",
+    "target": "MX-CCF-1928-ART-450",
+    "raw_reference": "Artículo 450",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-595",
+    "target": "MX-CCF-1928-ART-594",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-618",
+    "target": "MX-CCF-1928-ART-492",
+    "raw_reference": "artículos 492",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-620",
+    "target": "MX-CCF-1928-ART-457",
+    "raw_reference": "artículo 457",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-624",
+    "target": "MX-CCF-1928-ART-496",
+    "raw_reference": "artículo 496",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-627",
+    "target": "MX-CCF-1928-ART-626",
+    "raw_reference": "artículo precedente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-632",
+    "target": "MX-CCF-1928-ART-537",
+    "raw_reference": "artículo 537",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-635",
+    "target": "MX-CCF-1928-ART-537",
+    "raw_reference": "artículo 537",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-635",
+    "target": "MX-CCF-1928-ART-23",
+    "raw_reference": "artículo 23",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-651",
+    "target": "MX-CCF-1928-ART-496",
+    "raw_reference": "artículos 496",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-653",
+    "target": "MX-CCF-1928-ART-659",
+    "raw_reference": "artículo 659",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-657",
+    "target": "MX-CCF-1928-ART-653",
+    "raw_reference": "artículo 653",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-658",
+    "target": "MX-CCF-1928-ART-657",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-661",
+    "target": "MX-CCF-1928-ART-585",
+    "raw_reference": "artículos 585",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-666",
+    "target": "MX-CCF-1928-ART-669",
+    "raw_reference": "artículos 669",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-667",
+    "target": "MX-CCF-1928-ART-650",
+    "raw_reference": "artículo 650",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-671",
+    "target": "MX-CCF-1928-ART-670",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-672",
+    "target": "MX-CCF-1928-ART-670",
+    "raw_reference": "artículo 670",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-672",
+    "target": "MX-CCF-1928-ART-657",
+    "raw_reference": "artículos 657",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-672",
+    "target": "MX-CCF-1928-ART-673",
+    "raw_reference": "artículo siguiente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-674",
+    "target": "MX-CCF-1928-ART-650",
+    "raw_reference": "artículo 650",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-676",
+    "target": "MX-CCF-1928-ART-674",
+    "raw_reference": "artículo 674",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-679",
+    "target": "MX-CCF-1928-ART-677",
+    "raw_reference": "artículo 677",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-687",
+    "target": "MX-CCF-1928-ART-682",
+    "raw_reference": "artículo 682",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-688",
+    "target": "MX-CCF-1928-ART-683",
+    "raw_reference": "artículo 683",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-689",
+    "target": "MX-CCF-1928-ART-528",
+    "raw_reference": "artículo 528",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-691",
+    "target": "MX-CCF-1928-ART-631",
+    "raw_reference": "artículo 631",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-691",
+    "target": "MX-CCF-1928-ART-528",
+    "raw_reference": "artículo 528",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-694",
+    "target": "MX-CCF-1928-ART-602",
+    "raw_reference": "artículo 602",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-702",
+    "target": "MX-CCF-1928-ART-697",
+    "raw_reference": "artículo 697",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-706",
+    "target": "MX-CCF-1928-ART-680",
+    "raw_reference": "artículo 680",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-706",
+    "target": "MX-CCF-1928-ART-694",
+    "raw_reference": "artículo 694",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-707",
+    "target": "MX-CCF-1928-ART-697",
+    "raw_reference": "artículo 697",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-709",
+    "target": "MX-CCF-1928-ART-697",
+    "raw_reference": "artículos 697",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-711",
+    "target": "MX-CCF-1928-ART-709",
+    "raw_reference": "artículo 709",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-712",
+    "target": "MX-CCF-1928-ART-711",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-714",
+    "target": "MX-CCF-1928-ART-703",
+    "raw_reference": "artículo 703",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-724",
+    "target": "MX-CCF-1928-ART-725",
+    "raw_reference": "artículo siguiente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-725",
+    "target": "MX-CCF-1928-ART-740",
+    "raw_reference": "artículo 740",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-730",
+    "target": "MX-CCF-1928-ART-723",
+    "raw_reference": "artículo 723",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-731",
+    "target": "MX-CCF-1928-ART-730",
+    "raw_reference": "artículo 730",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-732",
+    "target": "MX-CCF-1928-ART-731",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-733",
+    "target": "MX-CCF-1928-ART-730",
+    "raw_reference": "artículo 730",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-734",
+    "target": "MX-CCF-1928-ART-725",
+    "raw_reference": "artículo 725",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-734",
+    "target": "MX-CCF-1928-ART-730",
+    "raw_reference": "artículo 730",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-734",
+    "target": "MX-CCF-1928-ART-731",
+    "raw_reference": "artículos 731",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-735",
+    "target": "MX-CCF-1928-ART-27",
+    "raw_reference": "artículo 27",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-736",
+    "target": "MX-CCF-1928-ART-27",
+    "raw_reference": "artículo 27",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-736",
+    "target": "MX-CCF-1928-ART-735",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-737",
+    "target": "MX-CCF-1928-ART-735",
+    "raw_reference": "artículo 735",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-737",
+    "target": "MX-CCF-1928-ART-731",
+    "raw_reference": "artículo 731",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-738",
+    "target": "MX-CCF-1928-ART-735",
+    "raw_reference": "artículo 735",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-738",
+    "target": "MX-CCF-1928-ART-732",
+    "raw_reference": "artículo 732",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-741",
+    "target": "MX-CCF-1928-ART-735",
+    "raw_reference": "artículo 735",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-743",
+    "target": "MX-CCF-1928-ART-725",
+    "raw_reference": "artículo 725",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-744",
+    "target": "MX-CCF-1928-ART-730",
+    "raw_reference": "artículo 730",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-751",
+    "target": "MX-CCF-1928-ART-750",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-773",
+    "target": "MX-CCF-1928-ART-27",
+    "raw_reference": "artículo 27",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-780",
+    "target": "MX-CCF-1928-ART-778",
+    "raw_reference": "artículo 778",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-788",
+    "target": "MX-CCF-1928-ART-781",
+    "raw_reference": "artículo 781",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-790",
+    "target": "MX-CCF-1928-ART-793",
+    "raw_reference": "artículo 793",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-809",
+    "target": "MX-CCF-1928-ART-791",
+    "raw_reference": "artículo 791",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-811",
+    "target": "MX-CCF-1928-ART-810",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-814",
+    "target": "MX-CCF-1928-ART-812",
+    "raw_reference": "artículo 812",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-815",
+    "target": "MX-CCF-1928-ART-810",
+    "raw_reference": "artículo 810",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-834",
+    "target": "MX-CCF-1928-ART-833",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-838",
+    "target": "MX-CCF-1928-ART-27",
+    "raw_reference": "artículo 27",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-850",
+    "target": "MX-CCF-1928-ART-849",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-852",
+    "target": "MX-CCF-1928-ART-851",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-857",
+    "target": "MX-CCF-1928-ART-856",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-859",
+    "target": "MX-CCF-1928-ART-861",
+    "raw_reference": "artículo 861",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-862",
+    "target": "MX-CCF-1928-ART-861",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-878",
+    "target": "MX-CCF-1928-ART-876",
+    "raw_reference": "artículos 876",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-884",
+    "target": "MX-CCF-1928-ART-881",
+    "raw_reference": "artículos 881",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-900",
+    "target": "MX-CCF-1928-ART-897",
+    "raw_reference": "artículo 897",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-907",
+    "target": "MX-CCF-1928-ART-902",
+    "raw_reference": "artículo 902",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-907",
+    "target": "MX-CCF-1928-ART-906",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-924",
+    "target": "MX-CCF-1928-ART-916",
+    "raw_reference": "artículos 916",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-927",
+    "target": "MX-CCF-1928-ART-926",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-932",
+    "target": "MX-CCF-1928-ART-904",
+    "raw_reference": "artículos 904",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-934",
+    "target": "MX-CCF-1928-ART-840",
+    "raw_reference": "artículo 840",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-955",
+    "target": "MX-CCF-1928-ART-954",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-958",
+    "target": "MX-CCF-1928-ART-957",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-961",
+    "target": "MX-CCF-1928-ART-960",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-962",
+    "target": "MX-CCF-1928-ART-959",
+    "raw_reference": "artículos 959",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-967",
+    "target": "MX-CCF-1928-ART-964",
+    "raw_reference": "artículos 964",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1005",
+    "target": "MX-CCF-1928-ART-973",
+    "raw_reference": "artículo 973",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1006",
+    "target": "MX-CCF-1928-ART-434",
+    "raw_reference": "artículo 434",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1010",
+    "target": "MX-CCF-1928-ART-1047",
+    "raw_reference": "artículo 1047",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1010",
+    "target": "MX-CCF-1928-ART-1038",
+    "raw_reference": "artículo 1038",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1012",
+    "target": "MX-CCF-1928-ART-1002",
+    "raw_reference": "artículo 1002",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1020",
+    "target": "MX-CCF-1928-ART-1",
+    "raw_reference": "artículo 1",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1033",
+    "target": "MX-CCF-1928-ART-1025",
+    "raw_reference": "artículo 1025",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1044",
+    "target": "MX-CCF-1928-ART-1019",
+    "raw_reference": "artículos 1019",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1048",
+    "target": "MX-CCF-1928-ART-991",
+    "raw_reference": "artículo 991",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1075",
+    "target": "MX-CCF-1928-ART-1074",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1079",
+    "target": "MX-CCF-1928-ART-1078",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1080",
+    "target": "MX-CCF-1928-ART-1078",
+    "raw_reference": "artículo 1078",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1083",
+    "target": "MX-CCF-1928-ART-1078",
+    "raw_reference": "artículo 1078",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1086",
+    "target": "MX-CCF-1928-ART-1078",
+    "raw_reference": "artículo 1078",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1087",
+    "target": "MX-CCF-1928-ART-1081",
+    "raw_reference": "artículo 1081",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1089",
+    "target": "MX-CCF-1928-ART-1086",
+    "raw_reference": "artículo 1086",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1090",
+    "target": "MX-CCF-1928-ART-1078",
+    "raw_reference": "artículo 1078",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1106",
+    "target": "MX-CCF-1928-ART-847",
+    "raw_reference": "artículos 847",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1126",
+    "target": "MX-CCF-1928-ART-1124",
+    "raw_reference": "artículo 1124",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1128",
+    "target": "MX-CCF-1928-ART-1116",
+    "raw_reference": "artículo 1116",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1139",
+    "target": "MX-CCF-1928-ART-826",
+    "raw_reference": "artículos 826",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1294",
+    "target": "MX-CCF-1928-ART-1292",
+    "raw_reference": "artículo 1292",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1298",
+    "target": "MX-CCF-1928-ART-1330",
+    "raw_reference": "artículo 1330",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1314",
+    "target": "MX-CCF-1928-ART-337",
+    "raw_reference": "artículo 337",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1317",
+    "target": "MX-CCF-1928-ART-1316",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1318",
+    "target": "MX-CCF-1928-ART-1316",
+    "raw_reference": "artículo 1316",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1320",
+    "target": "MX-CCF-1928-ART-1316",
+    "raw_reference": "artículo 1316",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1322",
+    "target": "MX-CCF-1928-ART-1316",
+    "raw_reference": "artículo 1316",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1322",
+    "target": "MX-CCF-1928-ART-1321",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1327",
+    "target": "MX-CCF-1928-ART-1328",
+    "raw_reference": "artículo siguiente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1330",
+    "target": "MX-CCF-1928-ART-27",
+    "raw_reference": "artículos 27",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1332",
+    "target": "MX-CCF-1928-ART-1331",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1337",
+    "target": "MX-CCF-1928-ART-1336",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1340",
+    "target": "MX-CCF-1928-ART-1316",
+    "raw_reference": "artículo 1316",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1359",
+    "target": "MX-CCF-1928-ART-311",
+    "raw_reference": "artículo 311",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1362",
+    "target": "MX-CCF-1928-ART-1351",
+    "raw_reference": "artículo 1351",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1365",
+    "target": "MX-CCF-1928-ART-1364",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1371",
+    "target": "MX-CCF-1928-ART-1368",
+    "raw_reference": "artículo 1368",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1371",
+    "target": "MX-CCF-1928-ART-1370",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1372",
+    "target": "MX-CCF-1928-ART-308",
+    "raw_reference": "artículos 308",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1373",
+    "target": "MX-CCF-1928-ART-1368",
+    "raw_reference": "artículo 1368",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1377",
+    "target": "MX-CCF-1928-ART-1375",
+    "raw_reference": "artículo 1375",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1379",
+    "target": "MX-CCF-1928-ART-1378",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1380",
+    "target": "MX-CCF-1928-ART-1344",
+    "raw_reference": "artículo 1344",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1403",
+    "target": "MX-CCF-1928-ART-761",
+    "raw_reference": "artículo 761",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1405",
+    "target": "MX-CCF-1928-ART-1404",
+    "raw_reference": "artículo precedente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1412",
+    "target": "MX-CCF-1928-ART-1459",
+    "raw_reference": "artículo 1459",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1430",
+    "target": "MX-CCF-1928-ART-1429",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1445",
+    "target": "MX-CCF-1928-ART-1441",
+    "raw_reference": "artículos 1441",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1450",
+    "target": "MX-CCF-1928-ART-1449",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1452",
+    "target": "MX-CCF-1928-ART-1444",
+    "raw_reference": "artículos 1444",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1456",
+    "target": "MX-CCF-1928-ART-1455",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1458",
+    "target": "MX-CCF-1928-ART-1456",
+    "raw_reference": "artículos 1456",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1470",
+    "target": "MX-CCF-1928-ART-1469",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1473",
+    "target": "MX-CCF-1928-ART-1472",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1480",
+    "target": "MX-CCF-1928-ART-1314",
+    "raw_reference": "artículo 1314",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1481",
+    "target": "MX-CCF-1928-ART-1480",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1483",
+    "target": "MX-CCF-1928-ART-1482",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1513",
+    "target": "MX-CCF-1928-ART-1514",
+    "raw_reference": "artículos 1514",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1517",
+    "target": "MX-CCF-1928-ART-1512",
+    "raw_reference": "artículo 1512",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1518",
+    "target": "MX-CCF-1928-ART-1503",
+    "raw_reference": "artículo 1503",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1531",
+    "target": "MX-CCF-1928-ART-1524",
+    "raw_reference": "artículos 1524",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1532",
+    "target": "MX-CCF-1928-ART-1528",
+    "raw_reference": "artículos 1528",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1532",
+    "target": "MX-CCF-1928-ART-1531",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1534",
+    "target": "MX-CCF-1928-ART-1520",
+    "raw_reference": "artículo 1520",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1536",
+    "target": "MX-CCF-1928-ART-1535",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1549",
+    "target": "MX-CCF-1928-ART-1508",
+    "raw_reference": "artículos 1508",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1549-BIS",
+    "target": "MX-CCF-1928-ART-1296",
+    "raw_reference": "artículo 1296",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1549-BIS",
+    "target": "MX-CCF-1928-ART-1713",
+    "raw_reference": "artículos 1713",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1549-BIS",
+    "target": "MX-CCF-1928-ART-876",
+    "raw_reference": "artículo 876",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1550",
+    "target": "MX-CCF-1928-ART-1553",
+    "raw_reference": "artículos 1553",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1553",
+    "target": "MX-CCF-1928-ART-1555",
+    "raw_reference": "artículo 1555",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1561",
+    "target": "MX-CCF-1928-ART-1551",
+    "raw_reference": "artículo 1551",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1572",
+    "target": "MX-CCF-1928-ART-1575",
+    "raw_reference": "artículo 1575",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1573",
+    "target": "MX-CCF-1928-ART-1572",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1577",
+    "target": "MX-CCF-1928-ART-1576",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1580",
+    "target": "MX-CCF-1928-ART-1579",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1584",
+    "target": "MX-CCF-1928-ART-1512",
+    "raw_reference": "artículos 1512",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1588",
+    "target": "MX-CCF-1928-ART-1587",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1595",
+    "target": "MX-CCF-1928-ART-1590",
+    "raw_reference": "artículo 1590",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1602",
+    "target": "MX-CCF-1928-ART-1635",
+    "raw_reference": "artículo 1635",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1604",
+    "target": "MX-CCF-1928-ART-1609",
+    "raw_reference": "artículos 1609",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1608",
+    "target": "MX-CCF-1928-ART-1624",
+    "raw_reference": "artículo 1624",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1625",
+    "target": "MX-CCF-1928-ART-1624",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1632",
+    "target": "MX-CCF-1928-ART-1631",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1637",
+    "target": "MX-CCF-1928-ART-27",
+    "raw_reference": "artículo 27",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1640",
+    "target": "MX-CCF-1928-ART-1638",
+    "raw_reference": "artículo 1638",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1641",
+    "target": "MX-CCF-1928-ART-1638",
+    "raw_reference": "artículo 1638",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1641",
+    "target": "MX-CCF-1928-ART-1640",
+    "raw_reference": "artículo 1640",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1644",
+    "target": "MX-CCF-1928-ART-1638",
+    "raw_reference": "artículos 1638",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1651",
+    "target": "MX-CCF-1928-ART-1650",
+    "raw_reference": "artículo precedente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1672",
+    "target": "MX-CCF-1928-ART-1671",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1674",
+    "target": "MX-CCF-1928-ART-1673",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1675",
+    "target": "MX-CCF-1928-ART-1673",
+    "raw_reference": "artículo 1673",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1688",
+    "target": "MX-CCF-1928-ART-1687",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1699",
+    "target": "MX-CCF-1928-ART-1696",
+    "raw_reference": "artículo 1696",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1704",
+    "target": "MX-CCF-1928-ART-205",
+    "raw_reference": "artículo 205",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1718",
+    "target": "MX-CCF-1928-ART-569",
+    "raw_reference": "artículos 569",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1738",
+    "target": "MX-CCF-1928-ART-1737",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1747",
+    "target": "MX-CCF-1928-ART-1701",
+    "raw_reference": "artículo 1701",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1748",
+    "target": "MX-CCF-1928-ART-1741",
+    "raw_reference": "artículo 1741",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1748",
+    "target": "MX-CCF-1928-ART-1743",
+    "raw_reference": "artículo 1743",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1751",
+    "target": "MX-CCF-1928-ART-1750",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1774",
+    "target": "MX-CCF-1928-ART-1368",
+    "raw_reference": "artículo 1368",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1784",
+    "target": "MX-CCF-1928-ART-1780",
+    "raw_reference": "artículo 1780",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1834-BIS",
+    "target": "MX-CCF-1928-ART-1834",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1849",
+    "target": "MX-CCF-1928-ART-1848",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1850",
+    "target": "MX-CCF-1928-ART-2007",
+    "raw_reference": "artículo 2007",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1862",
+    "target": "MX-CCF-1928-ART-1861",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1888",
+    "target": "MX-CCF-1928-ART-1887",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1911",
+    "target": "MX-CCF-1928-ART-1919",
+    "raw_reference": "artículos 1919",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1914",
+    "target": "MX-CCF-1928-ART-1913",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1915",
+    "target": "MX-CCF-1928-ART-2647",
+    "raw_reference": "artículo 2647",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1916",
+    "target": "MX-CCF-1928-ART-1913",
+    "raw_reference": "artículo 1913",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1916",
+    "target": "MX-CCF-1928-ART-1927",
+    "raw_reference": "artículos 1927",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1920",
+    "target": "MX-CCF-1928-ART-1919",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1923",
+    "target": "MX-CCF-1928-ART-1922",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1926",
+    "target": "MX-CCF-1928-ART-1923",
+    "raw_reference": "artículos 1923",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1948",
+    "target": "MX-CCF-1928-ART-2021",
+    "raw_reference": "artículo 2021",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1960",
+    "target": "MX-CCF-1928-ART-1959",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1974",
+    "target": "MX-CCF-1928-ART-1973",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1976",
+    "target": "MX-CCF-1928-ART-1975",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1978",
+    "target": "MX-CCF-1928-ART-2027",
+    "raw_reference": "artículo 2027",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1980",
+    "target": "MX-CCF-1928-ART-1979",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-1983",
+    "target": "MX-CCF-1928-ART-2027",
+    "raw_reference": "artículos 2027",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2022",
+    "target": "MX-CCF-1928-ART-2017",
+    "raw_reference": "artículo 2017",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2036",
+    "target": "MX-CCF-1928-ART-2033",
+    "raw_reference": "artículo 2033",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2069",
+    "target": "MX-CCF-1928-ART-2066",
+    "raw_reference": "artículo 2066",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2070",
+    "target": "MX-CCF-1928-ART-2067",
+    "raw_reference": "artículo 2067",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2071",
+    "target": "MX-CCF-1928-ART-2068",
+    "raw_reference": "artículo 2068",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2072",
+    "target": "MX-CCF-1928-ART-2058",
+    "raw_reference": "artículos 2058",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2104",
+    "target": "MX-CCF-1928-ART-2080",
+    "raw_reference": "artículo 2080",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2105",
+    "target": "MX-CCF-1928-ART-2080",
+    "raw_reference": "artículo 2080",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2105",
+    "target": "MX-CCF-1928-ART-2104",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2116",
+    "target": "MX-CCF-1928-ART-1916",
+    "raw_reference": "artículo 1916",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2123",
+    "target": "MX-CCF-1928-ART-2126",
+    "raw_reference": "artículos 2126",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2127",
+    "target": "MX-CCF-1928-ART-2126",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2128",
+    "target": "MX-CCF-1928-ART-2127",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2140",
+    "target": "MX-CCF-1928-ART-2123",
+    "raw_reference": "artículo 2123",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2140",
+    "target": "MX-CCF-1928-ART-2124",
+    "raw_reference": "artículo 2124",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2144",
+    "target": "MX-CCF-1928-ART-2142",
+    "raw_reference": "artículo 2142",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2145",
+    "target": "MX-CCF-1928-ART-2144",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2149",
+    "target": "MX-CCF-1928-ART-2138",
+    "raw_reference": "artículos 2138",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2152",
+    "target": "MX-CCF-1928-ART-2150",
+    "raw_reference": "artículo 2150",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2164",
+    "target": "MX-CCF-1928-ART-2163",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2174",
+    "target": "MX-CCF-1928-ART-2163",
+    "raw_reference": "artículo 2163",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2191",
+    "target": "MX-CCF-1928-ART-2186",
+    "raw_reference": "artículo 2186",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2196",
+    "target": "MX-CCF-1928-ART-2093",
+    "raw_reference": "artículo 2093",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2223",
+    "target": "MX-CCF-1928-ART-1999",
+    "raw_reference": "artículo 1999",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2227",
+    "target": "MX-CCF-1928-ART-2226",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2236",
+    "target": "MX-CCF-1928-ART-638",
+    "raw_reference": "artículo 638",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2262",
+    "target": "MX-CCF-1928-ART-2259",
+    "raw_reference": "artículos 2259",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2266",
+    "target": "MX-CCF-1928-ART-2265",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2274",
+    "target": "MX-CCF-1928-ART-27",
+    "raw_reference": "artículo 27",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2277",
+    "target": "MX-CCF-1928-ART-2276",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2278",
+    "target": "MX-CCF-1928-ART-428",
+    "raw_reference": "artículo 428",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2279",
+    "target": "MX-CCF-1928-ART-973",
+    "raw_reference": "artículos 973",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2296",
+    "target": "MX-CCF-1928-ART-2104",
+    "raw_reference": "artículos 2104",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2300",
+    "target": "MX-CCF-1928-ART-1950",
+    "raw_reference": "artículos 1950",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2312",
+    "target": "MX-CCF-1928-ART-2310",
+    "raw_reference": "artículo 2310",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2313",
+    "target": "MX-CCF-1928-ART-2312",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2314",
+    "target": "MX-CCF-1928-ART-2",
+    "raw_reference": "artículo 2",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2315",
+    "target": "MX-CCF-1928-ART-2312",
+    "raw_reference": "artículo 2312",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2317",
+    "target": "MX-CCF-1928-ART-730",
+    "raw_reference": "artículo 730",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2317",
+    "target": "MX-CCF-1928-ART-730",
+    "raw_reference": "artículo 730",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2318",
+    "target": "MX-CCF-1928-ART-1834-BIS",
+    "raw_reference": "artículo 1834",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2320",
+    "target": "MX-CCF-1928-ART-2317",
+    "raw_reference": "artículo 2317",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2327",
+    "target": "MX-CCF-1928-ART-2250",
+    "raw_reference": "artículo 2250",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2330",
+    "target": "MX-CCF-1928-ART-2329",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2357",
+    "target": "MX-CCF-1928-ART-337",
+    "raw_reference": "artículo 337",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2359",
+    "target": "MX-CCF-1928-ART-337",
+    "raw_reference": "artículo 337",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2360",
+    "target": "MX-CCF-1928-ART-2348",
+    "raw_reference": "artículo 2348",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2360",
+    "target": "MX-CCF-1928-ART-2359",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2369",
+    "target": "MX-CCF-1928-ART-2362",
+    "raw_reference": "artículos 2362",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2371",
+    "target": "MX-CCF-1928-ART-2361",
+    "raw_reference": "artículos 2361",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2385",
+    "target": "MX-CCF-1928-ART-2080",
+    "raw_reference": "artículo 2080",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2387",
+    "target": "MX-CCF-1928-ART-2085",
+    "raw_reference": "artículo 2085",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2391",
+    "target": "MX-CCF-1928-ART-2080",
+    "raw_reference": "artículo 2080",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2402",
+    "target": "MX-CCF-1928-ART-2401",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2414",
+    "target": "MX-CCF-1928-ART-2412",
+    "raw_reference": "artículo 2412",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2418",
+    "target": "MX-CCF-1928-ART-2412",
+    "raw_reference": "artículo 2412",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2424",
+    "target": "MX-CCF-1928-ART-2423",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2428",
+    "target": "MX-CCF-1928-ART-2422",
+    "raw_reference": "artículo 2422",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2432",
+    "target": "MX-CCF-1928-ART-2431",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2434",
+    "target": "MX-CCF-1928-ART-2431",
+    "raw_reference": "artículo 2431",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2443",
+    "target": "MX-CCF-1928-ART-2442",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2447",
+    "target": "MX-CCF-1928-ART-2448-L",
+    "raw_reference": "artículo 2448",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2448",
+    "target": "MX-CCF-1928-ART-2448-L",
+    "raw_reference": "artículos 2448",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2448-K",
+    "target": "MX-CCF-1928-ART-2448-J",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2448-K",
+    "target": "MX-CCF-1928-ART-2448-J",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2475",
+    "target": "MX-CCF-1928-ART-2474",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2477",
+    "target": "MX-CCF-1928-ART-2465",
+    "raw_reference": "artículo 2465",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2479",
+    "target": "MX-CCF-1928-ART-2456",
+    "raw_reference": "artículos 2456",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2479",
+    "target": "MX-CCF-1928-ART-2478",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2482",
+    "target": "MX-CCF-1928-ART-2480",
+    "raw_reference": "artículo 2480",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2482",
+    "target": "MX-CCF-1928-ART-2441",
+    "raw_reference": "artículo 2441",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2490",
+    "target": "MX-CCF-1928-ART-2412",
+    "raw_reference": "artículo 2412",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2490",
+    "target": "MX-CCF-1928-ART-2431",
+    "raw_reference": "artículos 2431",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2496",
+    "target": "MX-CCF-1928-ART-2456",
+    "raw_reference": "artículos 2456",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2533",
+    "target": "MX-CCF-1928-ART-2532",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2553",
+    "target": "MX-CCF-1928-ART-2554",
+    "raw_reference": "artículo 2554",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2559",
+    "target": "MX-CCF-1928-ART-2557",
+    "raw_reference": "artículo 2557",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2571",
+    "target": "MX-CCF-1928-ART-2570",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2587",
+    "target": "MX-CCF-1928-ART-2554",
+    "raw_reference": "artículo 2554",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2588",
+    "target": "MX-CCF-1928-ART-2595",
+    "raw_reference": "artículo 2595",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2592",
+    "target": "MX-CCF-1928-ART-2595",
+    "raw_reference": "artículo 2595",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2593",
+    "target": "MX-CCF-1928-ART-2592",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2595",
+    "target": "MX-CCF-1928-ART-670",
+    "raw_reference": "artículos 670",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2601",
+    "target": "MX-CCF-1928-ART-2600",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2604",
+    "target": "MX-CCF-1928-ART-2597",
+    "raw_reference": "artículo 2597",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2605",
+    "target": "MX-CCF-1928-ART-123",
+    "raw_reference": "artículo 123",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2605",
+    "target": "MX-CCF-1928-ART-123",
+    "raw_reference": "artículo 123",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2605",
+    "target": "MX-CCF-1928-ART-4",
+    "raw_reference": "artículos 4",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2609",
+    "target": "MX-CCF-1928-ART-2610",
+    "raw_reference": "artículo siguiente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2614",
+    "target": "MX-CCF-1928-ART-2589",
+    "raw_reference": "artículo 2589",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2622",
+    "target": "MX-CCF-1928-ART-2621",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2627",
+    "target": "MX-CCF-1928-ART-2626",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2652",
+    "target": "MX-CCF-1928-ART-2651",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2665",
+    "target": "MX-CCF-1928-ART-2664",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2693",
+    "target": "MX-CCF-1928-ART-2691",
+    "raw_reference": "Artículo 2691",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2700",
+    "target": "MX-CCF-1928-ART-27",
+    "raw_reference": "artículo 27",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2709",
+    "target": "MX-CCF-1928-ART-2719",
+    "raw_reference": "artículo 2719",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2719",
+    "target": "MX-CCF-1928-ART-2",
+    "raw_reference": "artículo 2",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2730",
+    "target": "MX-CCF-1928-ART-2729",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2746",
+    "target": "MX-CCF-1928-ART-2744",
+    "raw_reference": "artículo 2744",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2746",
+    "target": "MX-CCF-1928-ART-2745",
+    "raw_reference": "artículo 2745",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2759",
+    "target": "MX-CCF-1928-ART-2745",
+    "raw_reference": "artículo 2745",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2769",
+    "target": "MX-CCF-1928-ART-2768",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2770",
+    "target": "MX-CCF-1928-ART-2765",
+    "raw_reference": "artículo 2765",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2783",
+    "target": "MX-CCF-1928-ART-2782",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2786",
+    "target": "MX-CCF-1928-ART-2785",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2801",
+    "target": "MX-CCF-1928-ART-1998",
+    "raw_reference": "artículo 1998",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2804",
+    "target": "MX-CCF-1928-ART-2802",
+    "raw_reference": "artículo 2802",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2810",
+    "target": "MX-CCF-1928-ART-2809",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2821",
+    "target": "MX-CCF-1928-ART-2817",
+    "raw_reference": "artículo 2817",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2825",
+    "target": "MX-CCF-1928-ART-2809",
+    "raw_reference": "artículo 2809",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2838",
+    "target": "MX-CCF-1928-ART-2837",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2839",
+    "target": "MX-CCF-1928-ART-2837",
+    "raw_reference": "artículo 2837",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2839",
+    "target": "MX-CCF-1928-ART-2816",
+    "raw_reference": "artículo 2816",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2839",
+    "target": "MX-CCF-1928-ART-2816",
+    "raw_reference": "artículo 2816",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2853",
+    "target": "MX-CCF-1928-ART-2852",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2854",
+    "target": "MX-CCF-1928-ART-2852",
+    "raw_reference": "artículo 2852",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2872",
+    "target": "MX-CCF-1928-ART-2871",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2873",
+    "target": "MX-CCF-1928-ART-2981",
+    "raw_reference": "artículo 2981",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2881",
+    "target": "MX-CCF-1928-ART-2080",
+    "raw_reference": "artículo 2080",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2908",
+    "target": "MX-CCF-1928-ART-2907",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2909",
+    "target": "MX-CCF-1928-ART-2907",
+    "raw_reference": "artículo 2907",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2926",
+    "target": null,
+    "raw_reference": "artículo 2917",
+    "resolution": "unresolved",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2930",
+    "target": "MX-CCF-1928-ART-2929",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2933",
+    "target": null,
+    "raw_reference": "artículo 2912",
+    "resolution": "unresolved",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2935",
+    "target": "MX-CCF-1928-ART-520",
+    "raw_reference": "artículo 520",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2936",
+    "target": "MX-CCF-1928-ART-2935",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2939",
+    "target": "MX-CCF-1928-ART-2935",
+    "raw_reference": "artículo 2935",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2939",
+    "target": "MX-CCF-1928-ART-2995",
+    "raw_reference": "artículo 2995",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2941",
+    "target": "MX-CCF-1928-ART-2910",
+    "raw_reference": "artículo 2910",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2941",
+    "target": "MX-CCF-1928-ART-2325",
+    "raw_reference": "artículo 2325",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2943",
+    "target": "MX-CCF-1928-ART-2942",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2984",
+    "target": "MX-CCF-1928-ART-2981",
+    "raw_reference": "artículo 2981",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2984",
+    "target": "MX-CCF-1928-ART-2859",
+    "raw_reference": "artículo 2859",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2985",
+    "target": "MX-CCF-1928-ART-2982",
+    "raw_reference": "artículo 2982",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2986",
+    "target": "MX-CCF-1928-ART-2985",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2987",
+    "target": "MX-CCF-1928-ART-2981",
+    "raw_reference": "artículo 2981",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2991",
+    "target": "MX-CCF-1928-ART-2990",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2993",
+    "target": "MX-CCF-1928-ART-2644",
+    "raw_reference": "artículo 2644",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2995",
+    "target": "MX-CCF-1928-ART-2935",
+    "raw_reference": "artículo 2935",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2995",
+    "target": "MX-CCF-1928-ART-2980",
+    "raw_reference": "artículo 2980",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-2995",
+    "target": "MX-CCF-1928-ART-2935",
+    "raw_reference": "artículo 2935",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3003",
+    "target": "MX-CCF-1928-ART-3016",
+    "raw_reference": "artículo 3016",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3004",
+    "target": "MX-CCF-1928-ART-3003",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3013",
+    "target": "MX-CCF-1928-ART-3016",
+    "raw_reference": "artículo 3016",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3015",
+    "target": "MX-CCF-1928-ART-3016",
+    "raw_reference": "artículo siguiente",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3021",
+    "target": "MX-CCF-1928-ART-3011",
+    "raw_reference": "artículo 3011",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3022",
+    "target": "MX-CCF-1928-ART-3043",
+    "raw_reference": "artículo 3043",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3026",
+    "target": "MX-CCF-1928-ART-3022",
+    "raw_reference": "artículo 3022",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3026",
+    "target": "MX-CCF-1928-ART-3012",
+    "raw_reference": "artículo 3012",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3033",
+    "target": "MX-CCF-1928-ART-2325",
+    "raw_reference": "artículo 2325",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3043",
+    "target": "MX-CCF-1928-ART-2852",
+    "raw_reference": "artículo 2852",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3044",
+    "target": "MX-CCF-1928-ART-3043",
+    "raw_reference": "artículo 3043",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3044",
+    "target": "MX-CCF-1928-ART-2854",
+    "raw_reference": "artículo 2854",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3046",
+    "target": "MX-CCF-1928-ART-3051",
+    "raw_reference": "artículo 3051",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3046",
+    "target": "MX-CCF-1928-ART-3052",
+    "raw_reference": "artículo 3052",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3046",
+    "target": "MX-CCF-1928-ART-3053",
+    "raw_reference": "artículo 3053",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3047",
+    "target": "MX-CCF-1928-ART-3046",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3048",
+    "target": "MX-CCF-1928-ART-3046",
+    "raw_reference": "artículo 3046",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3048",
+    "target": "MX-CCF-1928-ART-3047",
+    "raw_reference": "artículo 3047",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3050",
+    "target": "MX-CCF-1928-ART-3046",
+    "raw_reference": "artículo 3046",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3051",
+    "target": "MX-CCF-1928-ART-3046",
+    "raw_reference": "artículo 3046",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3052",
+    "target": "MX-CCF-1928-ART-3046",
+    "raw_reference": "artículo 3046",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3053",
+    "target": "MX-CCF-1928-ART-3046",
+    "raw_reference": "artículo 3046",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3053",
+    "target": "MX-CCF-1928-ART-3052",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3054",
+    "target": "MX-CCF-1928-ART-3052",
+    "raw_reference": "artículo 3052",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3062",
+    "target": "MX-CCF-1928-ART-3061",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3068",
+    "target": "MX-CCF-1928-ART-3009",
+    "raw_reference": "artículo 3009",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3068",
+    "target": "MX-CCF-1928-ART-3067",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3069",
+    "target": "MX-CCF-1928-ART-2310",
+    "raw_reference": "artículo 2310",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3069",
+    "target": "MX-CCF-1928-ART-2312",
+    "raw_reference": "artículo 2312",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3069",
+    "target": "MX-CCF-1928-ART-2859",
+    "raw_reference": "artículo 2859",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3071",
+    "target": "MX-CCF-1928-ART-17",
+    "raw_reference": "artículos 17",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "MX-CCF-1928-ART-3074",
+    "target": "MX-CCF-1928-ART-2310",
+    "raw_reference": "artículo 2310",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  }
+]

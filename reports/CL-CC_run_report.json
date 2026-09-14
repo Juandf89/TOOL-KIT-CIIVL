@@ -1,7 +1,7 @@
 {
   "corpus_id": "CL-CC",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:48:38.250536+00:00",
+  "generated_at": "2026-09-14T14:42:54.605075+00:00",
   "source_hash": "sha256:813188f15a847597292b469b6b6150ea5d322ea911ec93f38e91a5a0b956a3fb",
   "segment_stats": {
     "articles_parsed": 2567,

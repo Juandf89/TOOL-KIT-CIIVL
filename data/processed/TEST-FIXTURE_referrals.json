@@ -1,0 +1,20 @@
+[
+  {
+    "source": "XX-TEST-2026-ART-2",
+    "target": "XX-TEST-2026-ART-1",
+    "raw_reference": "artículo 1",
+    "resolution": "numeric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  },
+  {
+    "source": "XX-TEST-2026-ART-3",
+    "target": "XX-TEST-2026-ART-2",
+    "raw_reference": "artículo anterior",
+    "resolution": "anaphoric",
+    "function": "indeterminada",
+    "in_function_sample": false,
+    "verified": false
+  }
+]

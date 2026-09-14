@@ -1,7 +1,7 @@
 {
   "corpus_id": "TEST-FIXTURE",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:16:29.101919+00:00",
+  "generated_at": "2026-09-14T14:43:00.208233+00:00",
   "source_hash": "sha256:ccb4096995fda6ed7dcf9d71b9d6791beeaa3c1da44673b1c9a0dad283adf2f5",
   "segment_stats": {
     "articles_parsed": 4,

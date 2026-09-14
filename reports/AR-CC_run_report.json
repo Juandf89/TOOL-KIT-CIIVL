@@ -1,7 +1,7 @@
 {
   "corpus_id": "AR-CC",
   "pipeline_version": "pipeline_v0.2",
-  "generated_at": "2026-09-11T00:48:40.407091+00:00",
+  "generated_at": "2026-09-14T14:42:55.971189+00:00",
   "source_hash": "sha256:a3f5931c7f5ba24d25eb04e6d901a052b760b61b434c2bcea022682610b60862",
   "segment_stats": {
     "articles_parsed": 3989,
