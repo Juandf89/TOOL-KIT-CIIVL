@@ -40,6 +40,7 @@ app = FastAPI(title='DataLex Lab · LATIO API', version='1.0.0', docs_url='/docs
 # o el puerto que uses, agregalo acá si no es 5500/8080).
 _DEFAULT_ORIGINS = [
     'https://datalexlab.com',
+    'https://juandf89.github.io',
     'http://localhost:5500', 'http://127.0.0.1:5500',
     'http://localhost:8080', 'http://127.0.0.1:8080',
 ]

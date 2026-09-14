@@ -14,20 +14,21 @@ Hostinger Business expone en hPanel una función para correr apps Python bajo Ph
 Passenger clásico espera un archivo `passenger_wsgi.py` con un callable WSGI llamado `application`.
 `src/api.py` es una app **ASGI** (FastAPI) — no WSGI — así que:
 
-### Listo en el repo (re-verificado, no solo leído)
+### Listo en el repo (re-verificado, no solo leído — última vez 2026-09-14)
 - **`passenger_wsgi.py`** (raíz del repo): envuelve `src.api:app` con `a2wsgi.ASGIMiddleware` para
-  exponer un callable WSGI válido. **Re-probado de nuevo hoy**, con una request WSGI sintética
-  (mismo mecanismo que usaría Passenger — sin `uvicorn`, sin socket real), contra los 4 grupos de
-  endpoints:
+  exponer un callable WSGI válido. **Re-probado hoy** (2026-09-14, después de agregar el motor de
+  etiquetado y corregir Hohfeld/Unicode), con una request WSGI sintética (mismo mecanismo que usaría
+  Passenger — sin `uvicorn`, sin socket real), contra:
   - `GET /health` → 200 `{"status":"ok"}`
-  - `GET /v1/reasoning/rulebases` → 200, incluye `jp-civil-612-sublease-demo`
-  - `POST /v1/reasoning/prove` con el **caso de oro del paper PROLEG** (Apéndice A, Satoh et al.,
-    JURISIN 2010 — el mismo factbase de `tests/test_api_reasoning.py`) → 200, `"proved": true`,
-    traza no vacía
-  - `GET /v1/corpora` → 200, 8 corpus
-  - `GET /v1/corpora/CO-CC/articles?limit=5&offset=0` → 200, `total` real (2672 artículos)
+  - `POST /v1/statements/propose` con un texto real ("El juez podrá reducir la pena...") → 200,
+    `hohfeldian_position: "potestad"` (confirma que el fix de Hohfeld del 09-11 también funciona bajo
+    Passenger, no solo bajo `uvicorn`)
+  - `POST /v1/statements/validate` → 200
+  - `GET /v1/corpora` → 200, 8 corpus (con `data/processed/` ya versionado en git desde el 09-14, esto
+    funciona en un clon limpio sin pasos manuales adicionales)
 
-  Nada roto — no hizo falta tocar el archivo.
+  Nada roto — no hizo falta tocar el archivo. (Verificación anterior del 09-10 contra
+  `/v1/reasoning/*` sigue vigente, no se repitió porque ese código no cambió.)
 - **`requirements-prod.txt`**: **re-instalado hoy en un venv nuevo y vacío** (no el entorno principal
   del repo, que ya tenía las dependencias sueltas instaladas globalmente y no serviría como prueba).
   `pip install -r requirements-prod.txt` bajó las 5 dependencias pineadas (`fastapi==0.141.1`,
@@ -128,11 +129,13 @@ la ve).
 1. Confirmá desde dónde se está sirviendo `toolkit-api/index.html` (¿`https://datalexlab.com/latio/`?
    ¿GitHub Pages? ¿local con `python -m http.server`?) — ese origen exacto (esquema + host + puerto,
    sin path) tiene que estar en `LATIO_ALLOWED_ORIGINS`.
-2. Si `LATIO_ALLOWED_ORIGINS` **no está seteada** en hPanel, la API cae al default de
-   `src/api.py` (`https://datalexlab.com`, `localhost:5500`, `localhost:8080`) — si tu frontend real
-   se sirve desde otro origen (por ejemplo `datalexlab.com/latio` sigue siendo el mismo origen
-   `https://datalexlab.com`, así que ese caso ya está cubierto; pero GitHub Pages
-   `https://juandf89.github.io` **no** lo está a menos que lo agregues).
+2. Si `LATIO_ALLOWED_ORIGINS` **no está seteada** en hPanel, la API cae al default de `src/api.py`
+   (`https://datalexlab.com`, `https://juandf89.github.io`, `localhost:5500`, `localhost:8080` —
+   actualizado el 09-14 para incluir GitHub Pages, ya que ahí es donde vive hoy la consola pública
+   real). Igual **recomendamos setear la variable explícitamente** en hPanel: es más robusto que
+   depender de un default hardcodeado en el código, y sigue siendo necesario si el frontend real
+   termina sirviéndose desde otro origen (`datalexlab.com/latio` es el mismo origen
+   `https://datalexlab.com` así que ese caso ya está cubierto por el default).
 3. Seteá `LATIO_ALLOWED_ORIGINS` en hPanel con la lista separada por comas de todos los orígenes que
    necesitás (por ejemplo: `https://datalexlab.com,https://juandf89.github.io`) y reiniciá la app.
 4. Si seteaste la variable y sigue fallando, verificá que hPanel realmente la esté pasando al proceso
@@ -203,25 +206,33 @@ Si alguno de estos falla, volvé a la sección **Troubleshooting** de arriba.
 
 ## Qué subir (mínimo vs. opcional)
 
-Verificado leyendo `src/api.py` de nuevo (no asumido): en runtime, la API **solo** abre archivos bajo
-tres rutas — `reports/manifest.json`, `config/corpus_registry.yaml`, y
-`data/processed/<corpus_id>_articles.json` (`src/api.py` líneas 101-256). Nunca toca `data/raw/` ni
+Verificado leyendo `src/api.py` de nuevo (no asumido): en runtime, la API abre archivos bajo tres
+rutas — `reports/manifest.json`, `config/corpus_registry.yaml`, y
+`data/processed/<corpus_id>_articles.json` — y además importa código de `src/labeling/` (motor de
+etiquetado N3, agregado el 09-11) además de `src/reasoning/*`. Nunca toca `data/raw/` ni
 `data/interim/`, y nunca abre los archivos `*_referrals.json` de `data/processed/` (esos solo los usa
 `src/pipeline.py`, que es el script de extracción offline — no se ejecuta en producción).
+
+**Cambio importante desde el 09-14: `data/processed/` ya está commiteado en git** (antes estaba en
+`.gitignore` y había que subirlo aparte a mano). Si desplegás por Git (ver paso 2 más abajo), los 8
+archivos de artículos vienen automáticamente con el clon/pull — ya no hace falta subirlos por
+separado. Si desplegás por SFTP/Administrador de Archivos igual podés subir la carpeta entera tal
+cual sale del repo, sin filtrar nada a mano.
 
 ### Mínimo imprescindible
 - `passenger_wsgi.py`
 - `requirements-prod.txt`
-- `src/` completo (en la práctica solo se importan `src/__init__.py`, `src/api.py` y
-  `src/reasoning/*`, pero subir el paquete entero es más simple que separar archivos y no rompe nada
-  — `src/pipeline.py`, `src/behavior.py` y `src/models.py` quedan sin usar en runtime si no los
-  importás, no fallan por estar presentes)
+- `src/` completo (en la práctica se importan `src/__init__.py`, `src/api.py`, `src/models.py`,
+  `src/labeling/*` y `src/reasoning/*`; subir el paquete entero es más simple que separar archivos y
+  no rompe nada — `src/pipeline.py` y `src/behavior.py` quedan sin usar en runtime, no fallan por
+  estar presentes)
 - `reports/manifest.json` (un solo archivo, no toda la carpeta `reports/`)
 - `config/corpus_registry.yaml`
 - `data/processed/CL-CC_articles.json`, `CO-CC_articles.json`, `AR-CC_articles.json`,
   `AR-CCYC_articles.json`, `BR-CC_articles.json`, `MX-CCF_articles.json`, `MX-CDMX_articles.json`,
   `PE-CC_articles.json` (los 8 reales — sin ellos, `/v1/corpora/<id>/articles` devuelve 404 para ese
-  corpus puntual, pero no rompe el arranque del resto de la app)
+  corpus puntual, pero no rompe el arranque del resto de la app). **Ya vienen con el repo si
+  desplegás por Git.**
 
 ### Opcional / no hace falta subir
 - **`data/raw/`** (7.7 MB) — no lo lee nada en runtime, es el insumo del pipeline de extracción.
