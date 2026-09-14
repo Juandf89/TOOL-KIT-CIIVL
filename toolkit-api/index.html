@@ -1933,7 +1933,7 @@ function renderResponse() {
           <span class="v-tag vt-deontic">VON WRIGHT: ${n.deontic_modality}${confidenceSuffix('deontic_modality')}</span>
           <span class="v-tag vt-hohfeld">HOHFELD: ${n.hohfeldian_position}${confidenceSuffix('hohfeldian_position')}</span>
           <span class="v-tag vt-dest">DESTINATARIO: ${n.addressee}${confidenceSuffix('addressee')}</span>
-          ${n.exception && n.exception.present ? '<span class="v-tag vt-exc">DERROTABLE (EXCEPCIÓN)</span>' : ''}
+          ${n.exception && n.exception.present ? '<span class="v-tag vt-exc">CARGA DE LA PRUEBA (EXCEPCIÓN)</span>' : ''}
         </div>
         <div class="v-text" style="font-style:normal;">"${n.text_span || ''}"</div>
         <div style="font-size:12px;color:var(--text-dark-muted);">generalidad: ${c.generality_level} · derogabilidad: ${n.derogability}</div>
