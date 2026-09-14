@@ -268,11 +268,11 @@ def propose_from_text(text: str) -> LabelProposal:
         deontic_modality = "ninguno"
         undetermined.append("deontic_modality")
         notes.append(
-            "deontic_modality: sin marcador léxico de obligación/prohibición/"
-            "permiso — se deja 'ninguno' por defecto (correcto para "
-            "definiciones/remisiones, pero revisar si es una regla con "
-            "deóntica implícita en presente indicativo, ej. 'el comprador "
-            "paga el precio' sin 'deberá')."
+            "Deóntica (Von Wright): sin marcador léxico de obligación/"
+            "prohibición/permiso — se deja 'ninguno' por defecto (correcto "
+            "para definiciones/remisiones, pero revisar si es una regla "
+            "con deóntica implícita en presente indicativo, ej. 'el "
+            "comprador paga el precio' sin 'deberá')."
         )
 
     # addressee se detecta ACÁ (antes de derivar Hohfeld) porque
@@ -286,7 +286,7 @@ def propose_from_text(text: str) -> LabelProposal:
         addressee = "partes"
         default.append("addressee")
         notes.append(
-            "addressee: sin marcador de juez/funcionario/tercero — se "
+            "Destinatario: sin marcador de juez/funcionario/tercero — se "
             "asume 'partes' por defecto (mayoría del derecho privado); "
             "revisar si el artículo se dirige a otro destinatario."
         )
@@ -300,7 +300,7 @@ def propose_from_text(text: str) -> LabelProposal:
     if "deontic_modality" in determined:
         default.append("hohfeldian_position")
         notes.append(
-            "hohfeldian_position: correlato por defecto de la deóntica "
+            "Posición (Hohfeld): correlato por defecto de la deóntica "
             "detectada (y, si es 'permiso', del destinatario) — no un "
             "análisis bilateral de Hohfeld (no identifica contraparte) — "
             "ver docs/limitaciones_conocidas.md §2."
@@ -336,7 +336,7 @@ def propose_from_text(text: str) -> LabelProposal:
     else:
         undetermined.append("statement_type")
         notes.append(
-            "statement_type no determinado: sin marcador léxico de "
+            "Tipo de norma: no determinado. Sin marcador léxico de "
             "presunción/remisión/definición ni deóntica explícita. "
             "Distinguir principio/regla_interpretativa/norma_organica/"
             "ficcion sin marcador textual requiere criterio humano."
@@ -351,15 +351,17 @@ def propose_from_text(text: str) -> LabelProposal:
         undetermined.append("structure")
         if statement_type is not None:
             notes.append(
-                f"structure no determinado: statement_type='{statement_type}' "
-                f"admite más de una estructura compatible sin más evidencia "
+                f"Estructura: no determinada. El tipo de norma detectado "
+                f"('{statement_type}') admite más de una estructura "
+                f"compatible sin más evidencia "
                 f"({sorted(COMPATIBILITY.get(statement_type, set()))})."
             )
 
     undetermined.append("generality")
     notes.append(
-        "generality (n_conditions, indeterminate_concepts, etc.) queda "
-        "fuera del alcance de este motor de reglas — completar manualmente."
+        "Generalidad (cantidad de condiciones, conceptos indeterminados, "
+        "etc.) queda fuera del alcance de este motor de reglas — "
+        "completar manualmente."
     )
 
     proleg_preview = None

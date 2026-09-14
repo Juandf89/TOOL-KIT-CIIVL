@@ -841,6 +841,31 @@ let labelingState = {
   proposal: null,
 };
 
+// Nombres de campo reales (los que usa la API) -> etiqueta en español llano.
+// Se usa tanto para traducir errores de validación como el resumen
+// "detectado / sin determinar" que se muestra antes del formulario.
+const LABELING_FIELD_LABELS_ES = {
+  text_span: 'Texto del artículo',
+  statement_type: 'Tipo de norma',
+  structure: 'Estructura',
+  deontic_modality: 'Deóntica (Von Wright)',
+  hohfeldian_position: 'Posición (Hohfeld)',
+  addressee: 'Destinatario',
+  antecedent_operator: 'Operador del antecedente',
+  exception_present: '¿Tiene excepción?',
+  exception_marker: 'Marcador de la excepción',
+  exception_scope: '¿Dónde está la excepción?',
+  generality_n_conditions: 'Cantidad de condiciones',
+  generality_has_enumeration: '¿Tiene una lista/enumeración?',
+  generality_enumeration_closed: '¿La lista es cerrada?',
+  presumption_rebuttable: '¿Admite prueba en contrario?',
+  generality: 'Generalidad',
+};
+
+function labelingFieldNamesEs(fields) {
+  return (fields || []).map(f => LABELING_FIELD_LABELS_ES[f] || f).join(', ') || '(ninguno)';
+}
+
 async function checkAnalyzerConnection() {
   const pill = document.getElementById('connection-status-pill');
   const text = document.getElementById('connection-status-text');
@@ -901,42 +926,45 @@ function renderParamsForm() {
   if (currentEndpoint === 'reasoning') {
     container.innerHTML = `
       <div class="builder-card">
-        <h3>Conexión <span class="param-type">requiere backend local</span></h3>
+        <h3>Conexión</h3>
         <div class="param-row">
-          <div class="param-label"><span>API base URL</span><span class="param-type">string</span></div>
+          <div class="param-label"><span>Dirección del analizador</span></div>
           <input type="text" id="param-api-base" class="form-input" value="${getStoredApiBase()}" oninput="onReasoningBaseChange()" placeholder="http://127.0.0.1:8000">
         </div>
-        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;">
-          Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita — ver <code>ALLOWED_ORIGINS</code> en <code>src/api.py</code>.
-        </p>
+        <details style="margin-top:8px;">
+          <summary style="cursor:pointer;font-size:11.5px;color:var(--text-muted);">Detalles técnicos para levantar el analizador</summary>
+          <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:8px;">
+            Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita.
+          </p>
+        </details>
       </div>
       <div class="builder-card">
-        <h3>Ruleset</h3>
+        <h3>Conjunto de reglas</h3>
         <div class="param-row">
-          <div class="param-label"><span>rulebase_id</span><span class="param-type">string · required</span></div>
+          <div class="param-label"><span>Cuál usar</span></div>
           <select id="param-rulebase" class="form-select" onchange="updateCodeSnippet()">
-            <option value="jp-civil-612-sublease-demo">jp-civil-612-sublease-demo</option>
-            <option value="co-civil-256-visitas">co-civil-256-visitas</option>
+            <option value="jp-civil-612-sublease-demo">Caso de oro (Art. 612 japonés)</option>
+            <option value="co-civil-256-visitas">Art. 256 CO · Visitas</option>
           </select>
         </div>
-        <button class="btn-secondary-sm" onclick="refreshRulebases()">🔄 Actualizar lista desde /v1/reasoning/rulebases</button>
+        <button class="btn-secondary-sm" onclick="refreshRulebases()">🔄 Actualizar lista</button>
       </div>
       <div class="builder-card">
         <h3>Caso</h3>
         <button class="btn-secondary-sm" onclick="loadReasoningGoldenCase()" style="margin-bottom:16px;">🧩 Cargar caso de oro (Art. 612 japonés)</button>
         <div class="param-row">
-          <div class="param-label"><span>party</span><span class="param-type">string · required</span></div>
+          <div class="param-label"><span>¿Quién representás?</span></div>
           <select id="param-party" class="form-select" onchange="updateCodeSnippet()">
-            <option value="plaintiff">plaintiff (demandante)</option>
-            <option value="defendant">defendant (demandado)</option>
+            <option value="plaintiff">demandante</option>
+            <option value="defendant">demandado</option>
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>goal</span><span class="param-type">string · required</span></div>
-          <input type="text" id="param-goal" class="form-input" value="" placeholder="contract_end" oninput="updateCodeSnippet()">
+          <div class="param-label"><span>¿Qué querés probar?</span></div>
+          <input type="text" id="param-goal" class="form-input" value="" placeholder="ej. contract_end" oninput="updateCodeSnippet()">
         </div>
         <div class="param-row">
-          <div class="param-label"><span>facts</span><span class="param-type">FactEntry[] · JSON</span></div>
+          <div class="param-label"><span>Hechos del caso</span></div>
           <textarea id="param-facts" class="form-textarea" style="font-family:var(--font-mono);font-size:12px;min-height:220px;" oninput="updateCodeSnippet()">[]</textarea>
         </div>
       </div>
@@ -944,36 +972,42 @@ function renderParamsForm() {
   } else if (currentEndpoint === 'corpora') {
     container.innerHTML = `
       <div class="builder-card">
-        <h3>Conexión <span class="param-type">requiere backend local</span></h3>
+        <h3>Conexión</h3>
         <div class="param-row">
-          <div class="param-label"><span>API base URL</span><span class="param-type">string</span></div>
+          <div class="param-label"><span>Dirección del analizador</span></div>
           <input type="text" id="param-api-base" class="form-input" value="${getStoredApiBase()}" oninput="onReasoningBaseChange()" placeholder="http://127.0.0.1:8000">
         </div>
-        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;">
-          Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita.
-        </p>
+        <details style="margin-top:8px;">
+          <summary style="cursor:pointer;font-size:11.5px;color:var(--text-muted);">Detalles técnicos para levantar el analizador</summary>
+          <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:8px;">
+            Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita.
+          </p>
+        </details>
       </div>
       <div class="builder-card">
-        <h3>Parámetros de Consulta</h3>
-        <p style="color:var(--text-muted);font-size:13px;">Este endpoint no requiere parámetros. Ejecuta directamente para listar los 8 corpus reales con su recall y compuertas.</p>
+        <h3>Sin parámetros</h3>
+        <p style="color:var(--text-muted);font-size:13px;">Esta consulta no necesita nada más. Ejecutá directamente para listar los 8 códigos reales con su cobertura y controles de calidad.</p>
       </div>
     `;
   } else if (currentEndpoint === 'corpora-articles') {
     container.innerHTML = `
       <div class="builder-card">
-        <h3>Conexión <span class="param-type">requiere backend local</span></h3>
+        <h3>Conexión</h3>
         <div class="param-row">
-          <div class="param-label"><span>API base URL</span><span class="param-type">string</span></div>
+          <div class="param-label"><span>Dirección del analizador</span></div>
           <input type="text" id="param-api-base" class="form-input" value="${getStoredApiBase()}" oninput="onReasoningBaseChange()" placeholder="http://127.0.0.1:8000">
         </div>
-        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;">
-          Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita.
-        </p>
+        <details style="margin-top:8px;">
+          <summary style="cursor:pointer;font-size:11.5px;color:var(--text-muted);">Detalles técnicos para levantar el analizador</summary>
+          <p style="font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:8px;">
+            Corré <code>uvicorn src.api:app --reload --port 8000</code> desde <code>latio-kit/</code>. Serví este archivo con un servidor local (p. ej. <code>python -m http.server 5500</code> dentro de <code>toolkit-api/</code>) en vez de abrirlo con <code>file://</code>, para que CORS lo permita.
+          </p>
+        </details>
       </div>
       <div class="builder-card">
-        <h3>Corpus & Paginación</h3>
+        <h3>Código civil y página</h3>
         <div class="param-row">
-          <div class="param-label"><span>corpus_id</span><span class="param-type">string · required</span></div>
+          <div class="param-label"><span>Código civil</span></div>
           <select id="param-corpus-id" class="form-select" onchange="updateCodeSnippet()">
             <option value="CL-CC">CL-CC — Código Civil de Chile</option>
             <option value="CO-CC" selected>CO-CC — Código Civil de Colombia</option>
@@ -984,14 +1018,14 @@ function renderParamsForm() {
             <option value="MX-CDMX">MX-CDMX — Código Civil CDMX</option>
             <option value="PE-CC">PE-CC — Código Civil de Perú</option>
           </select>
-          <button class="btn-secondary-sm" onclick="refreshCorporaOptions()">🔄 Actualizar lista desde /v1/corpora</button>
+          <button class="btn-secondary-sm" onclick="refreshCorporaOptions()">🔄 Actualizar lista</button>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>limit</span><span class="param-type">int · default 50, máx 200</span></div>
+          <div class="param-label"><span>Cuántos artículos mostrar</span><span class="param-type">máx 200</span></div>
           <input type="number" id="param-articles-limit" class="form-input" value="20" min="1" max="200" oninput="updateCodeSnippet()">
         </div>
         <div class="param-row">
-          <div class="param-label"><span>offset</span><span class="param-type">int · default 0</span></div>
+          <div class="param-label"><span>Desde cuál empezar</span></div>
           <input type="number" id="param-articles-offset" class="form-input" value="0" min="0" oninput="updateCodeSnippet()">
         </div>
       </div>
@@ -1043,7 +1077,7 @@ function renderParamsForm() {
       <div class="builder-card">
         <h3>Etiquetado <span class="param-type">completá lo que el análisis no determinó</span></h3>
         <div class="param-row">
-          <div class="param-label"><span>Tipo de norma</span><span class="param-type">statement_type</span> <span id="lbl-badge-statement_type"></span></div>
+          <div class="param-label"><span>Tipo de norma</span> <span id="lbl-badge-statement_type"></span></div>
           <select id="lbl-statement_type" class="form-select" onchange="onLabelingFieldChange()">
             <option value="">— elegí uno —</option>
             <option value="regla">regla</option>
@@ -1057,7 +1091,7 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>Estructura</span><span class="param-type">structure</span> <span id="lbl-badge-structure"></span></div>
+          <div class="param-label"><span>Estructura</span> <span id="lbl-badge-structure"></span></div>
           <select id="lbl-structure" class="form-select" onchange="updateCodeSnippet()">
             <option value="">— elegí una —</option>
             <option value="supuesto_consecuencia">supuesto_consecuencia</option>
@@ -1070,7 +1104,7 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>Deóntica (Von Wright)</span><span class="param-type">deontic_modality</span> <span id="lbl-badge-deontic_modality"></span></div>
+          <div class="param-label"><span>Deóntica (Von Wright)</span> <span id="lbl-badge-deontic_modality"></span></div>
           <select id="lbl-deontic_modality" class="form-select" onchange="onLabelingFieldChange()">
             <option value="ninguno">ninguno</option>
             <option value="obligacion">obligación</option>
@@ -1079,7 +1113,7 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>Posición (Hohfeld)</span><span class="param-type">hohfeldian_position · correlato por defecto</span> <span id="lbl-badge-hohfeldian_position"></span></div>
+          <div class="param-label"><span>Posición (Hohfeld)</span><span class="param-type">correlato por defecto</span> <span id="lbl-badge-hohfeldian_position"></span></div>
           <select id="lbl-hohfeldian_position" class="form-select" onchange="updateCodeSnippet()">
             <option value="ninguno">ninguno</option>
             <option value="deber">deber</option>
@@ -1091,7 +1125,7 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>Destinatario</span><span class="param-type">addressee</span> <span id="lbl-badge-addressee"></span></div>
+          <div class="param-label"><span>Destinatario</span> <span id="lbl-badge-addressee"></span></div>
           <select id="lbl-addressee" class="form-select" onchange="updateCodeSnippet()">
             <option value="">— elegí uno —</option>
             <option value="partes">partes</option>
@@ -1102,7 +1136,7 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>Operador del antecedente</span><span class="param-type">antecedent_operator</span> <span id="lbl-badge-antecedent_operator"></span></div>
+          <div class="param-label"><span>Operador del antecedente</span> <span id="lbl-badge-antecedent_operator"></span></div>
           <select id="lbl-antecedent_operator" class="form-select" onchange="updateCodeSnippet()">
             <option value="ninguno_explicito">ninguno_explicito</option>
             <option value="si">si</option>
@@ -1112,41 +1146,41 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>¿Tiene excepción?</span><span class="param-type">exception_present</span> <span id="lbl-badge-exception_present"></span></div>
+          <div class="param-label"><span>¿Tiene excepción?</span> <span id="lbl-badge-exception_present"></span></div>
           <select id="lbl-exception_present" class="form-select" onchange="onLabelingFieldChange()">
             <option value="false">no</option>
             <option value="true">sí</option>
           </select>
         </div>
         <div class="param-row" id="lbl-row-exception-details" style="display:none;">
-          <div class="param-label"><span>Marcador de la excepción</span><span class="param-type">exception_marker</span></div>
+          <div class="param-label"><span>Marcador de la excepción</span></div>
           <input type="text" id="lbl-exception_marker" class="form-input" placeholder="ej. salvo que" oninput="updateCodeSnippet()">
-          <div class="param-label" style="margin-top:8px;"><span>¿Dónde está la excepción?</span><span class="param-type">exception_scope</span></div>
+          <div class="param-label" style="margin-top:8px;"><span>¿Dónde está la excepción?</span></div>
           <select id="lbl-exception_scope" class="form-select" onchange="updateCodeSnippet()">
             <option value="interna">en el mismo artículo</option>
             <option value="por_remision">remite a otro artículo</option>
           </select>
         </div>
         <div class="param-row">
-          <div class="param-label"><span>Cantidad de condiciones</span><span class="param-type">generality_n_conditions</span></div>
+          <div class="param-label"><span>Cantidad de condiciones</span></div>
           <input type="number" id="lbl-generality_n_conditions" class="form-input" value="1" min="0" oninput="updateCodeSnippet()">
         </div>
         <div class="param-row">
-          <div class="param-label"><span>¿Tiene una lista/enumeración?</span><span class="param-type">generality_has_enumeration</span></div>
+          <div class="param-label"><span>¿Tiene una lista/enumeración?</span></div>
           <select id="lbl-generality_has_enumeration" class="form-select" onchange="onLabelingFieldChange()">
             <option value="false">no</option>
             <option value="true">sí</option>
           </select>
         </div>
         <div class="param-row" id="lbl-row-enumeration-closed" style="display:none;">
-          <div class="param-label"><span>¿La lista es cerrada?</span><span class="param-type">generality_enumeration_closed</span></div>
+          <div class="param-label"><span>¿La lista es cerrada?</span></div>
           <select id="lbl-generality_enumeration_closed" class="form-select" onchange="updateCodeSnippet()">
             <option value="true">sí, taxativa (solo esos casos)</option>
             <option value="false">no, enunciativa (ejemplos, no cierra la lista)</option>
           </select>
         </div>
         <div class="param-row" id="lbl-row-presumption" style="display:none;">
-          <div class="param-label"><span>¿Admite prueba en contrario?</span><span class="param-type">presumption_rebuttable · solo si es presunción</span> <span id="lbl-badge-presumption_rebuttable"></span></div>
+          <div class="param-label"><span>¿Admite prueba en contrario?</span><span class="param-type">solo si es presunción</span> <span id="lbl-badge-presumption_rebuttable"></span></div>
           <select id="lbl-presumption_rebuttable" class="form-select" onchange="updateCodeSnippet()">
             <option value="true">sí (presunción legal)</option>
             <option value="false">no (presunción de derecho)</option>
@@ -1318,7 +1352,7 @@ async function proposeLabels() {
     }
     proposal = await res.json();
   } catch (e) {
-    notesEl.innerHTML = `<div class="api-conn-error">⚠️ No se pudo conectar a ${base}. ¿Corriste "uvicorn src.api:app --reload --port 8000"? Detalle: ${e.message}</div>`;
+    notesEl.innerHTML = `<div class="api-conn-error">⚠️ No se pudo conectar con el analizador en ${base}. Revisá la dirección de conexión arriba, o los detalles técnicos si sos quien lo está configurando.</div>`;
     return;
   }
 
@@ -1349,12 +1383,11 @@ async function proposeLabels() {
   onLabelingFieldChange();
   renderProlegPreview(proposal.proleg_preview);
 
-  const undetermined = proposal.undetermined_fields || [];
   notesEl.innerHTML = `
     <div style="font-size:11.5px;color:var(--text-muted);line-height:1.6;">
-      <strong>Detectado por reglas:</strong> ${(proposal.determined_fields || []).join(', ') || '(ninguno)'}<br>
-      <strong>Completado por defecto (revisar):</strong> ${(proposal.default_fields || []).join(', ') || '(ninguno)'}<br>
-      <strong>Sin determinar (completá a mano):</strong> ${undetermined.join(', ') || '(ninguno)'}
+      <strong>Detectado por reglas:</strong> ${labelingFieldNamesEs(proposal.determined_fields)}<br>
+      <strong>Completado por defecto (revisar):</strong> ${labelingFieldNamesEs(proposal.default_fields)}<br>
+      <strong>Sin determinar (completá a mano):</strong> ${labelingFieldNamesEs(proposal.undetermined_fields)}
       ${(proposal.notes || []).length ? '<ul style="margin:6px 0 0 16px;">' + proposal.notes.map(n => `<li>${n}</li>`).join('') + '</ul>' : ''}
     </div>
   `;
@@ -1390,23 +1423,6 @@ function buildLabelingPayload() {
   }
   return payload;
 }
-
-const LABELING_FIELD_LABELS_ES = {
-  text_span: 'Texto del artículo',
-  statement_type: 'Tipo de norma',
-  structure: 'Estructura',
-  deontic_modality: 'Deóntica (Von Wright)',
-  hohfeldian_position: 'Posición (Hohfeld)',
-  addressee: 'Destinatario',
-  antecedent_operator: 'Operador del antecedente',
-  exception_present: '¿Tiene excepción?',
-  exception_marker: 'Marcador de la excepción',
-  exception_scope: '¿Dónde está la excepción?',
-  generality_n_conditions: 'Cantidad de condiciones',
-  generality_has_enumeration: '¿Tiene una lista/enumeración?',
-  generality_enumeration_closed: '¿La lista es cerrada?',
-  presumption_rebuttable: '¿Admite prueba en contrario?',
-};
 
 function friendlyLabelingRequestError(status, bodyText) {
   if (status === 422) {
@@ -1458,7 +1474,7 @@ async function executeLabelingValidate(start) {
     timeText.innerText = `${duration} ms`;
     lastResponseData = {
       __error: true,
-      message: `No se pudo conectar a ${base}. ¿Corriste "uvicorn src.api:app --reload --port 8000"? ¿Serviste este HTML desde un origen permitido por CORS (no file://)? Detalle técnico: ${e.message}`
+      message: `No se pudo conectar con el analizador en ${base}. Revisá la dirección de conexión arriba, o los detalles técnicos si sos quien lo está configurando.`
     };
     modeTag.className = 'error-tag';
     modeTag.innerText = '🔴 Sin conexión';
@@ -1622,7 +1638,7 @@ async function refreshCorporaOptions() {
       .join('');
     if (data.some(c => c.corpus_id === current)) select.value = current;
   } catch (e) {
-    alert(`No se pudo consultar /v1/corpora en ${base}.\n\n¿Está corriendo "uvicorn src.api:app --reload --port 8000"? ¿Serviste este HTML desde un origen permitido por CORS (no file://)?\n\nDetalle: ${e.message}`);
+    alert(`No se pudo conectar con el analizador en ${base}. Revisá la dirección de conexión arriba, o los detalles técnicos si sos quien lo está configurando.`);
   }
 }
 
@@ -1638,7 +1654,7 @@ async function refreshRulebases() {
     select.innerHTML = data.map(rb => `<option value="${rb.id}">${rb.id}</option>`).join('');
     if (data.some(rb => rb.id === current)) select.value = current;
   } catch (e) {
-    alert(`No se pudo consultar /v1/reasoning/rulebases en ${base}.\n\n¿Está corriendo "uvicorn src.api:app --reload --port 8000"? ¿Serviste este HTML desde un origen permitido por CORS (no file://)?\n\nDetalle: ${e.message}`);
+    alert(`No se pudo conectar con el analizador en ${base}. Revisá la dirección de conexión arriba, o los detalles técnicos si sos quien lo está configurando.`);
   }
 }
 
@@ -1742,7 +1758,7 @@ async function executeReasoningCall(start) {
     timeText.innerText = `${duration} ms`;
     lastResponseData = {
       __error: true,
-      message: `No se pudo conectar a ${base}. ¿Corriste "uvicorn src.api:app --reload --port 8000"? ¿Serviste este HTML desde un origen permitido por CORS (no file://)? Detalle técnico: ${e.message}`
+      message: `No se pudo conectar con el analizador en ${base}. Revisá la dirección de conexión arriba, o los detalles técnicos si sos quien lo está configurando.`
     };
     modeTag.className = 'error-tag';
     modeTag.innerText = '🔴 Sin conexión';
@@ -1793,7 +1809,7 @@ async function executeCorporaCall(start) {
     timeText.innerText = `${duration} ms`;
     lastResponseData = {
       __error: true,
-      message: `No se pudo conectar a ${base}. ¿Corriste "uvicorn src.api:app --reload --port 8000"? ¿Serviste este HTML desde un origen permitido por CORS (no file://)? Detalle técnico: ${e.message}`
+      message: `No se pudo conectar con el analizador en ${base}. Revisá la dirección de conexión arriba, o los detalles técnicos si sos quien lo está configurando.`
     };
     modeTag.className = 'error-tag';
     modeTag.innerText = '🔴 Sin conexión';
