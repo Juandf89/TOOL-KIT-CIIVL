@@ -1222,11 +1222,20 @@ function loadCase(caseKey) {
 // error de conexión explícito, nunca una respuesta simulada.
 // ---------------------------------------------------------------------
 
+// Si la consola corre en localhost (desarrollo), el analizador por defecto
+// también es local. Si corre en cualquier otro origen (p. ej. GitHub Pages),
+// apunta al backend real de producción — nadie que visite la consola
+// publicada tiene un backend en su propia máquina.
+const PRODUCTION_API_BASE = 'https://api-latio.datalexlab.com';
+const DEFAULT_API_BASE = (['localhost', '127.0.0.1'].includes(window.location.hostname))
+  ? 'http://127.0.0.1:8000'
+  : PRODUCTION_API_BASE;
+
 function getStoredApiBase() {
   try {
-    return localStorage.getItem('latio_reasoning_api_base') || 'http://127.0.0.1:8000';
+    return localStorage.getItem('latio_reasoning_api_base') || DEFAULT_API_BASE;
   } catch (e) {
-    return 'http://127.0.0.1:8000';
+    return DEFAULT_API_BASE;
   }
 }
 
@@ -1242,7 +1251,7 @@ function onReasoningBaseChange() {
 
 function currentApiBase() {
   const input = document.getElementById('param-api-base');
-  return (input ? input.value.trim() : getStoredApiBase()) || 'http://127.0.0.1:8000';
+  return (input ? input.value.trim() : getStoredApiBase()) || DEFAULT_API_BASE;
 }
 
 // ---------------------------------------------------------------------
