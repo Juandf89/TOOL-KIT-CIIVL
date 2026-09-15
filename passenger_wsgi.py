@@ -9,8 +9,14 @@ app ASGI (FastAPI) — `a2wsgi.ASGIMiddleware` la envuelve como WSGI sin tocar
 
 Si el plan de Hostinger específico soporta ASGI nativo en su versión de
 Passenger, este wrapper igual funciona (corre en modo síncrono, sin
-aprovechar async nativo) — es la opción más compatible entre pl,anes, no la
+aprovechar async nativo) — es la opción más compatible entre planes, no la
 más rápida. Ver DEPLOYMENT.md, sección "Hostinger (hosting compartido)".
+
+Nota sobre la IP del cliente (importa para el límite de tasa): a2wsgi solo
+puebla `scope["client"]` si el entorno WSGI trae REMOTE_ADDR **y**
+REMOTE_PORT, y REMOTE_PORT no es parte de PEP 3333. Por eso
+`src/ratelimit.py` lee REMOTE_ADDR de `scope["wsgi_environ"]`, que a2wsgi sí
+conserva siempre. No cambiar eso sin leer el comentario de `_client_ip`.
 """
 
 import sys

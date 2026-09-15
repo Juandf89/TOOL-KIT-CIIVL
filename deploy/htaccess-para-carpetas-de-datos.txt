@@ -1,0 +1,36 @@
+# .htaccess — copiar este archivo (con el nombre exacto ".htaccess") dentro de
+# las carpetas data/, config/ y reports/ DEL DIRECTORIO DE LA PYTHON APP.
+#
+# Por qué hace falta
+# ------------------
+# Bajo Passenger en hosting compartido, Apache sigue sirviendo como archivos
+# estáticos todo lo que esté en el directorio de la app y no sea capturado por
+# Passenger. Si el document root de la Python App queda dentro de public_html
+# (que es lo habitual en Hostinger), entonces:
+#
+#   https://api.datalexlab.com/data/processed/CO-CC_articles.json
+#
+# descarga los 2.9 MB del corpus completo sin pasar por la API, sin quedar
+# sujeto al límite de tasa, y repetido por un crawler consume el ancho de banda
+# del plan. Lo mismo con config/corpus_registry.yaml y reports/manifest.json.
+#
+# La API los lee desde el sistema de archivos (open()), no por HTTP, así que
+# bloquear el acceso web NO rompe ningún endpoint. Verificable después de
+# aplicarlo: /v1/corpora y /v1/corpora/<id>/articles deben seguir devolviendo
+# 200, y la URL directa de arriba debe devolver 403.
+#
+# NO tocar el .htaccess que hPanel genera en la RAÍZ de la app: ese lleva la
+# configuración de Passenger (PassengerAppRoot, etc.) y modificarlo puede
+# tumbar el arranque. Estas reglas van en las subcarpetas, que no tienen
+# .htaccess propio.
+
+# Apache 2.4 (el de Hostinger)
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+# Apache 2.2 y anteriores — inofensivo si no aplica
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

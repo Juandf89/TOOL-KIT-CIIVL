@@ -53,8 +53,12 @@ Passenger clásico espera un archivo `passenger_wsgi.py` con un callable WSGI ll
    - **Dominio/subdominio**: si `api.datalexlab.com` es el subdominio deseado (coherente con lo que
      ya referencia `README.md`/`toolkit-api/index.html`), primero crealo en hPanel → Dominios →
      Subdominios, apuntando su document root a la carpeta donde subas este repo.
-   - **Versión de Python**: la más alta disponible que sea ≥ 3.10 (el código usa sintaxis moderna de
-     type hints de `src/reasoning/`); confirmá cuál ofrece tu plan — **a confirmar en tu panel**.
+   - **Versión de Python**: la más alta disponible que sea **≥ 3.10**; confirmá cuál ofrece tu plan
+     — **a confirmar en tu panel**. El piso lo imponen las dependencias pineadas, no el código
+     propio: `fastapi==0.141.1` y su `starlette==1.0.0` declaran `Requires-Python >= 3.10`
+     (`pydantic` pide ≥3.9, `a2wsgi` y `pyyaml` ≥3.8). El código de `src/` corre en 3.9 sin
+     problema — todos los módulos de `src/reasoning/` y `src/labeling/` empiezan con
+     `from __future__ import annotations`, así que las anotaciones ni se evalúan al importar.
    - **Archivo de arranque**: `passenger_wsgi.py`.
    - **Punto de entrada**: `application` (nombre del callable, ya está así en el archivo).
 2. **Subir el código**: por Git (si hPanel lo soporta en tu plan) o por el Administrador de Archivos /
@@ -73,7 +77,28 @@ Passenger clásico espera un archivo `passenger_wsgi.py` con un callable WSGI ll
 4. **Variables de entorno**: seteá `LATIO_ALLOWED_ORIGINS` al origen real del frontend (ver checklist
    abajo) — si hPanel no expone variables de entorno para Python Apps en tu plan, avisame y agrego un
    fallback que lea un archivo de config en vez de `os.environ`.
-5. **Reiniciar la app** (botón "Restart" en hPanel) y probar `https://api.datalexlab.com/health` desde
+5. **Bloquear el acceso web directo a los datos.** Passenger no captura los archivos estáticos que
+   estén en el directorio de la app: los sigue sirviendo Apache. Si el document root de la Python
+   App queda dentro de `public_html` (lo habitual en Hostinger compartido), esto funciona y
+   **esquiva la API por completo**:
+
+   ```
+   https://api.datalexlab.com/data/processed/CO-CC_articles.json    → 2.9 MB
+   https://api.datalexlab.com/config/corpus_registry.yaml
+   https://api.datalexlab.com/reports/manifest.json
+   ```
+
+   Son los 25 MB de los 8 corpus descargables de una, sin pasar por ningún endpoint, sin quedar
+   sujetos al límite de tasa y sin aparecer en ninguna métrica. Subí el archivo
+   `deploy/htaccess-para-carpetas-de-datos.txt` **con el nombre `.htaccess`** dentro de `data/`,
+   `config/` y `reports/`. La API abre esos archivos por sistema de archivos (`open()`), no por
+   HTTP, así que no rompe ningún endpoint.
+
+   ⚠️ **No toques el `.htaccess` que hPanel genera en la RAÍZ de la app** — lleva la configuración
+   de Passenger (`PassengerAppRoot`, etc.) y modificarlo puede impedir el arranque. Estas reglas
+   van en las subcarpetas, que no tienen `.htaccess` propio.
+
+6. **Reiniciar la app** (botón "Restart" en hPanel) y probar `https://api.datalexlab.com/health` desde
    el navegador — debería devolver `{"status":"ok"}`. Si da error, ver **Troubleshooting** abajo.
 
 ### Qué NO puedo verificar por vos
@@ -110,10 +135,15 @@ Dos causas posibles, en este orden de probabilidad:
    `from a2wsgi import ASGIMiddleware` y la app no arranca. Volvé al paso 3 de "Pasos en hPanel" y
    confirmá que el botón de instalación apuntó al archivo correcto (o que copiaste
    `requirements-prod.txt` sobre `requirements.txt` en el servidor antes de instalar).
-2. **Versión de Python incompatible**: si tu plan te dio Python 3.9 o anterior, `src/reasoning/`
-   usa sintaxis de type hints moderna (por ejemplo `list[dict]`) que rompe en < 3.10 con
-   `SyntaxError`, no con `ModuleNotFoundError` — si el traceback del log dice `SyntaxError` en vez de
-   `ModuleNotFoundError`, es este caso. Solución: cambiar la versión de Python de la app a ≥ 3.10 en
+2. **Versión de Python incompatible**: si tu plan te dio Python 3.9 o anterior, el problema
+   **no** se manifiesta como `SyntaxError` (una versión anterior de este documento decía eso y
+   estaba mal: `list[dict]` existe desde 3.9, y además todo `src/reasoning/` y `src/labeling/` usa
+   `from __future__ import annotations`, así que las anotaciones no se evalúan al importar).
+   Lo que falla es la **instalación**: `fastapi==0.141.1` y `starlette==1.0.0` declaran
+   `Requires-Python >= 3.10`, así que en 3.9 `pip` o bien aborta con un error de resolución —
+   visible en el log de instalación de hPanel, no en el de la app — o instala una FastAPI vieja
+   compatible, y entonces el síntoma es un `ImportError`/`AttributeError` al arrancar, no un
+   `ModuleNotFoundError` limpio. Solución: cambiar la versión de Python de la app a ≥ 3.10 en
    hPanel (paso 1) y reinstalar dependencias.
    Si el traceback es específicamente `ModuleNotFoundError: No module named 'a2wsgi'` (o `'fastapi'`)
    después de haber instalado correctamente contra `requirements-prod.txt`, puede ser que hPanel haya
@@ -132,10 +162,19 @@ la ve).
 2. Si `LATIO_ALLOWED_ORIGINS` **no está seteada** en hPanel, la API cae al default de `src/api.py`
    (`https://datalexlab.com`, `https://juandf89.github.io`, `localhost:5500`, `localhost:8080` —
    actualizado el 09-14 para incluir GitHub Pages, ya que ahí es donde vive hoy la consola pública
-   real). Igual **recomendamos setear la variable explícitamente** en hPanel: es más robusto que
-   depender de un default hardcodeado en el código, y sigue siendo necesario si el frontend real
-   termina sirviéndose desde otro origen (`datalexlab.com/latio` es el mismo origen
-   `https://datalexlab.com` así que ese caso ya está cubierto por el default).
+   real).
+
+   ⚠️ **`https://www.datalexlab.com` NO está en ese default, y para el navegador es un origen
+   distinto de `https://datalexlab.com`.** Es una trampa concreta: el propio endpoint raíz de la
+   API devuelve `'website': 'https://www.datalexlab.com'`, y muchos dominios en Hostinger
+   redirigen el dominio desnudo a `www`. Si el explorador termina servido en
+   `https://www.datalexlab.com/latio/`, el default lo bloquea y el síntoma es exactamente el
+   error de CORS de arriba, con la variable "correctamente" sin setear. Confirmá en
+   hPanel → Dominios hacia qué lado redirige.
+
+   Por eso **hay que setear la variable explícitamente** en hPanel en vez de confiar en el
+   default — con las tres variantes:
+   `https://datalexlab.com,https://www.datalexlab.com,https://juandf89.github.io`
 3. Seteá `LATIO_ALLOWED_ORIGINS` en hPanel con la lista separada por comas de todos los orígenes que
    necesitás (por ejemplo: `https://datalexlab.com,https://juandf89.github.io`) y reiniciá la app.
 4. Si seteaste la variable y sigue fallando, verificá que hPanel realmente la esté pasando al proceso
@@ -199,6 +238,56 @@ curl -s https://api.datalexlab.com/v1/corpora/CO-CC | python -m json.tool
 curl -i https://api.datalexlab.com/v1/corpora -H "Origin: https://datalexlab.com"
 # esperado: header de respuesta "access-control-allow-origin: https://datalexlab.com"
 ```
+```bash
+curl -i https://api.datalexlab.com/v1/corpora -H "Origin: https://www.datalexlab.com"
+# esperado: MISMO header con el www. Si este falla y el anterior pasa, falta
+# https://www.datalexlab.com en LATIO_ALLOWED_ORIGINS — ver troubleshooting.
+```
+
+### 7. Límite de tasa — que exista Y que sea por IP
+```bash
+for i in $(seq 1 25); do
+  printf "%s " "$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+    https://api.datalexlab.com/v1/statements/propose \
+    -H "Content-Type: application/json" \
+    -d '{"text_span":"El arrendatario deberá pagar el canon."}')"
+done; echo
+# esperado: ~20 veces 200 y después 429 (el corte exacto depende de cuántos
+# procesos Passenger haya levantado; ver "Límite de tasa" arriba).
+```
+```bash
+curl -i -X POST https://api.datalexlab.com/v1/statements/propose \
+  -H "Content-Type: application/json" -d '{"text_span":"x"}' | head -5
+# inmediatamente después del bucle: esperado HTTP 429 con header "retry-after".
+```
+
+**La comprobación que importa de verdad** — que el límite sea por IP y no global. Esperá un minuto
+y pedile a alguien en otra red (datos del celular sirve) que abra
+`https://api.datalexlab.com/v1/reasoning/rulebases`. Si le da 429 sin haber pedido nada, el
+limitador está agrupando a todos bajo una sola clave porque `REMOTE_ADDR` no llega: poné
+`LATIO_TRUST_FORWARDED_FOR=1` y reiniciá la app.
+
+### 8. Topes de entrada (413 / 422)
+```bash
+python -c "import json;print(json.dumps({'rulebase_id':'jp-civil-612-sublease-demo','goal':'contract_end','party':'plaintiff','facts':[{'action':'admission','fact':'x%d'%i,'party':'defendant'} for i in range(3000)]}))" > too_big.json
+curl -s -o /dev/null -w "%{http_code}\n" -X POST https://api.datalexlab.com/v1/reasoning/prove \
+  -H "Content-Type: application/json" -d @too_big.json
+# esperado: 413 (el cuerpo supera LATIO_MAX_BODY_BYTES y se rechaza sin parsear).
+```
+
+### 9. Los datos NO se descargan esquivando la API
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" https://api.datalexlab.com/data/processed/CO-CC_articles.json
+curl -s -o /dev/null -w "%{http_code}\n" https://api.datalexlab.com/config/corpus_registry.yaml
+curl -s -o /dev/null -w "%{http_code}\n" https://api.datalexlab.com/reports/manifest.json
+# esperado: 403 (o 404) en los tres, con el .htaccess del paso 5 aplicado.
+# Si devuelven 200, el .htaccess no está puesto o no está donde corresponde.
+```
+```bash
+curl -s https://api.datalexlab.com/v1/corpora | python -m json.tool | head -5
+# esperado: sigue devolviendo los 8 corpus — el bloqueo es solo para HTTP,
+# la API lee esos archivos por sistema de archivos.
+```
 
 Si alguno de estos falla, volvé a la sección **Troubleshooting** de arriba.
 
@@ -219,13 +308,21 @@ archivos de artículos vienen automáticamente con el clon/pull — ya no hace f
 separado. Si desplegás por SFTP/Administrador de Archivos igual podés subir la carpeta entera tal
 cual sale del repo, sin filtrar nada a mano.
 
+**Corrección (09-14): `data/raw/` TAMBIÉN está versionado.** El `.gitignore` solo excluye
+`data/raw/*.pdf`, y los archivos reales son `.md` (~8.0 MB). Sigue siendo cierto que la API nunca
+los lee, pero la frase "no hace falta subirlo" solo aplica a SFTP: **si desplegás por Git, vienen
+igual** y el clon son ~33 MB, no 25. No rompe nada; hay que tenerlo en cuenta para el
+`.htaccess` de la sección siguiente, que los cubre.
+
 ### Mínimo imprescindible
 - `passenger_wsgi.py`
 - `requirements-prod.txt`
+- `deploy/htaccess-para-carpetas-de-datos.txt` → copiar como `.htaccess` dentro de `data/`,
+  `config/` y `reports/` (paso 5 de hPanel)
 - `src/` completo (en la práctica se importan `src/__init__.py`, `src/api.py`, `src/models.py`,
-  `src/labeling/*` y `src/reasoning/*`; subir el paquete entero es más simple que separar archivos y
-  no rompe nada — `src/pipeline.py` y `src/behavior.py` quedan sin usar en runtime, no fallan por
-  estar presentes)
+  `src/ratelimit.py`, `src/labeling/*` y `src/reasoning/*`; subir el paquete entero es más simple
+  que separar archivos y no rompe nada — `src/pipeline.py` y `src/behavior.py` quedan sin usar en
+  runtime, no fallan por estar presentes)
 - `reports/manifest.json` (un solo archivo, no toda la carpeta `reports/`)
 - `config/corpus_registry.yaml`
 - `data/processed/CL-CC_articles.json`, `CO-CC_articles.json`, `AR-CC_articles.json`,
@@ -283,34 +380,117 @@ salvo que sepas específicamente para qué se usa.
 
 ## Falta decidir/confirmar
 
-1. **Subdominio exacto para la API** (`api.datalexlab.com` asumido, por ser lo que ya referencian
-   `README.md` y `toolkit-api/index.html` — confirmalo o corregilo).
-2. **`LATIO_ALLOWED_ORIGINS` real**: el origen exacto del frontend que va a llamar a la API — si el
-   explorador (`toolkit-api/index.html`) también se sirve desde este mismo Hostinger en
-   `datalexlab.com/latio/` (Opción B del README), el origen es `https://datalexlab.com`; si sigue en
-   GitHub Pages, es `https://juandf89.github.io`. Pueden ser varios, separados por coma.
+### Cerrado — decidido el 09-14
+
+1. **Subdominio de la API: `api.datalexlab.com`.** Es lo que ya referencian `README.md` y
+   `toolkit-api/index.html`; cambiarlo obliga a tocar los dos. Queda así salvo que digas lo
+   contrario.
+2. **`LATIO_ALLOWED_ORIGINS`: setearla explícitamente con las tres variantes** —
+   `https://datalexlab.com,https://www.datalexlab.com,https://juandf89.github.io`. No basta con el
+   default: hoy la consola pública vive en GitHub Pages (`README.md` Opción A) y el explorador
+   puede terminar además en `datalexlab.com/latio/` (Opción B), y `www` es un origen distinto que
+   el default **no** cubre. Setear las tres cierra los tres escenarios de una y no cuesta nada.
+
+### Sigue abierto — necesita tu panel o tu decisión
+
 3. **TLS/HTTPS**: Hostinger normalmente emite un certificado Let's Encrypt automático por dominio/
    subdominio desde hPanel (SSL) — confirmá que está activado para el subdominio de la API antes de
    anunciarlo, para no servir la API en HTTP plano.
 4. **Actualizar el placeholder de la consola** (`toolkit-api/index.html`, campo "API base URL", hoy
    `http://127.0.0.1:8000` por default) para que apunte a la URL real una vez esté online, y el link
    "Swagger Docs" (hoy marcado `pendiente de despliegue`).
-5. **Versión de Python disponible en tu plan de Hostinger** y **si tu plan expone variables de
-   entorno para Python Apps** — ambos marcados como "a confirmar en tu panel" arriba porque no tengo
-   forma de verlos desde acá.
+5. **Versión de Python disponible en tu plan** (necesitás ≥ 3.10 — ver el motivo real en el paso 1
+   de hPanel) y **si tu plan expone variables de entorno para Python Apps**. Si no las expone,
+   avisame: el fallback es leer un archivo de config en vez de `os.environ`, y ahora hay **siete**
+   variables en juego, no una (`LATIO_ALLOWED_ORIGINS` + las seis del limitador).
+6. **¿El document root de la Python App queda dentro de `public_html`?** De eso depende que haga
+   falta el `.htaccess` del paso 5. Si queda fuera, no hace falta — pero aplicarlo igual no rompe
+   nada y es más barato que averiguarlo mal.
+7. **¿Dejamos `/docs` (Swagger) público?** Está abierto hoy. No es una vulnerabilidad —los
+   endpoints ya son públicos— pero es un catálogo navegable que invita a probar el endpoint caro.
+   Con el límite de tasa puesto, dejarlo abierto es defendible para un lanzamiento académico, que
+   es el caso. Se apaga con `docs_url=None` si preferís. **Mi recomendación: dejarlo.**
 
-## Riesgo a evaluar antes de ir a producción (no bloqueante, pero real)
+## Límite de tasa y topes de entrada (implementado el 09-14)
 
-- **La API no tiene autenticación ni rate limiting.** `/v1/reasoning/prove` acepta cualquier rulebase
-  registrado y cualquier factbase sin límite de tamaño ni de frecuencia. En hosting compartido esto
-  importa el doble: un uso abusivo puede consumir los recursos compartidos del plan (CPU/memoria) y
-  afectar a otras apps en la misma cuenta. Para un lanzamiento de alcance controlado puede ser
-  aceptable por ahora; si esperás tráfico público sin restricción, avisame y agrego un límite básico
-  (por IP) antes de anunciarlo ampliamente — no lo agregué solo porque cambia comportamiento visible
-  de la API y es una decisión de producto.
-- **Ningún corpus tiene `retrieved_at` poblado** (sigue en `null` con TODO, ver
-  `docs/notas_gobernanza.md`) — no bloquea el despliegue técnico, pero si el lanzamiento incluye
-  afirmaciones de procedencia/trazabilidad de los datos, falta ese dato.
+`src/ratelimit.py` — **cero dependencias nuevas**, `requirements-prod.txt` queda idéntico. Se
+descartó `slowapi`/`limits` a propósito: cada dependencia extra es un `ModuleNotFoundError` más
+capaz de tumbar el arranque bajo Passenger, que es el modo de falla que documenta la sección de
+Troubleshooting de arriba.
+
+**Por qué el tamaño del `factbase` era el problema real, no solo la frecuencia:** `FactBase`
+(`src/reasoning/models.py`) resuelve cada consulta con un barrido **lineal** sobre `entries`, y
+`has_allege_and_evidence` hace dos. El meta-intérprete las llama una o dos veces por literal y por
+regla: costo **O(reglas × cuerpo × N)**. Sumado al costo de que Pydantic valide N modelos
+`FactEntry` — el término dominante —, un solo POST podía monopolizar el CPU del plan compartido.
+Por eso hay tres topes en capas, del más barato al más caro:
+
+| Capa | Qué corta | Respuesta |
+|---|---|---|
+| Tamaño del cuerpo (`Content-Length`) | Rechaza **antes** de leer y parsear | `413` |
+| Tamaño de la lista (`facts` ≤ 2000, ~100× el caso de oro del paper) | Validación del modelo | `422` |
+| Frecuencia por IP | Ventana deslizante en memoria | `429` + `Retry-After` |
+
+### Variables de entorno (todas opcionales — el default ya es razonable)
+
+| Variable | Default | Qué hace |
+|---|---|---|
+| `LATIO_RATE_LIMIT_ENABLED` | `1` | `0` desactiva el limitador por completo |
+| `LATIO_RATE_LIMIT_WINDOW` | `60` | Ventana en segundos |
+| `LATIO_RATE_LIMIT_DEFAULT` | `120` | Peticiones/ventana en rutas de lectura |
+| `LATIO_RATE_LIMIT_HEAVY` | `20` | Peticiones/ventana en `/v1/reasoning/prove` y `/v1/statements/*` |
+| `LATIO_MAX_BODY_BYTES` | `262144` | Tope de cuerpo (256 KB) |
+| `LATIO_TRUST_FORWARDED_FOR` | `0` | Ver abajo — solo si `REMOTE_ADDR` no trae la IP real |
+
+Un valor basura en cualquiera de estas (vacío, no numérico) cae al default en vez de tumbar el
+arranque: un error acá rompería **toda** la app al importar el módulo.
+
+`/health` está **siempre exento**, para no romper monitores de uptime.
+
+### Dos detalles que no son obvios
+
+1. **`X-Forwarded-For` no se usa por default.** Bajo Passenger, Apache normalmente entrega la IP
+   real en `REMOTE_ADDR`. `X-Forwarded-For` lo puede falsificar cualquiera que mande el header, así
+   que confiar en él sin un proxy que lo reescriba vuelve trivial evadir el límite. **Cómo
+   comprobarlo en producción:** pegale desde tu casa 21 veces seguidas a
+   `/v1/statements/propose` (ver checklist §7); si el 21° da 429, `REMOTE_ADDR` funciona. Si en
+   cambio ves que un solo visitante bloquea a todos, poné `LATIO_TRUST_FORWARDED_FOR=1` — usa el
+   **último** elemento de `X-Forwarded-For` (el que agrega el proxy de confianza), no el primero,
+   que controla el cliente.
+
+2. **El contador vive en la memoria del proceso.** Passenger puede levantar varios procesos para
+   la misma app; cada uno lleva su propio contador, así que el límite efectivo es
+   `LATIO_RATE_LIMIT_* × nº de procesos`. Para frenar abuso alcanza; para una cuota exacta haría
+   falta almacenamiento compartido (Redis), que el hosting compartido no ofrece.
+
+## Memoria por proceso (medido, no estimado)
+
+`_ARTICLES_CACHE` cachea cada corpus para toda la vida del proceso — la decisión correcta para la
+latencia, pero conviene tener el número antes de que aparezca en el panel:
+
+| Concepto | Medido |
+|---|---|
+| RSS tras importar la app (baseline) | 45 MB |
+| `AR-CC`: 4.40 MB en disco → en RAM | 9.9 MB (2.25×) |
+| `CO-CC`: 2.88 MB en disco → en RAM | 5.9 MB (2.04×) |
+| Los 8 corpus cacheados (proyección) | ~54 MB |
+| **Total por proceso Passenger** | **~99 MB** |
+| Con 4 procesos Passenger | ~395 MB |
+
+Manejable en un plan Business, pero se paga **por proceso**. Si el panel reporta presión de
+memoria: limitar el número de procesos de la app en hPanel, o servir menos corpus. No bloquea el
+lanzamiento.
+
+## Riesgo que queda abierto
+
+- **La API sigue sin autenticación.** El límite de tasa frena el abuso accidental y el escaneo
+  casual; no frena a alguien decidido con IPs rotativas. Para un lanzamiento académico de alcance
+  controlado es la postura correcta. Si en algún momento hay que cerrarla, el paso siguiente es una
+  API key por header, no más límites.
+- **Ningún corpus tiene `retrieved_at` poblado** (sigue en `null` con TODO en
+  `config/corpus_registry.yaml`, 9 ocurrencias; ver `docs/notas_gobernanza.md`) — no bloquea el
+  despliegue técnico, pero si el lanzamiento incluye afirmaciones de procedencia/trazabilidad de
+  los datos, falta ese dato.
 
 ## Cómo probar `passenger_wsgi.py` localmente antes de subir a Hostinger
 

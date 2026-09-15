@@ -24,8 +24,17 @@ from src.models import (
 )
 from src.labeling.rules import propose_from_text
 from src.labeling.schemas import LabelProposal
+from src.ratelimit import RateLimitMiddleware
 
 app = FastAPI(title='DataLex Lab · LATIO API', version='1.0.0', docs_url='/docs')
+
+# Tamaño máximo de `facts` en /v1/reasoning/prove. El motor hace búsquedas
+# LINEALES sobre la lista (src/reasoning/models.py: has_allege_and_evidence,
+# has_admission, is_plausible) una o dos veces por literal y por regla, así
+# que el costo crece con el producto reglas x cuerpo x len(facts). Sin tope,
+# un solo POST puede monopolizar el CPU del plan compartido. 2000 entradas
+# es ~100x el caso de oro del paper PROLEG (16 entradas).
+MAX_FACTS_PER_REQUEST = 2000
 
 # Orígenes permitidos. `allow_origins=['*']` junto con `allow_credentials=True`
 # es una combinación inválida/insegura según la especificación CORS (ver A-2,
@@ -46,6 +55,14 @@ _DEFAULT_ORIGINS = [
 ]
 _env_origins = os.environ.get('LATIO_ALLOWED_ORIGINS', '').strip()
 ALLOWED_ORIGINS = [o.strip() for o in _env_origins.split(',') if o.strip()] if _env_origins else _DEFAULT_ORIGINS
+
+# ORDEN DE MIDDLEWARE — importa y no es intuitivo. Starlette ejecuta el
+# ÚLTIMO `add_middleware` como el más EXTERNO. El rate limiter se agrega
+# primero y CORS después, a propósito: así CORS envuelve al limitador y las
+# respuestas 429/413 también llevan los headers `Access-Control-Allow-*`.
+# Al revés, el navegador reportaría un error de CORS genérico en vez del 429
+# real, y el explorador no podría mostrarle al usuario qué pasó.
+app.add_middleware(RateLimitMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -79,10 +96,13 @@ class RulebaseInfo(BaseModel):
 
 
 class ProveRequest(BaseModel):
-    rulebase_id: str
-    goal: str
+    # `rulebase_id` y `goal` son nombres de predicados del rulebase, no texto
+    # libre: acotarlos evita que un cuerpo válido pero absurdo infle la
+    # memoria y el mensaje del 404, que refleja el `rulebase_id` recibido.
+    rulebase_id: str = Field(min_length=1, max_length=200)
+    goal: str = Field(min_length=1, max_length=200)
     party: Party
-    facts: List[FactEntry]
+    facts: List[FactEntry] = Field(max_length=MAX_FACTS_PER_REQUEST)
 
 
 @app.get('/v1/reasoning/rulebases', response_model=List[RulebaseInfo])
