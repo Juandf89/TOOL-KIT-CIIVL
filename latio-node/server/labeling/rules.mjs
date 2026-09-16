@@ -216,14 +216,28 @@ export function proposeFromText(rawText) {
     );
   }
 
-  const hohfeldianPosition = deriveHohfeldFromDeontic(deonticDetermined ? deonticModality : null, addressee);
-  if (deonticDetermined) {
+  // Port 1:1 de src/labeling/rules.py: "tiene derecho a" fija Hohfeld por sí
+  // mismo, sin pasar por Von Wright — no manda una conducta, afirma una
+  // posición jurídica cuyo correlativo es un deber en la otra parte.
+  let hohfeldianPosition;
+  if (lex.DERECHO_SUBJETIVO_RE.test(text)) {
+    hohfeldianPosition = "derecho_subjetivo";
     notes.push(
-      "Posición (Hohfeld): correlato por defecto de la deóntica detectada " +
-      "(y, si es 'permiso', del destinatario) — no un análisis bilateral " +
-      "de Hohfeld (no identifica contraparte) — ver " +
-      "docs/limitaciones_conocidas.md §2."
+      "Posición (Hohfeld): el texto dice 'tiene derecho a', que afirma un " +
+      "derecho subjetivo — su correlativo es un deber en la otra parte, no " +
+      "la mera libertad de un privilegio. No se deriva de la deóntica; se " +
+      "lee directo del enunciado."
     );
+  } else {
+    hohfeldianPosition = deriveHohfeldFromDeontic(deonticDetermined ? deonticModality : null, addressee);
+    if (deonticDetermined) {
+      notes.push(
+        "Posición (Hohfeld): correlato por defecto de la deóntica detectada " +
+        "(y, si es 'permiso', del destinatario) — no un análisis bilateral " +
+        "de Hohfeld (no identifica contraparte) — ver " +
+        "docs/limitaciones_conocidas.md §2."
+      );
+    }
   }
 
   let statementType = null;

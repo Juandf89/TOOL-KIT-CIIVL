@@ -280,17 +280,30 @@ def propose_from_text(text: str) -> LabelProposal:
             "revisar si el artículo se dirige a otro destinatario."
         )
 
-    hohfeldian_position = _derive_hohfeld_from_deontic(
-        deontic_modality if deontic_determined else None,
-        addressee,
-    )
-    if deontic_determined:
+    # "tiene derecho a" fija Hohfeld POR SÍ MISMO, sin pasar por Von Wright:
+    # no manda una conducta, afirma una posición jurídica cuyo correlativo es
+    # un deber en la otra parte. Se chequea antes que la derivación desde la
+    # deóntica porque es evidencia más directa que un correlato por defecto.
+    if lex.DERECHO_SUBJETIVO_RE.search(text):
+        hohfeldian_position = "derecho_subjetivo"
         notes.append(
-            "Posición (Hohfeld): correlato por defecto de la deóntica "
-            "detectada (y, si es 'permiso', del destinatario) — no un "
-            "análisis bilateral de Hohfeld (no identifica contraparte) — "
-            "ver docs/limitaciones_conocidas.md §2."
+            "Posición (Hohfeld): el texto dice 'tiene derecho a', que afirma "
+            "un derecho subjetivo — su correlativo es un deber en la otra "
+            "parte, no la mera libertad de un privilegio. No se deriva de la "
+            "deóntica; se lee directo del enunciado."
         )
+    else:
+        hohfeldian_position = _derive_hohfeld_from_deontic(
+            deontic_modality if deontic_determined else None,
+            addressee,
+        )
+        if deontic_determined:
+            notes.append(
+                "Posición (Hohfeld): correlato por defecto de la deóntica "
+                "detectada (y, si es 'permiso', del destinatario) — no un "
+                "análisis bilateral de Hohfeld (no identifica contraparte) — "
+                "ver docs/limitaciones_conocidas.md §2."
+            )
 
     statement_type: str | None = None
     presumption_rebuttable: bool | None = None

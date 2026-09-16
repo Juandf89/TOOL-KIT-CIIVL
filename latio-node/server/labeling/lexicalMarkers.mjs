@@ -110,7 +110,9 @@ export const DEONTIC_PROHIBICION_RE = new RegExp(
   '|\\bno\\s+podr[áa](n)?' + FIN +
   '|\\bno\\s+puede(n)?' + FIN +
   '|\\bno\\s+se\\s+permit' +
-  '|\\bes\\s+nul[ao]' + FIN + '|\\bqueda(n)?\\s+proh[íi]bid[ao]s?' + FIN + '|\\bno\\s+se\\s+admit' +
+  // "es nulo/nula" NO está acá a propósito: la nulidad es una consecuencia
+  // sobre el ACTO, no un operador deóntico sobre la CONDUCTA de alguien.
+  '|\\bqueda(n)?\\s+proh[íi]bid[ao]s?' + FIN + '|\\bno\\s+se\\s+admit' +
   // "Nadie puede construir…", "ninguno de los comuneros podrá inquietar…".
   '|' + INI + '(nadie|ninguno|ninguna)' + FIN + '[\\s\\wáéíóúüñ,]{0,40}?' + INI + '(puede|pueden|podr[áa]|podr[áa]n)' + FIN,
   'i',
@@ -128,9 +130,21 @@ export const DEONTIC_PERMISO_RE = new RegExp(
   _NEG + '\\bpodr[áa](n)?' + FIN +
   // "puede ser" describe una modalidad del objeto, no un permiso.
   '|' + _NEG + '\\bpuede(n)?' + FIN + '(?!\\s+ser' + FIN + ')' +
-  '|' + _NEG + '\\bestá(n)?\\s+facultad[ao]s?\\s+(?:a|para)' + FIN +
-  '|' + _NEG + '\\btiene(n)?\\s+derecho\\s+a' + FIN +
-  '|\\blibremente' + FIN,
+  '|' + _NEG + '\\bestá(n)?\\s+facultad[ao]s?\\s+(?:a|para)' + FIN,
+  // Salieron "tiene(n) derecho a" (es Hohfeld, no Von Wright — ver
+  // DERECHO_SUBJETIVO_RE) y "libremente" (describía la capacidad o el modo de
+  // obrar de las partes, no un permiso concedido por el artículo).
+  'i',
+);
+
+// ---------------------------------------------------------------------------
+// derecho subjetivo (Hohfeld) — NO es deóntica de Von Wright. "El
+// arrendatario tiene derecho a la terminación del arrendamiento" afirma una
+// posición jurídica cuyo CORRELATIVO es un deber en la otra parte: un derecho
+// subjetivo, no un privilegio (correlativo: no-derecho) ni un permiso.
+// ---------------------------------------------------------------------------
+export const DERECHO_SUBJETIVO_RE = new RegExp(
+  _NEG + '\\btiene(n)?\\s+derecho\\s+a' + FIN,
   'i',
 );
 

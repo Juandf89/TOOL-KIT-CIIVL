@@ -127,7 +127,12 @@ DEONTIC_PROHIBICION_RE = re.compile(
     r"|\bno\s+podr[áa](n)?\b"
     r"|\bno\s+puede(n)?\b"
     r"|\bno\s+se\s+permit"
-    r"|\bes\s+nul[ao]\b|\bqueda(n)?\s+proh[íi]bid[ao]s?\b|\bno\s+se\s+admit"
+    # "es nulo/nula" NO está acá a propósito: la nulidad es una consecuencia
+    # jurídica sobre el ACTO (su invalidez), no un operador deóntico sobre la
+    # CONDUCTA de alguien. "Es nula la donación que comprenda la totalidad de
+    # los bienes" no le prohíbe nada a nadie: dice qué pasa si se hace.
+    # Tratarla como prohibición mezclaba dos planos distintos.
+    r"|\bqueda(n)?\s+proh[íi]bid[ao]s?\b|\bno\s+se\s+admit"
     # "Nadie puede construir…", "ninguno de los comuneros podrá inquietar…":
     # el cuantificador negativo prohíbe aunque el verbo esté en afirmativo.
     # La ventana se limita a palabras y comas para no cruzar a otra oración.
@@ -150,9 +155,31 @@ DEONTIC_PERMISO_RE = re.compile(
     # alguien: se excluye para no inflar el permiso con enunciados
     # descriptivos.
     r"|" + _NEG + r"\bpuede(n)?\b(?!\s+ser\b)"
-    r"|" + _NEG + r"\bestá(n)?\s+facultad[ao]s?\s+(?:a|para)\b"
-    r"|" + _NEG + r"\btiene(n)?\s+derecho\s+a\b"
-    r"|\blibremente\b",
+    r"|" + _NEG + r"\bestá(n)?\s+facultad[ao]s?\s+(?:a|para)\b",
+    # Salieron de acá dos marcadores:
+    #   * "tiene(n) derecho a" -> no es una modalidad de Von Wright sino una
+    #     posición de Hohfeld; ver DERECHO_SUBJETIVO_RE abajo.
+    #   * "libremente" -> describía la capacidad o el modo de obrar de las
+    #     partes ("siendo capaces de disponer libremente de lo suyo"), no un
+    #     permiso concedido por el artículo. Cuando sí hay permiso, el
+    #     "podrá"/"puede" de la misma oración ya lo detecta.
+    re.IGNORECASE,
+)
+
+# ---------------------------------------------------------------------------
+# derecho subjetivo (Hohfeld) — NO es deóntica de Von Wright.
+#
+# "El arrendatario tiene derecho a la terminación del arrendamiento" no manda
+# una conducta: afirma una posición jurídica cuyo CORRELATIVO es un deber en
+# la otra parte. Eso es un derecho subjetivo, no un privilegio (cuyo
+# correlativo es un no-derecho) ni un permiso. Por eso fija la posición
+# hohfeldiana directamente, sin pasar por la deóntica.
+#
+# La guarda de negación importa igual que en los marcadores deónticos: "el
+# usufructuario NO tiene derecho a pedir cosa alguna" es justo lo contrario.
+# ---------------------------------------------------------------------------
+DERECHO_SUBJETIVO_RE = re.compile(
+    _NEG + r"\btiene(n)?\s+derecho\s+a\b",
     re.IGNORECASE,
 )
 

@@ -151,6 +151,47 @@ def test_cuantificador_negativo_es_prohibicion_aunque_el_verbo_sea_afirmativo():
     ).deontic_modality == "prohibicion"
 
 
+def test_tiene_derecho_a_es_derecho_subjetivo_no_privilegio():
+    """"Tiene derecho a" no manda una conducta: afirma una posición jurídica
+    cuyo CORRELATIVO es un deber en la otra parte. Eso es un derecho
+    subjetivo, no un privilegio (cuyo correlativo es un no-derecho) ni un
+    permiso de Von Wright — leerlo como permiso era el mismo error categorial
+    que ya se corrigió una vez con permiso/potestad."""
+    p = propose_from_text(
+        "El arrendatario tiene derecho a la terminación del arrendamiento."
+    )
+    assert p.hohfeldian_position == "derecho_subjetivo"
+    assert p.deontic_modality == "ninguno"
+
+
+def test_no_tiene_derecho_a_no_afirma_derecho_subjetivo():
+    p = propose_from_text(
+        "El usufructuario no tiene derecho a pedir cosa alguna por las mejoras."
+    )
+    assert p.hohfeldian_position != "derecho_subjetivo"
+
+
+def test_libremente_solo_no_es_permiso():
+    """"Siendo capaces de disponer libremente de lo suyo" describe la
+    capacidad de las partes, no un permiso que el artículo conceda. Cuando sí
+    hay permiso, el "podrá"/"puede" de la misma oración ya lo detecta."""
+    p = propose_from_text(
+        "Las partes interesadas, siendo capaces de disponer libremente de lo suyo, "
+        "consienten en darla por nula."
+    )
+    assert p.deontic_modality == "ninguno"
+
+
+def test_nulidad_no_es_prohibicion():
+    """La nulidad es una consecuencia sobre el ACTO (su invalidez), no un
+    operador deóntico sobre la CONDUCTA de alguien: "es nula la donación
+    que…" no le prohíbe nada a nadie, dice qué pasa si se hace."""
+    p = propose_from_text(
+        "Es nula la donación que comprenda la totalidad de los bienes del donante."
+    )
+    assert p.deontic_modality == "ninguno"
+
+
 def test_puede_ser_descriptivo_no_es_permiso():
     """"La aceptación puede ser expresa o tácita" describe las modalidades
     posibles de un acto; no le concede un permiso a nadie."""

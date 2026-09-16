@@ -69,6 +69,29 @@ test("deontica: 'puede ser' descriptivo no es permiso", () => {
     "ninguno");
 });
 
+test("hohfeld: 'tiene derecho a' es derecho_subjetivo, no privilegio", () => {
+  const p = proposeFromText("El arrendatario tiene derecho a la terminación del arrendamiento.");
+  assert.equal(p.hohfeldianPosition, "derecho_subjetivo");
+  assert.equal(p.deonticModality, "ninguno");
+});
+
+test("hohfeld: 'no tiene derecho a' no afirma derecho subjetivo", () => {
+  const p = proposeFromText("El usufructuario no tiene derecho a pedir cosa alguna por las mejoras.");
+  assert.notEqual(p.hohfeldianPosition, "derecho_subjetivo");
+});
+
+test("deontica: 'libremente' solo no es permiso", () => {
+  assert.equal(
+    proposeFromText("Las partes interesadas, siendo capaces de disponer libremente de lo suyo, consienten en darla por nula.").deonticModality,
+    "ninguno");
+});
+
+test("deontica: la nulidad no es prohibicion", () => {
+  assert.equal(
+    proposeFromText("Es nula la donación que comprenda la totalidad de los bienes del donante.").deonticModality,
+    "ninguno");
+});
+
 test("antecedent_operator: ausencia de marcador es ninguno_explicito, no undetermined", () => {
   const p = proposeFromText("El comprador debe pagar el precio en el plazo estipulado.");
   assert.equal(p.antecedentOperator, "ninguno_explicito");
