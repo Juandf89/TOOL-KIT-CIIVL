@@ -69,6 +69,77 @@ test("deontica: 'puede ser' descriptivo no es permiso", () => {
     "ninguno");
 });
 
+// Espejo de los tests de negación, perífrasis y portugués de
+// tests/test_labeling_rules.py.
+const deontica = (t) => proposeFromText(t).deonticModality;
+
+test("deontica: negacion con pronombre intermedio es prohibicion", () => {
+  assert.equal(deontica("No se puede empeñar una cosa, sino por persona que tenga facultad de enajenarla."), "prohibicion");
+  assert.equal(deontica("Si fueren varios los propietarios, no se podrán imponer servidumbres."), "prohibicion");
+  assert.equal(deontica("O direito de preferência não se pode ceder nem passa aos herdeiros."), "prohibicion");
+});
+
+test("deontica: 'no deber' + infinitivo es prohibicion; sin infinitivo, no se adeuda", () => {
+  assert.equal(deontica("Las molestias por actividades en inmuebles vecinos no deben exceder la normal tolerancia."), "prohibicion");
+  assert.equal(deontica("Não devem casar os ascendentes com os descendentes."), "prohibicion");
+  assert.equal(deontica("No se deben intereses de los intereses."), "ninguno");
+  assert.notEqual(deontica("El dueño no debe responder por el hecho del tercero."), "prohibicion");
+});
+
+test("deontica: formas perifrasticas en presente y futuro", () => {
+  assert.equal(deontica("El gestor estará obligado a pagarla, aunque hubiese perdido."), "obligacion");
+  assert.equal(deontica("El vendedor será obligado a reembolsar al comprador."), "obligacion");
+  assert.equal(deontica("Los usuarios quedan obligados a todos los gastos de cultivo."), "obligacion");
+  assert.equal(deontica("Es lícito a cualquier persona apropiarse los enjambres."), "permiso");
+  assert.equal(deontica("No es lícito al propietario hacer cosa alguna que perjudique al usufructuario."), "prohibicion");
+  assert.notEqual(deontica("Nadie está obligado a vender, excepto que se encuentre sometido a una necesidad jurídica."), "obligacion");
+  assert.equal(proposeFromText("El fiduciario tiene derecho al reembolso de los gastos.").hohfeldianPosition, "derecho_subjetivo");
+});
+
+test("portugues: modales en todas sus formas", () => {
+  const casos = {
+    "O herdeiro pode demandar o reconhecimento de seu direito sucessório.": "permiso",
+    "Podem os nubentes requerer prazo razoável para fazer prova contrária.": "permiso",
+    "Qualquer dos nubentes poderá acrescer ao seu o sobrenome do outro.": "permiso",
+    "Pode-se exigir que cesse a ameaça a direito da personalidade.": "permiso",
+    "É lícito às partes fixar o preço em função de índices.": "permiso",
+    "O instrumento do penhor deverá ser levado a registro.": "obligacion",
+    "O mutuário é obrigado a restituir ao mutuante o que dele recebeu.": "obligacion",
+    "O devedor não poderá alienar os animais empenhados.": "prohibicion",
+    "Não pode o credor exigir indenização suplementar.": "prohibicion",
+    "É vedada contribuição que consista em prestação de serviços.": "prohibicion",
+    "Não é lícito encostar à parede divisória chaminés.": "prohibicion",
+    "Ninguém pode ser constrangido a submeter-se a tratamento médico.": "prohibicion",
+    "Desembarcadas as mercadorias, o transportador não é obrigado a dar aviso ao destinatário.": "ninguno",
+    "A dispensa da colação pode ser outorgada pelo doador em testamento.": "ninguno",
+  };
+  for (const [texto, esperado] of Object.entries(casos)) assert.equal(deontica(texto), esperado, texto);
+});
+
+test("portugues: direito subjetivo, potestad del juiz, excepcion y presuncion", () => {
+  assert.equal(proposeFromText("O possuidor de título ao portador tem direito à prestação nele indicada.").hohfeldianPosition, "derecho_subjetivo");
+  assert.equal(proposeFromText("Aquele que restituir a coisa achada terá direito a uma recompensa.").hohfeldianPosition, "derecho_subjetivo");
+  const juiz = proposeFromText("Para fiscalização dos atos do tutor, pode o juiz nomear um protutor.");
+  assert.equal(juiz.addressee, "juez");
+  assert.equal(juiz.hohfeldianPosition, "potestad");
+  const exc = proposeFromText("O devedor responde pelos prejuízos, salvo se provar caso fortuito.");
+  assert.equal(exc.exceptionPresent, true);
+  assert.equal(exc.exceptionMarker, "salvo se");
+  const pres = proposeFromText("Presumem-se verdadeiras as declarações constantes de documentos assinados.");
+  assert.equal(pres.statementType, "presuncion");
+  assert.equal(pres.presumptionRebuttable, true);
+});
+
+test("portugues: letra inicial tachada se une a su palabra", () => {
+  assert.equal(deontica("§ 1 o ~~N~~ ão pode o devedor obrigar o credor a receber parte."), "prohibicion");
+  assert.equal(proposeFromText("§ 1 o ~~S~~ alvo quando exigidos por lei outros requisitos, a escritura é válida.").exceptionPresent, true);
+});
+
+test("portugues: no contamina el castellano", () => {
+  assert.equal(proposeFromText("El juez o tribunal resolverá lo que corresponda.").addressee, "juez");
+  assert.equal(proposeFromText("Los frutos se deben desde que se interpuso la demanda.").antecedentOperator, "ninguno_explicito");
+});
+
 test("hohfeld: 'tiene derecho a' es derecho_subjetivo, no privilegio", () => {
   const p = proposeFromText("El arrendatario tiene derecho a la terminación del arrendamiento.");
   assert.equal(p.hohfeldianPosition, "derecho_subjetivo");

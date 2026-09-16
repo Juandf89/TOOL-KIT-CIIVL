@@ -199,6 +199,154 @@ def test_puede_ser_descriptivo_no_es_permiso():
     assert p.deontic_modality == "ninguno"
 
 
+# ---------------------------------------------------------------------------
+# Negación con pronombre intermedio, formas perifrásticas y "no deber + inf."
+# ---------------------------------------------------------------------------
+
+def test_negacion_con_pronombre_intermedio_es_prohibicion():
+    """"No SE puede empeñar una cosa" prohíbe. Sin contemplar el pronombre
+    entre la negación y el verbo, se leía como permiso."""
+    for texto in (
+        "No se puede empeñar una cosa, sino por persona que tenga facultad de enajenarla.",
+        "Si fueren varios los propietarios, no se podrán imponer servidumbres.",
+        "El direito de preferência não se pode ceder nem passa aos herdeiros.",
+    ):
+        assert propose_from_text(texto).deontic_modality == "prohibicion", texto
+
+
+def test_ni_puede_es_prohibicion():
+    p = propose_from_text("El derecho de recibir alimentos no es renunciable, ni puede ser objeto de transacción.")
+    assert p.deontic_modality == "prohibicion"
+
+
+def test_no_deber_con_infinitivo_es_prohibicion():
+    """"no deber" + infinitivo es un deber de no hacer."""
+    for texto in (
+        "Las molestias por actividades en inmuebles vecinos no deben exceder la normal tolerancia.",
+        "No debe efectuarse la restitución al depositante del bien.",
+        "Não devem casar os ascendentes com os descendentes.",
+    ):
+        assert propose_from_text(texto).deontic_modality == "prohibicion", texto
+
+
+def test_no_deber_sin_infinitivo_dice_que_no_se_adeuda():
+    """"No se deben intereses de los intereses" no prohíbe nada: dice que
+    nada se adeuda. No es obligación ni prohibición."""
+    p = propose_from_text("No se deben intereses de los intereses.")
+    assert p.deontic_modality == "ninguno"
+
+
+def test_no_deber_responder_no_es_prohibicion():
+    p = propose_from_text("El dueño no debe responder por el hecho del tercero.")
+    assert p.deontic_modality != "prohibicion"
+
+
+def test_cuantificador_negativo_niega_la_obligacion():
+    p = propose_from_text("Nadie está obligado a vender, excepto que se encuentre sometido a una necesidad jurídica.")
+    assert p.deontic_modality != "obligacion"
+
+
+def test_formas_perifrasticas_en_presente_y_futuro():
+    """El principio es cubrir cada modo en que el código dispone, no solo
+    "debe/deberá": "estará obligado", "es obligado", "queda obligado",
+    "será obligatoria", "es lícito", "es permitido", "tendrá derecho a"."""
+    casos = {
+        "El gestor estará obligado a pagarla, aunque hubiese perdido.": "obligacion",
+        "El vendedor será obligado a reembolsar al comprador.": "obligacion",
+        "Los usuarios quedan obligados a todos los gastos de cultivo.": "obligacion",
+        "La ley será obligatoria desde su publicación.": "obligacion",
+        "Es lícito a cualquier persona apropiarse los enjambres.": "permiso",
+        "Es permitido estipular interés por el mutuo.": "permiso",
+        "No es lícito al propietario hacer cosa alguna que perjudique al usufructuario.": "prohibicion",
+    }
+    for texto, esperado in casos.items():
+        assert propose_from_text(texto).deontic_modality == esperado, texto
+    p = propose_from_text("Cada socio tendrá derecho a que la sociedad le reembolse las sumas.")
+    assert p.hohfeldian_position == "derecho_subjetivo"
+    p = propose_from_text("El fiduciario tiene derecho al reembolso de los gastos.")
+    assert p.hohfeldian_position == "derecho_subjetivo"
+
+
+# ---------------------------------------------------------------------------
+# Portugués (Código Civil brasileño)
+# ---------------------------------------------------------------------------
+
+def test_portugues_modales_en_todas_sus_formas():
+    casos = {
+        "O herdeiro pode demandar o reconhecimento de seu direito sucessório.": "permiso",
+        "Podem os nubentes requerer prazo razoável para fazer prova contrária.": "permiso",
+        "Qualquer dos nubentes poderá acrescer ao seu o sobrenome do outro.": "permiso",
+        "Pode-se exigir que cesse a ameaça a direito da personalidade.": "permiso",
+        "Também se poderá deixar a fixação do preço à taxa de mercado.": "permiso",
+        "É lícito às partes fixar o preço em função de índices.": "permiso",
+        "O tabelião deve começar o auto de aprovação imediatamente.": "obligacion",
+        "O instrumento do penhor deverá ser levado a registro.": "obligacion",
+        "O mutuário é obrigado a restituir ao mutuante o que dele recebeu.": "obligacion",
+        "Os contratantes são obrigados a guardar os princípios de probidade.": "obligacion",
+        "O devedor não poderá alienar os animais empenhados.": "prohibicion",
+        "A coisa consignada não pode ser objeto de penhora.": "prohibicion",
+        "Não pode o credor exigir indenização suplementar.": "prohibicion",
+        "É vedada contribuição que consista em prestação de serviços.": "prohibicion",
+        "Não é lícito encostar à parede divisória chaminés.": "prohibicion",
+        "Ninguém pode ser constrangido a submeter-se a tratamento médico.": "prohibicion",
+    }
+    for texto, esperado in casos.items():
+        assert propose_from_text(texto).deontic_modality == esperado, texto
+
+
+def test_portugues_negacion_no_se_lee_como_obligacion():
+    p = propose_from_text("Desembarcadas as mercadorias, o transportador não é obrigado a dar aviso ao destinatário.")
+    assert p.deontic_modality == "ninguno"
+
+
+def test_portugues_pode_ser_descriptivo_no_es_permiso():
+    p = propose_from_text("A dispensa da colação pode ser outorgada pelo doador em testamento.")
+    assert p.deontic_modality == "ninguno"
+
+
+def test_portugues_direito_subjetivo_en_presente_y_futuro():
+    for texto in (
+        "Cada um dos credores solidários tem direito a exigir do devedor o cumprimento.",
+        "O possuidor de título ao portador tem direito à prestação nele indicada.",
+        "Aquele que restituir a coisa achada terá direito a uma recompensa.",
+    ):
+        assert propose_from_text(texto).hohfeldian_position == "derecho_subjetivo", texto
+
+
+def test_portugues_juez_con_permiso_es_potestad():
+    p = propose_from_text("Para fiscalização dos atos do tutor, pode o juiz nomear um protutor.")
+    assert p.addressee == "juez"
+    assert p.hohfeldian_position == "potestad"
+
+
+def test_portugues_excepcion_y_presuncion():
+    p = propose_from_text("O devedor responde pelos prejuízos, salvo se provar caso fortuito.")
+    assert p.exception_present is True
+    assert p.exception_marker == "salvo se"
+    assert p.proleg_preview is not None
+    p = propose_from_text("Presumem-se verdadeiras as declarações constantes de documentos assinados.")
+    assert p.statement_type == "presuncion"
+    assert p.presumption_rebuttable is True
+
+
+def test_portugues_letra_inicial_tachada_se_une_a_su_palabra():
+    """Artefacto de la extracción del Código Civil brasileño: "~~N~~ ão
+    pode" es "Não pode". Sin unirlo, la negación no se ve y se lee permiso."""
+    p = propose_from_text("§ 1 o ~~N~~ ão pode o devedor obrigar o credor a receber parte.")
+    assert p.deontic_modality == "prohibicion"
+    p = propose_from_text("§ 1 o ~~S~~ alvo quando exigidos por lei outros requisitos, a escritura é válida.")
+    assert p.exception_present is True
+
+
+def test_portugues_no_contamina_el_castellano():
+    """"juez o tribunal" no es el "o tribunal" portugués, y "desde que" en
+    castellano es temporal, no condicional."""
+    p = propose_from_text("El juez o tribunal resolverá lo que corresponda.")
+    assert p.addressee == "juez"
+    p = propose_from_text("Los frutos se deben desde que se interpuso la demanda.")
+    assert p.antecedent_operator == "ninguno_explicito"
+
+
 def test_detecta_permiso_dirigido_a_partes_deriva_privilegio_no_potestad():
     """"Permiso" a un particular es una LIBERTAD/PRIVILEGIO hohfeldiana (no
     altera la posición jurídica de nadie más), distinta de una POTESTAD

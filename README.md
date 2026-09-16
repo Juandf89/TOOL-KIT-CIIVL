@@ -41,7 +41,7 @@ TOOL-KIT-CIIVL/
 │   └── card-datalex.html       # Tarjeta de proyecto para incrustar en datalexlab.com
 └── latio-node/                 # Puerto Node.js/Express de src/api.py — la API que SÍ corre en producción (api-latio.datalexlab.com), ver DEPLOYMENT-NODE.md
     ├── server/                  # app.mjs (Express) + reasoning/, labeling/, models.mjs, ratelimit.mjs, data.mjs
-    ├── tests/                   # 47 tests node:test (módulos + Express app end-to-end)
+    ├── tests/                   # 54 tests node:test (módulos + Express app end-to-end)
     ├── cross_validate.mjs       # Compara Node vs. Python (oráculo) campo a campo
     ├── verify_prod.mjs          # Checklist HTTP post-despliegue contra una URL ya desplegada
     └── DEPLOYMENT-NODE.md       # Guía de despliegue en Hostinger (Node.js Web App / lsnode)
@@ -141,7 +141,7 @@ como Node.js Web App de Hostinger (`lsnode`/LiteSpeed), aislado del resto de la 
 ```bash
 cd latio-node
 npm install
-npm test                    # 47 tests node:test — módulos + Express app end-to-end
+npm test                    # 54 tests node:test — módulos + Express app end-to-end
 node cross_validate.mjs     # compara Node vs. Python (oráculo) sobre el caso de oro del Apéndice B, CO-256 y labeling
 ```
 

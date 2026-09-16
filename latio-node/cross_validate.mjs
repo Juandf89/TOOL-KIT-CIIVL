@@ -214,6 +214,23 @@ print(json.dumps({"proved": result.proved, "trace_length": len(result.trace)}))
     "El apoderado no está obligado a rendir cuentas de los frutos percibidos.",
     "Nadie puede construir cerca de una pared ajena hornos ni chimeneas.",
     "Únicamente en los siguientes casos procede la acción.",
+    // Negación con pronombre intermedio y "no deber + infinitivo".
+    "No se puede empeñar una cosa, sino por persona que tenga facultad de enajenarla.",
+    "Las molestias no deben exceder la normal tolerancia.",
+    "No se deben intereses de los intereses.",
+    // Portugués (Código Civil brasileño): letras como ã, ç y ê son las que
+    // más fácil rompen la paridad entre los dos motores.
+    "Podem os nubentes requerer prazo razoável para fazer prova contrária.",
+    "Também se poderá deixar a fixação do preço à taxa de mercado.",
+    "O direito de preferência não se pode ceder nem passa aos herdeiros.",
+    "O transportador não é obrigado a dar aviso ao destinatário.",
+    "Os contratantes são obrigados a guardar os princípios de probidade.",
+    "É vedada contribuição que consista em prestação de serviços.",
+    "O possuidor de título ao portador tem direito à prestação nele indicada.",
+    "Para fiscalização dos atos do tutor, pode o juiz nomear um protutor.",
+    "O devedor responde pelos prejuízos, salvo se provar caso fortuito.",
+    "Presumem-se verdadeiras as declarações constantes de documentos assinados.",
+    "§ 1 o ~~N~~ ão pode o devedor obrigar o credor a receber parte.",
   ];
 
   for (const texto of textos) {
@@ -233,6 +250,7 @@ print(result.model_dump_json())
       statement_type: o.statement_type,
       structure: o.structure,
       deontic_modality: o.deontic_modality,
+      hohfeldian_position: o.hohfeldian_position,
       addressee: o.addressee,
       antecedent_operator: o.antecedent_operator,
       exception_present: o.exception_present,

@@ -176,6 +176,10 @@ export function buildProlegPreview(exceptionMarker, exceptionScope, statementTyp
   };
 }
 
+// La letra inicial de un párrafo quedó tachada y separada del resto de la
+// palabra ("~~S~~ alvo quando"); se une solo si lo que sigue es una letra.
+const LETRA_INICIAL_TACHADA = /~~(\p{L})~~\s+(?=\p{L})/gu;
+
 export function proposeFromText(rawText) {
   // NFC: sin esto, el mismo texto en dos formas Unicode canónicamente
   // equivalentes (copiado desde macOS, o extraído de OCR, que suelen
@@ -183,7 +187,9 @@ export function proposeFromText(rawText) {
   // precompuestas) y dar un resultado distinto para el mismo enunciado.
   // text.normalize("NFC") de JS es equivalente a unicodedata.normalize de
   // Python — ambos implementan el mismo algoritmo Unicode estándar.
-  const text = rawText.normalize("NFC").trim();
+  // Artefacto de la extracción del Código Civil brasileño: "~~N~~ ão pode" es
+  // "Não pode". Port de _LETRA_INICIAL_TACHADA en rules.py.
+  const text = rawText.normalize("NFC").trim().replace(LETRA_INICIAL_TACHADA, "$1");
 
   const notes = [];
 

@@ -21,6 +21,7 @@ tiene costo.
 
 from __future__ import annotations
 
+import re
 import unicodedata
 
 from src.labeling import lexical_markers as lex
@@ -28,6 +29,15 @@ from src.labeling.schemas import LabelProposal, ProlegPreview, ProlegRunResult
 from src.models import COMPATIBILITY
 from src.reasoning.engine import prove
 from src.reasoning.models import FactAction, FactBase, FactEntry, Party, Rule, RuleBase, ExceptionLink
+
+
+# Artefacto de la extracción del Código Civil brasileño (152 artículos): la
+# letra inicial de un párrafo quedó tachada y separada del resto de la
+# palabra — "~~N~~ ão pode", "~~S~~ alvo quando". Sin volver a unirla, el
+# motor no ve la negación ni la excepción, y "Não pode o devedor…" se leía
+# como un permiso. Solo se une cuando lo que sigue es una letra, es decir,
+# cuando es claramente la misma palabra.
+_LETRA_INICIAL_TACHADA = re.compile(r"~~([^\W\d_])~~\s+(?=[^\W\d_])")
 
 
 def _detect_antecedent_operator(text: str) -> str:
@@ -248,6 +258,7 @@ def propose_from_text(text: str) -> LabelProposal:
     # ingesta (src/pipeline.py) ya normaliza a NFC los 8 corpus reales; esto
     # cubre el otro punto de entrada: texto pegado directo por un usuario.
     text = unicodedata.normalize("NFC", text).strip()
+    text = _LETRA_INICIAL_TACHADA.sub(r"\1", text)
 
     notes: list[str] = []
 

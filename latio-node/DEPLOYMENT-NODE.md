@@ -27,9 +27,9 @@ api-latio.datalexlab.com
 
 ## 0. Qué se verificó antes de este documento
 
-- **118/118 tests** del repo Python (oráculo) pasan, incluida la suite con el
+- **133/133 tests** del repo Python (oráculo) pasan, incluida la suite con el
   rate limiter activo en modo agresivo.
-- **47/47 tests Node** (`npm test`, `node --test tests/`) — subconjunto
+- **54/54 tests Node** (`npm test`, `node --test tests/`) — subconjunto
   representativo de los mismos comportamientos, corriendo directo contra los
   módulos portados (sin HTTP) y contra la app Express completa (con HTTP).
 - **`cross_validate.mjs`**: el caso de oro del Apéndice B del paper PROLEG
