@@ -1,13 +1,10 @@
-"""schemas.py — contrato de salida del etiquetado por reglas.
+"""schemas.py — contrato de salida de la determinación deóntica por reglas.
 
-LabelProposal es deliberadamente parcial: cada campo se reporta en una de
-tres categorías —`determined_fields` (marcador léxico de baja ambigüedad),
-`default_fields` (sin marcador, pero con un valor modal razonable y
-documentado en `notes`), o `undetermined_fields` (sin evidencia suficiente,
-se deja en None). El llamador (la UI, o un humano) completa lo que falta y
-el resultado final siempre pasa por POST /v1/statements/validate
-(src/api.py), la única fuente de verdad sobre si la combinación es
-jurídicamente válida.
+LabelProposal reporta la determinación deóntica (Von Wright) y el correlato
+hohfeldiano por defecto que las reglas léxicas deterministas (ver rules.py)
+logran derivar del texto, con `notes` documentando los criterios y límites
+aplicados. Cuando no hay evidencia suficiente para un campo, este queda en
+None (u "ninguno"/"ninguno_explicito", según el vocabulario del campo).
 """
 
 from __future__ import annotations
@@ -52,9 +49,6 @@ class LabelProposal(BaseModel):
 
     presumption_rebuttable: Optional[bool] = None
 
-    determined_fields: list[str] = Field(default_factory=list)
-    default_fields: list[str] = Field(default_factory=list)
-    undetermined_fields: list[str] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
 
     proleg_preview: Optional[ProlegPreview] = None

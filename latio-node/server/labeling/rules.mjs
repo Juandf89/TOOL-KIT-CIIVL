@@ -1,10 +1,11 @@
 // labeling/rules.mjs — port de src/labeling/rules.py.
 //
-// Motor de reglas deterministas para el etiquetado N3. Mismo contrato que el
-// original: determined_fields (marcador léxico de baja ambigüedad),
-// default_fields (sin marcador, valor modal documentado) y
-// undetermined_fields (sin evidencia, nunca adivinado). No usa red, no usa
-// LLM, no tiene costo — igual que la versión Python.
+// Motor de reglas deterministas para la determinación deóntica (Von Wright)
+// y la posición hohfeldiana por defecto. Mismo contrato que el original:
+// marcador léxico de baja ambigüedad documentado en `notes`, o valor modal
+// por defecto documentado en `notes` cuando no hay marcador textual. Sin
+// evidencia suficiente, el campo queda en null/"ninguno", nunca adivinado.
+// No usa red, no usa LLM, no tiene costo — igual que la versión Python.
 
 import * as lex from "./lexicalMarkers.mjs";
 import { COMPATIBILITY } from "../models.mjs";
@@ -184,27 +185,16 @@ export function proposeFromText(rawText) {
   // Python — ambos implementan el mismo algoritmo Unicode estándar.
   const text = rawText.normalize("NFC").trim();
 
-  const determined = [];
-  const defaultFields = [];
-  const undetermined = [];
   const notes = [];
 
   const antecedentOperator = detectAntecedentOperator(text);
-  determined.push("antecedent_operator");
 
   const { present: exceptionPresent, marker: exceptionMarker, scope: exceptionScope } = detectException(text);
-  determined.push("exception_present");
-  if (exceptionPresent) {
-    determined.push("exception_marker", "exception_scope");
-  }
 
   let deonticModality = detectDeonticModality(text);
   const deonticDetermined = deonticModality !== null;
-  if (deonticDetermined) {
-    determined.push("deontic_modality");
-  } else {
+  if (!deonticDetermined) {
     deonticModality = "ninguno";
-    undetermined.push("deontic_modality");
     notes.push(
       "Deóntica (Von Wright): sin marcador léxico de obligación/prohibición/" +
       "permiso — se deja 'ninguno' por defecto (correcto para definiciones/" +
@@ -217,58 +207,41 @@ export function proposeFromText(rawText) {
   // deriveHohfeldFromDeontic necesita saber si el "permiso" se dirige a un
   // juez/funcionario (potestad) o a partes/tercero (privilegio).
   let addressee = detectAddressee(text);
-  if (addressee !== null) {
-    determined.push("addressee");
-  } else if (deonticModality !== "ninguno") {
+  if (addressee === null && deonticModality !== "ninguno") {
     addressee = "partes";
-    defaultFields.push("addressee");
     notes.push(
       "Destinatario: sin marcador de juez/funcionario/tercero — se asume " +
       "'partes' por defecto (mayoría del derecho privado); revisar si el " +
       "artículo se dirige a otro destinatario."
     );
-  } else {
-    undetermined.push("addressee");
   }
 
   const hohfeldianPosition = deriveHohfeldFromDeontic(deonticDetermined ? deonticModality : null, addressee);
   if (deonticDetermined) {
-    defaultFields.push("hohfeldian_position");
     notes.push(
       "Posición (Hohfeld): correlato por defecto de la deóntica detectada " +
       "(y, si es 'permiso', del destinatario) — no un análisis bilateral " +
       "de Hohfeld (no identifica contraparte) — ver " +
       "docs/limitaciones_conocidas.md §2."
     );
-  } else {
-    undetermined.push("hohfeldian_position");
   }
 
   let statementType = null;
-  let statementTypeDetermined = false;
   let presumptionRebuttable = null;
 
   const { isPresumption, rebuttable } = detectPresumption(text);
   if (isPresumption) {
     statementType = "presuncion";
     presumptionRebuttable = rebuttable;
-    statementTypeDetermined = true;
-    determined.push("statement_type", "presumption_rebuttable");
   } else if (detectRemision(text)) {
     statementType = "remision";
-    statementTypeDetermined = true;
-    determined.push("statement_type");
   } else if (detectDefinicion(text)) {
     statementType = "definicion";
-    statementTypeDetermined = true;
-    determined.push("statement_type");
   } else if (deonticModality !== "ninguno") {
     // Hay marcador deóntico explícito y ningún otro marcador más específico:
     // el default modal es "regla".
     statementType = "regla";
-    defaultFields.push("statement_type");
   } else {
-    undetermined.push("statement_type");
     notes.push(
       "Tipo de norma: no determinado. Sin marcador léxico de presunción/" +
       "remisión/definición ni deóntica explícita. Distinguir " +
@@ -280,25 +253,14 @@ export function proposeFromText(rawText) {
   const { has: hasEnumeration, closed: enumerationClosed } = detectEnumeration(text);
 
   const structure = deriveStructure(statementType, exceptionPresent, hasEnumeration);
-  if (structure !== null) {
-    (statementTypeDetermined ? determined : defaultFields).push("structure");
-  } else {
-    undetermined.push("structure");
-    if (statementType !== null) {
-      const candidates = [...(COMPATIBILITY[statementType] ?? new Set())].sort();
-      notes.push(
-        `Estructura: no determinada. El tipo de norma detectado ` +
-        `('${statementType}') admite más de una estructura compatible sin ` +
-        `más evidencia (${JSON.stringify(candidates)}).`
-      );
-    }
+  if (structure === null && statementType !== null) {
+    const candidates = [...(COMPATIBILITY[statementType] ?? new Set())].sort();
+    notes.push(
+      `Estructura: no determinada. El tipo de norma detectado ` +
+      `('${statementType}') admite más de una estructura compatible sin ` +
+      `más evidencia (${JSON.stringify(candidates)}).`
+    );
   }
-
-  undetermined.push("generality");
-  notes.push(
-    "Generalidad (cantidad de condiciones, conceptos indeterminados, etc.) " +
-    "queda fuera del alcance de este motor de reglas — completar manualmente."
-  );
 
   let prolegPreview = null;
   if (exceptionPresent) {
@@ -316,9 +278,6 @@ export function proposeFromText(rawText) {
     exceptionMarker,
     exceptionScope,
     presumptionRebuttable,
-    determinedFields: determined,
-    defaultFields,
-    undeterminedFields: undetermined,
     notes,
     prolegPreview,
     annotatedBy: "heuristica_local",

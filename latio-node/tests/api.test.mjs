@@ -1,8 +1,8 @@
 // tests/api.test.mjs — smoke test HTTP de todas las rutas, incluidos los
 // contratos de error (404/422/413/429) y CORS. Espejo liviano de
-// tests/test_api_corpora.py y tests/test_api_statements_validate.py del
-// repo Python — no reimplementa cada caso de esos archivos (ver
-// cross_validate.mjs para la comparación exhaustiva contra el oráculo).
+// tests/test_api_corpora.py del repo Python — no reimplementa cada caso de
+// ese archivo (ver cross_validate.mjs para la comparación exhaustiva
+// contra el oráculo).
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -107,61 +107,13 @@ test("GET /v1/corpora/CO-CC/articles/:uid inexistente -> 404", async () => {
   assert.equal(res.status, 404);
 });
 
-test("POST /v1/statements/validate: caso valido -> valid true con computed", async () => {
+test("POST /v1/statements/validate ya no existe (retirado junto con el anotador) -> 404", async () => {
   const res = await fetch(`${base}/v1/statements/validate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      text_span: "El comprador deberá pagar el precio dentro de los treinta días.",
-      statement_type: "regla",
-      structure: "supuesto_consecuencia",
-      deontic_modality: "obligacion",
-      addressee: "partes",
-      antecedent_operator: "ninguno_explicito",
-      generality_n_conditions: 1,
-    }),
+    body: JSON.stringify({ text_span: "x" }),
   });
-  assert.equal(res.status, 200);
-  const body = await res.json();
-  assert.equal(body.valid, true);
-  assert.equal(body.computed.generality_level, "intermedia");
-});
-
-test("POST /v1/statements/validate: combinacion ilegal -> valid false con error, HTTP 200", async () => {
-  const res = await fetch(`${base}/v1/statements/validate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      text_span: "x",
-      statement_type: "definicion",
-      structure: "supuesto_consecuencia",
-      deontic_modality: "ninguno",
-      addressee: "partes",
-      antecedent_operator: "ninguno_explicito",
-      generality_n_conditions: 0,
-    }),
-  });
-  assert.equal(res.status, 200);
-  const body = await res.json();
-  assert.equal(body.valid, false);
-  assert.match(body.error, /combinación ilegal/);
-});
-
-test("POST /v1/statements/validate: statement_type invalido -> 422 (forma de request)", async () => {
-  const res = await fetch(`${base}/v1/statements/validate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      text_span: "x",
-      statement_type: "no-es-un-tipo-valido",
-      structure: "supuesto_consecuencia",
-      deontic_modality: "ninguno",
-      addressee: "partes",
-      antecedent_operator: "ninguno_explicito",
-      generality_n_conditions: 0,
-    }),
-  });
-  assert.equal(res.status, 422);
+  assert.equal(res.status, 404);
 });
 
 test("POST /v1/statements/propose devuelve una propuesta parcial", async () => {

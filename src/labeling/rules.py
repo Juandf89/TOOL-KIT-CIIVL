@@ -1,21 +1,22 @@
-"""rules.py — motor de reglas deterministas para el etiquetado N3.
+"""rules.py — motor de reglas deterministas para la determinación deóntica
+(Von Wright) y la posición hohfeldiana por defecto.
 
-Cubre dos familias de campos, con confianza declarada distinta:
+Distingue dos niveles de confianza, documentados en `notes` cuando aplica:
 
-  * "reglas" (determined_fields): marcador léxico de baja ambigüedad medido
-    o evidenciado dentro del propio proyecto — antecedent_operator,
-    exception, presuncion/remision/definicion, deóntica de Von Wright.
-  * "default" (default_fields): no hay marcador textual, pero hay un valor
-    modal razonable y documentado — p. ej. addressee="partes" para una
-    regla con deóntica explícita (la mayoría del derecho privado se dirige
-    a las partes salvo marca en contrario), o el correlato hohfeldiano por
-    defecto de la deóntica detectada (ver `_derive_hohfeld_from_deontic`:
-    es una simplificación declarada, NO un análisis bilateral completo de
+  * marcador léxico de baja ambigüedad medido o evidenciado dentro del
+    propio proyecto — antecedent_operator, exception,
+    presuncion/remision/definicion, deóntica de Von Wright.
+  * sin marcador textual, pero con un valor modal razonable y documentado
+    en `notes` — p. ej. addressee="partes" para una regla con deóntica
+    explícita (la mayoría del derecho privado se dirige a las partes salvo
+    marca en contrario), o el correlato hohfeldiano por defecto de la
+    deóntica detectada (ver `_derive_hohfeld_from_deontic`: es una
+    simplificación declarada, NO un análisis bilateral completo de
     Hohfeld, que exigiría identificar a la contraparte concreta).
 
-Todo lo que no cae en ninguna de las dos categorías queda en
-`undetermined_fields`, explícito, nunca adivinado. No usa red, no usa LLM,
-no tiene costo.
+Cuando no hay evidencia suficiente, el campo queda en None (o su valor
+"ninguno"/"ninguno_explicito"), nunca adivinado. No usa red, no usa LLM, no
+tiene costo.
 """
 
 from __future__ import annotations
@@ -248,25 +249,16 @@ def propose_from_text(text: str) -> LabelProposal:
     # cubre el otro punto de entrada: texto pegado directo por un usuario.
     text = unicodedata.normalize("NFC", text).strip()
 
-    determined: list[str] = []
-    default: list[str] = []
-    undetermined: list[str] = []
     notes: list[str] = []
 
     antecedent_operator = _detect_antecedent_operator(text)
-    determined.append("antecedent_operator")
 
     exception_present, exception_marker, exception_scope = _detect_exception(text)
-    determined.append("exception_present")
-    if exception_present:
-        determined += ["exception_marker", "exception_scope"]
 
     deontic_modality = _detect_deontic_modality(text)
-    if deontic_modality is not None:
-        determined.append("deontic_modality")
-    else:
+    deontic_determined = deontic_modality is not None
+    if not deontic_determined:
         deontic_modality = "ninguno"
-        undetermined.append("deontic_modality")
         notes.append(
             "Deóntica (Von Wright): sin marcador léxico de obligación/"
             "prohibición/permiso — se deja 'ninguno' por defecto (correcto "
@@ -280,61 +272,44 @@ def propose_from_text(text: str) -> LabelProposal:
     # dirige a un juez/funcionario (potestad) o a partes/tercero
     # (privilegio) — ver docstring de esa función.
     addressee = _detect_addressee(text)
-    if addressee is not None:
-        determined.append("addressee")
-    elif deontic_modality != "ninguno":
+    if addressee is None and deontic_modality != "ninguno":
         addressee = "partes"
-        default.append("addressee")
         notes.append(
             "Destinatario: sin marcador de juez/funcionario/tercero — se "
             "asume 'partes' por defecto (mayoría del derecho privado); "
             "revisar si el artículo se dirige a otro destinatario."
         )
-    else:
-        undetermined.append("addressee")
 
     hohfeldian_position = _derive_hohfeld_from_deontic(
-        deontic_modality if "deontic_modality" in determined else None,
+        deontic_modality if deontic_determined else None,
         addressee,
     )
-    if "deontic_modality" in determined:
-        default.append("hohfeldian_position")
+    if deontic_determined:
         notes.append(
             "Posición (Hohfeld): correlato por defecto de la deóntica "
             "detectada (y, si es 'permiso', del destinatario) — no un "
             "análisis bilateral de Hohfeld (no identifica contraparte) — "
             "ver docs/limitaciones_conocidas.md §2."
         )
-    else:
-        undetermined.append("hohfeldian_position")
 
     statement_type: str | None = None
-    statement_type_determined = False
     presumption_rebuttable: bool | None = None
 
     is_presumption, rebuttable = _detect_presumption(text)
     if is_presumption:
         statement_type = "presuncion"
         presumption_rebuttable = rebuttable
-        statement_type_determined = True
-        determined += ["statement_type", "presumption_rebuttable"]
     elif _detect_remision(text):
         statement_type = "remision"
-        statement_type_determined = True
-        determined.append("statement_type")
     elif _detect_definicion(text):
         statement_type = "definicion"
-        statement_type_determined = True
-        determined.append("statement_type")
     elif deontic_modality != "ninguno":
         # Hay marcador deóntico explícito y ningún otro marcador más
         # específico (presunción/remisión/definición): el default modal es
         # "regla" — es, literalmente, la definición de statement_type=regla
         # en este esquema (mandato con antecedente y consecuente).
         statement_type = "regla"
-        default.append("statement_type")
     else:
-        undetermined.append("statement_type")
         notes.append(
             "Tipo de norma: no determinado. Sin marcador léxico de "
             "presunción/remisión/definición ni deóntica explícita. "
@@ -345,24 +320,13 @@ def propose_from_text(text: str) -> LabelProposal:
     has_enumeration, enumeration_closed = _detect_enumeration(text)
 
     structure = _derive_structure(statement_type, exception_present, has_enumeration)
-    if structure is not None:
-        (determined if statement_type_determined else default).append("structure")
-    else:
-        undetermined.append("structure")
-        if statement_type is not None:
-            notes.append(
-                f"Estructura: no determinada. El tipo de norma detectado "
-                f"('{statement_type}') admite más de una estructura "
-                f"compatible sin más evidencia "
-                f"({sorted(COMPATIBILITY.get(statement_type, set()))})."
-            )
-
-    undetermined.append("generality")
-    notes.append(
-        "Generalidad (cantidad de condiciones, conceptos indeterminados, "
-        "etc.) queda fuera del alcance de este motor de reglas — "
-        "completar manualmente."
-    )
+    if structure is None and statement_type is not None:
+        notes.append(
+            f"Estructura: no determinada. El tipo de norma detectado "
+            f"('{statement_type}') admite más de una estructura "
+            f"compatible sin más evidencia "
+            f"({sorted(COMPATIBILITY.get(statement_type, set()))})."
+        )
 
     proleg_preview = None
     if exception_present:
@@ -379,9 +343,6 @@ def propose_from_text(text: str) -> LabelProposal:
         exception_marker=exception_marker,
         exception_scope=exception_scope,
         presumption_rebuttable=presumption_rebuttable,
-        determined_fields=determined,
-        default_fields=default,
-        undetermined_fields=undetermined,
         notes=notes,
         proleg_preview=proleg_preview,
     )

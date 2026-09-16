@@ -5,23 +5,12 @@ from pathlib import Path
 import yaml
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field, ValidationError
-from typing import List, Literal, Optional, Dict, Any
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict
 
 from src.reasoning.models import Party, FactEntry, FactBase, ProofResult
 from src.reasoning.engine import prove
 from src.reasoning.rulesets import RULEBASES
-from src.models import (
-    AntecedentOperator,
-    Addressee,
-    DeonticModality,
-    ExceptionInfo,
-    GeneralityProxies,
-    HohfeldianPosition,
-    NormativeStatement,
-    StatementType,
-    Structure,
-)
 from src.labeling.rules import propose_from_text
 from src.labeling.schemas import LabelProposal
 from src.ratelimit import RateLimitMiddleware
@@ -351,121 +340,14 @@ def get_corpus_article(corpus_id: str, uid: str):
 
 
 # --------------------------------------------------------------------------
-# /v1/statements/validate — valida un etiquetado propuesto (por reglas
-# deterministas locales, ver src/labeling/, o por un humano) contra el
-# esquema ontológico REAL del proyecto (NormativeStatement, src/models.py).
-# Este endpoint es la parte verificable del flujo: quien propone el
-# etiquetado nunca reimplementa las reglas de compatibilidad — las manda
-# acá y Pydantic decide, con el motivo exacto si rechaza.
-#
-# `hohfeldian_position` SÍ se acepta como input (default "ninguno") pero es
-# un correlato por defecto de la deóntica, no un análisis bilateral pleno
-# de Hohfeld — ver src/labeling/rules.py:_derive_hohfeld_from_deontic y
-# docs/limitaciones_conocidas.md §2 para el límite declarado. Lo que SIGUE
-# excluido del input porque son DERIVADOS por código real, no propuestos:
-# `generality_level` (`derive_generality()`) y `derogability_marker_detected`
-# (`DEROGABILITY_MARKER_RE`), ambos en src/models.py.
-# --------------------------------------------------------------------------
-
-class StatementDraftRequest(BaseModel):
-    text_span: str = Field(min_length=1, max_length=4000)
-    statement_type: StatementType
-    structure: Structure
-    deontic_modality: DeonticModality
-    # Correlato hohfeldiano por defecto de la deóntica (ver
-    # src/labeling/rules.py:_derive_hohfeld_from_deontic) — simplificación
-    # declarada, no un análisis bilateral completo (no identifica
-    # contraparte). "ninguno" si no aplica o no se determinó.
-    hohfeldian_position: HohfeldianPosition = "ninguno"
-    addressee: Addressee
-    antecedent_operator: AntecedentOperator
-    exception_present: bool = False
-    exception_marker: Optional[str] = None
-    exception_scope: Optional[str] = None  # restringido a interna|por_remision
-    generality_n_conditions: int = Field(ge=0)
-    generality_has_enumeration: bool = False
-    generality_enumeration_closed: Optional[bool] = None
-    generality_indeterminate_concepts: List[str] = Field(default_factory=list)
-    # Solo relevante si statement_type == "presuncion" — marcador textual
-    # explícito ("se presume de derecho" vs. "se presume"), no inferencia.
-    presumption_rebuttable: Optional[bool] = None
-    # Procedencia real del etiquetado propuesto — nunca se asume "llm" por
-    # defecto (ver src/models.py: "heuristica_local" es src/labeling/rules.py).
-    annotated_by: Literal["human", "llm", "llm+human", "heuristica_local"] = "heuristica_local"
-
-
-class StatementValidationResult(BaseModel):
-    valid: bool
-    normalized: Optional[Dict[str, Any]] = None
-    computed: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
-
-
-@app.post('/v1/statements/validate', response_model=StatementValidationResult)
-def validate_statement(req: StatementDraftRequest):
-    """Construye un NormativeStatement real a partir de un etiquetado
-    propuesto y devuelve si el esquema ontológico lo acepta o lo rechaza —
-    con el motivo exacto del rechazo si corresponde. No persiste nada."""
-    presumption = None
-    derogability = "indeterminada"
-    if req.statement_type == "presuncion":
-        rebuttable = req.presumption_rebuttable if req.presumption_rebuttable is not None else True
-        presumption = {
-            "rebuttable": rebuttable,
-            "burden_shifts_to": "partes" if rebuttable else "ninguno",
-        }
-        if not rebuttable:
-            derogability = "inderogable"
-
-    try:
-        stmt = NormativeStatement(
-            statement_id=0,
-            span_type="articulo_completo",
-            text_span=req.text_span,
-            statement_type=req.statement_type,
-            structure=req.structure,
-            deontic_modality=req.deontic_modality,
-            hohfeldian_position=req.hohfeldian_position,
-            derogability=derogability,
-            addressee=req.addressee,
-            antecedent_operator=req.antecedent_operator,
-            exception=ExceptionInfo(
-                present=req.exception_present,
-                marker=req.exception_marker if req.exception_present else None,
-                scope=req.exception_scope if req.exception_present else None,
-            ),
-            presumption=presumption,
-            generality=GeneralityProxies(
-                n_conditions=req.generality_n_conditions,
-                has_enumeration=req.generality_has_enumeration,
-                enumeration_closed=req.generality_enumeration_closed,
-                indeterminate_concepts=req.generality_indeterminate_concepts,
-            ),
-            annotated_by=req.annotated_by,
-            verified=False,
-        )
-    except ValidationError as exc:
-        return StatementValidationResult(valid=False, error=str(exc))
-
-    return StatementValidationResult(
-        valid=True,
-        normalized=stmt.model_dump(mode="json"),
-        computed={
-            "generality_level": stmt.generality_level,
-            "derogability_marker_detected": stmt.derogability_marker_detected,
-        },
-    )
-
-
-# --------------------------------------------------------------------------
-# /v1/statements/propose — primer paso del etiquetado sin LLM ni costo
-# externo (ver src/labeling/rules.py): a partir del texto de un artículo,
-# propone los campos donde hay evidencia léxica confiable dentro del propio
-# proyecto (antecedent_operator, exception, presuncion/remision, structure
-# derivado de COMPATIBILITY). Los campos sin evidencia suficiente quedan
-# explícitos en `undetermined_fields`, no se adivinan. El resultado de este
-# endpoint es solo una propuesta parcial: se completa a mano y se confirma
-# con /v1/statements/validate antes de darlo por válido.
+# /v1/statements/propose — determinación deóntica (Von Wright) + posición
+# hohfeldiana por defecto, sin LLM ni costo externo (ver
+# src/labeling/rules.py): a partir del texto de un artículo, deriva los
+# campos donde hay evidencia léxica confiable dentro del propio proyecto
+# (antecedent_operator, exception, presuncion/remision, structure derivado
+# de COMPATIBILITY, deóntica y su correlato hohfeldiano). Incluye
+# `proleg_preview`: el motor de razonamiento derrotable real corrido sobre
+# la estructura detectada.
 # --------------------------------------------------------------------------
 
 class ProposeLabelsRequest(BaseModel):

@@ -32,19 +32,6 @@ import { prove } from "./reasoning/engine.mjs";
 import { Party, FactAction, FactEntry, FactBase } from "./reasoning/models.mjs";
 import { proposeFromText } from "./labeling/rules.mjs";
 import {
-  ValidationError,
-  STATEMENT_TYPES,
-  STRUCTURES,
-  DEONTIC_MODALITIES,
-  HOHFELDIAN_POSITIONS,
-  ADDRESSEES,
-  ANTECEDENT_OPERATORS,
-  EXCEPTION_SCOPES,
-  makeExceptionInfo,
-  makeGeneralityProxies,
-  makeNormativeStatement,
-} from "./models.mjs";
-import {
   initData,
   getCorpusEntries,
   requireKnownCorpus,
@@ -115,36 +102,6 @@ function reqEnum(body, field, allowedSet, { required = true, fallback = undefine
   }
   if (!allowedSet.has(value)) {
     throw new HttpError(422, `'${field}' inválido: '${value}'. Valores permitidos: ${[...allowedSet].sort().join(", ")}.`);
-  }
-  return value;
-}
-
-function reqBool(body, field, { required = false, fallback = undefined } = {}) {
-  const value = body?.[field];
-  if (value === undefined || value === null) {
-    if (required) throw new HttpError(422, `'${field}' es obligatorio.`);
-    return fallback;
-  }
-  if (typeof value !== "boolean") throw new HttpError(422, `'${field}' debe ser boolean.`);
-  return value;
-}
-
-function reqInt(body, field, { min = -Infinity, required = true, fallback = undefined } = {}) {
-  const value = body?.[field];
-  if (value === undefined || value === null) {
-    if (required) throw new HttpError(422, `'${field}' es obligatorio.`);
-    return fallback;
-  }
-  if (!Number.isInteger(value)) throw new HttpError(422, `'${field}' debe ser un entero.`);
-  if (value < min) throw new HttpError(422, `'${field}' debe ser >= ${min}.`);
-  return value;
-}
-
-function reqStringArray(body, field, { fallback = [] } = {}) {
-  const value = body?.[field];
-  if (value === undefined || value === null) return fallback;
-  if (!Array.isArray(value) || !value.every((v) => typeof v === "string")) {
-    throw new HttpError(422, `'${field}' debe ser una lista de strings.`);
   }
   return value;
 }
@@ -353,105 +310,6 @@ export async function createApp() {
       position_index: article.position_index ?? null,
     });
   }));
-
-  // -------------------------------------------------------------------
-  // /v1/statements/validate — construye un NormativeStatement real y
-  // reporta si el esquema lo acepta. Un ValidationError de negocio NO es
-  // un 422 de forma de request: es {valid:false, error:...} con 200,
-  // igual que el original Python (ver src/api.py: `except ValidationError
-  // as exc: return StatementValidationResult(valid=False, error=str(exc))`).
-  // -------------------------------------------------------------------
-
-  app.post("/v1/statements/validate", (req, res) => {
-    const body = req.body ?? {};
-
-    const textSpan = reqString(body, "text_span", { minLength: 1, maxLength: 4000 });
-    const statementType = reqEnum(body, "statement_type", STATEMENT_TYPES);
-    const structure = reqEnum(body, "structure", STRUCTURES);
-    const deonticModality = reqEnum(body, "deontic_modality", DEONTIC_MODALITIES);
-    const hohfeldianPosition = reqEnum(body, "hohfeldian_position", HOHFELDIAN_POSITIONS, {
-      required: false,
-      fallback: "ninguno",
-    });
-    const addressee = reqEnum(body, "addressee", ADDRESSEES);
-    const antecedentOperator = reqEnum(body, "antecedent_operator", ANTECEDENT_OPERATORS);
-    const exceptionPresent = reqBool(body, "exception_present", { fallback: false });
-    const exceptionMarker = reqString(body, "exception_marker", { required: false });
-    const exceptionScope = reqEnum(body, "exception_scope", EXCEPTION_SCOPES, {
-      required: false,
-      fallback: undefined,
-    });
-    const nConditions = reqInt(body, "generality_n_conditions", { min: 0 });
-    const hasEnumeration = reqBool(body, "generality_has_enumeration", { fallback: false });
-    const enumerationClosed = reqBool(body, "generality_enumeration_closed", {
-      required: false,
-      fallback: null,
-    });
-    const indeterminateConcepts = reqStringArray(body, "generality_indeterminate_concepts");
-    const presumptionRebuttableRaw = body.presumption_rebuttable;
-    if (presumptionRebuttableRaw !== undefined && presumptionRebuttableRaw !== null &&
-        typeof presumptionRebuttableRaw !== "boolean") {
-      throw new HttpError(422, "'presumption_rebuttable' debe ser boolean o null.");
-    }
-    const annotatedByAllowed = new Set(["human", "llm", "llm+human", "heuristica_local"]);
-    const annotatedBy = reqEnum(body, "annotated_by", annotatedByAllowed, {
-      required: false,
-      fallback: "heuristica_local",
-    });
-
-    let presumption = null;
-    let derogability = "indeterminada";
-    if (statementType === "presuncion") {
-      const rebuttable = presumptionRebuttableRaw ?? true;
-      presumption = { rebuttable, burdenShiftsTo: rebuttable ? "partes" : "ninguno" };
-      if (!rebuttable) derogability = "inderogable";
-    }
-
-    try {
-      const stmt = makeNormativeStatement({
-        statementId: 0,
-        spanType: "articulo_completo",
-        textSpan,
-        statementType,
-        structure,
-        deonticModality,
-        hohfeldianPosition,
-        derogability,
-        addressee,
-        antecedentOperator,
-        exception: makeExceptionInfo({
-          present: exceptionPresent,
-          marker: exceptionPresent ? (exceptionMarker ?? null) : null,
-          scope: exceptionPresent ? (exceptionScope ?? null) : null,
-        }),
-        presumption,
-        generality: makeGeneralityProxies({
-          nConditions,
-          hasEnumeration,
-          enumerationClosed: enumerationClosed ?? null,
-          indeterminateConcepts,
-        }),
-        annotatedBy,
-        verified: false,
-      });
-
-      res.json({
-        valid: true,
-        normalized: toSnakeCase(stmt),
-        computed: {
-          generality_level: stmt.generalityLevel,
-          derogability_marker_detected: stmt.derogabilityMarkerDetected,
-        },
-        error: null,
-      });
-    } catch (err) {
-      if (err instanceof ValidationError) {
-        res.json({ valid: false, normalized: null, computed: null, error: err.message });
-        return;
-      }
-      throw err;
-    }
-  });
 
   // -------------------------------------------------------------------
   // /v1/statements/propose
