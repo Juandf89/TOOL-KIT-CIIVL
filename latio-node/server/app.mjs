@@ -43,6 +43,20 @@ import {
 } from "./data.mjs";
 import { createRateLimiter } from "./ratelimit.mjs";
 
+// Los niveles de `path` se devuelven con los mismos seis campos que declara
+// ArticlePathLevel en src/api.py, que descarta cualquier otra clave. Pasar el
+// objeto tal cual del JSON haría que una clave nueva del pipeline apareciera
+// en Node y no en Python.
+const pathLevels = (path) =>
+  (path ?? []).map((l) => ({
+    level_type: l.level_type ?? null,
+    rank: l.rank ?? null,
+    ordinal: l.ordinal ?? null,
+    ordinal_int: l.ordinal_int ?? null,
+    label: l.label ?? null,
+    depth: l.depth ?? null,
+  }));
+
 // ---------------------------------------------------------------------------
 // Utilidades de borde HTTP
 // ---------------------------------------------------------------------------
@@ -283,7 +297,7 @@ export async function createApp() {
         uid: a.uid,
         number: a.number ?? null,
         suffix: a.suffix ?? null,
-        path: a.path ?? [],
+        path: pathLevels(a.path),
         text_raw: text.slice(0, ARTICLE_TEXT_PREVIEW_CHARS),
         truncated,
       };
@@ -303,7 +317,7 @@ export async function createApp() {
       uid: article.uid,
       number: article.number ?? null,
       suffix: article.suffix ?? null,
-      path: article.path ?? [],
+      path: pathLevels(article.path),
       text_raw: article.text_raw ?? "",
       editorial_notes: article.editorial_notes ?? [],
       qa_flags: article.qa_flags ?? [],

@@ -267,6 +267,22 @@ def test_formas_perifrasticas_en_presente_y_futuro():
     assert p.hohfeldian_position == "derecho_subjetivo"
 
 
+def test_presuncion_absoluta_con_otras_redacciones():
+    """"Se presume de derecho" es la fórmula de Bello; los demás códigos
+    declaran la presunción absoluta con otras palabras, y sin reconocerlas
+    esas presunciones se mostraban como legales (lo contrario)."""
+    for texto in (
+        "Se presume, sin admitirse prueba en contrario, que toda persona tiene conocimiento del contenido de las inscripciones.",
+        "El reglamento se presume conocido por todo propietario sin admitir prueba en contrario.",
+        "El error en materia de derecho constituye una presunción de mala fe, que no admite prueba en contrario.",
+    ):
+        p = propose_from_text(texto)
+        assert p.statement_type == "presuncion", texto
+        assert p.presumption_rebuttable is False, texto
+    p = propose_from_text("Se presume la buena fe del poseedor, salvo prueba en contrario.")
+    assert p.presumption_rebuttable is True
+
+
 # ---------------------------------------------------------------------------
 # Portugués (Código Civil brasileño)
 # ---------------------------------------------------------------------------

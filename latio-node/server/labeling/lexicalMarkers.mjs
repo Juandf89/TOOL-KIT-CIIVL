@@ -90,7 +90,16 @@ export const ARTICLE_REFERENCE_RE = re(String.raw`\bart(?:[íi]culo|igo)?s?\.?\s
 // ---------------------------------------------------------------------------
 // presunción — "de derecho" (irrebuttable) se chequea antes que la legal.
 // ---------------------------------------------------------------------------
-export const PRESUMPTION_DE_DERECHO_RE = re(String.raw`\bse\s+presum(?:e|en)\s+de\s+derecho\b`);
+// Además de la fórmula de Bello, las redacciones con que los otros códigos
+// declaran una presunción absoluta (ver lexical_markers.py).
+export const PRESUMPTION_DE_DERECHO_RE = re(
+  String.raw`\bse\s+presum(?:e|en)\s+de\s+derecho\b` +
+  String.raw`|\b(?:sin\s+(?:admitir(?:se)?|que\s+se\s+admita)|no\s+(?:se\s+)?admit(?:e|en|ir[áa]|ir[áa]n))` +
+  String.raw`\s+(?:la\s+)?prueba\s+en\s+contrario\b` +
+  String.raw`|\b[ij]uris\s+et\s+de\s+[ij]ure\b|\bpresunci[óo]n\s+absoluta\b` +
+  String.raw`|\b(?:sem\s+admitir|n[ãa]o\s+(?:se\s+)?admit(?:e|em|ir[áa]))\s+prova\s+em\s+contr[áa]rio\b` +
+  String.raw`|\bpresun[çc][ãa]o\s+absoluta\b`,
+);
 export const PRESUMPTION_LEGAL_RE = re(
   String.raw`\bse\s+presum(?:e|en)\b|\bpresume(?:m)?-se\b|\bpresumir-se-(?:[áa]|[ãa]o)\b`,
 );

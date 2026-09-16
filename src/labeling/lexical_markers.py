@@ -86,8 +86,19 @@ ARTICLE_REFERENCE_RE = re.compile(
 # (rebuttable). Orden importa: chequear "de derecho" primero.
 # ---------------------------------------------------------------------------
 
+# "Se presume de derecho" es la fórmula de la tradición de Bello (Chile,
+# Colombia). Los demás códigos declaran la presunción absoluta con otras
+# palabras — "se presume, sin admitir prueba en contrario" (AR-CCYC, PE-CC),
+# "presunción de mala fe, que no admite prueba en contrario" — y sin ellas esas
+# presunciones se leían como legales, que es exactamente lo contrario.
 PRESUMPTION_DE_DERECHO_RE = re.compile(
-    r"\bse\s+presum(?:e|en)\s+de\s+derecho\b", re.IGNORECASE
+    r"\bse\s+presum(?:e|en)\s+de\s+derecho\b"
+    r"|\b(?:sin\s+(?:admitir(?:se)?|que\s+se\s+admita)|no\s+(?:se\s+)?admit(?:e|en|ir[áa]|ir[áa]n))"
+    r"\s+(?:la\s+)?prueba\s+en\s+contrario\b"
+    r"|\b[ij]uris\s+et\s+de\s+[ij]ure\b|\bpresunci[óo]n\s+absoluta\b"
+    r"|\b(?:sem\s+admitir|n[ãa]o\s+(?:se\s+)?admit(?:e|em|ir[áa]))\s+prova\s+em\s+contr[áa]rio\b"
+    r"|\bpresun[çc][ãa]o\s+absoluta\b",
+    re.IGNORECASE,
 )
 # "se presume" es igual en los dos idiomas; el portugués agrega la forma con
 # el pronombre pegado ("presume-se") y la del futuro ("presumir-se-á"). El

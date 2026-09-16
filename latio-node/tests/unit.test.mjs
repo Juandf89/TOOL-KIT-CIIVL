@@ -96,6 +96,19 @@ test("deontica: formas perifrasticas en presente y futuro", () => {
   assert.equal(proposeFromText("El fiduciario tiene derecho al reembolso de los gastos.").hohfeldianPosition, "derecho_subjetivo");
 });
 
+test("presuncion absoluta con otras redacciones", () => {
+  for (const texto of [
+    "Se presume, sin admitirse prueba en contrario, que toda persona tiene conocimiento del contenido de las inscripciones.",
+    "El reglamento se presume conocido por todo propietario sin admitir prueba en contrario.",
+    "El error en materia de derecho constituye una presunción de mala fe, que no admite prueba en contrario.",
+  ]) {
+    const p = proposeFromText(texto);
+    assert.equal(p.statementType, "presuncion", texto);
+    assert.equal(p.presumptionRebuttable, false, texto);
+  }
+  assert.equal(proposeFromText("Se presume la buena fe del poseedor, salvo prueba en contrario.").presumptionRebuttable, true);
+});
+
 test("portugues: modales en todas sus formas", () => {
   const casos = {
     "O herdeiro pode demandar o reconhecimento de seu direito sucessório.": "permiso",

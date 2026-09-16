@@ -38,6 +38,7 @@ MAX_FACTS_PER_REQUEST = 2000
 # o el puerto que uses, agregalo acá si no es 5500/8080).
 _DEFAULT_ORIGINS = [
     'https://datalexlab.com',
+    'https://www.datalexlab.com',
     'https://juandf89.github.io',
     'http://localhost:5500', 'http://127.0.0.1:5500',
     'http://localhost:8080', 'http://127.0.0.1:8080',
