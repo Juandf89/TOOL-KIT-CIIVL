@@ -24,7 +24,6 @@ latio-node/node_modules/
 # ya viven versionados (toolkit-api/index.html, latio-node/server/...), y
 # versionar la copia es garantizar que en algún momento se desincronice de su
 # original. Se arman cuando hacen falta y se descartan.
-deploy/hostinger/
 *.zip
 *.bundle
 

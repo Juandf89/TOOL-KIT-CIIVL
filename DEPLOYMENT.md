@@ -88,10 +88,29 @@ Passenger clásico espera un archivo `passenger_wsgi.py` con un callable WSGI ll
    ```
 
    Son los 25 MB de los 8 corpus descargables de una, sin pasar por ningún endpoint, sin quedar
-   sujetos al límite de tasa y sin aparecer en ninguna métrica. Subí el archivo
-   `deploy/htaccess-para-carpetas-de-datos.txt` **con el nombre `.htaccess`** dentro de `data/`,
-   `config/` y `reports/`. La API abre esos archivos por sistema de archivos (`open()`), no por
-   HTTP, así que no rompe ningún endpoint.
+   sujetos al límite de tasa y sin aparecer en ninguna métrica. Creá un archivo llamado
+   exactamente `.htaccess` dentro de `data/`, `config/` y `reports/`, con este contenido:
+
+   ```apache
+   # Apache 2.4 (el de Hostinger)
+   <IfModule mod_authz_core.c>
+       Require all denied
+   </IfModule>
+
+   # Apache 2.2 y anteriores — inofensivo si no aplica
+   <IfModule !mod_authz_core.c>
+       Order allow,deny
+       Deny from all
+   </IfModule>
+   ```
+
+   La API abre esos archivos por sistema de archivos (`open()`), no por HTTP, así que no rompe
+   ningún endpoint. Para verificarlo: `/v1/corpora` y `/v1/corpora/<id>/articles` siguen
+   devolviendo 200, y las URLs directas de arriba pasan a devolver 403.
+
+   (Esto aplica a la ruta Python/Passenger. La API Node de producción no sirve archivos
+   estáticos: esas mismas rutas en `api-latio.datalexlab.com` devuelven 404 desde la propia app,
+   verificado el 16-09-2026.)
 
    ⚠️ **No toques el `.htaccess` que hPanel genera en la RAÍZ de la app** — lleva la configuración
    de Passenger (`PassengerAppRoot`, etc.) y modificarlo puede impedir el arranque. Estas reglas
@@ -314,8 +333,7 @@ igual** y el clon son ~33 MB, no 25. No rompe nada; hay que tenerlo en cuenta pa
 ### Mínimo imprescindible
 - `passenger_wsgi.py`
 - `requirements-prod.txt`
-- `deploy/htaccess-para-carpetas-de-datos.txt` → copiar como `.htaccess` dentro de `data/`,
-  `config/` y `reports/` (paso 5 de hPanel)
+- un `.htaccess` dentro de `data/`, `config/` y `reports/`, con las reglas del paso 5 de hPanel
 - `src/` completo (en la práctica se importan `src/__init__.py`, `src/api.py`, `src/models.py`,
   `src/ratelimit.py`, `src/labeling/*` y `src/reasoning/*`; subir el paquete entero es más simple
   que separar archivos y no rompe nada — `src/pipeline.py` y `src/behavior.py` quedan sin usar en
