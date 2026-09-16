@@ -14,9 +14,6 @@ TOOL-KIT-CIIVL/
 ├── .gitignore                 # Exclusiones de control de versiones
 ├── requirements.txt           # Dependencias runtime: fastapi, uvicorn, pydantic, pyyaml
 ├── requirements-dev.txt       # Dependencias de desarrollo: pytest
-├── .github/
-│   └── workflows/
-│       └── deploy.yml         # CI: despliega toolkit-api/ a GitHub Pages en cada push a main
 ├── config/
 │   └── corpus_registry.yaml   # Registro de fuentes, licencias y reglas de parsing calibradas para los 8 códigos reales + TEST-FIXTURE
 ├── data/
@@ -44,7 +41,7 @@ TOOL-KIT-CIIVL/
 │   └── card-datalex.html       # Tarjeta de proyecto para incrustar en datalexlab.com
 └── latio-node/                 # Puerto Node.js/Express de src/api.py — la API que SÍ corre en producción (api-latio.datalexlab.com), ver DEPLOYMENT-NODE.md
     ├── server/                  # app.mjs (Express) + reasoning/, labeling/, models.mjs, ratelimit.mjs, data.mjs
-    ├── tests/                   # 41 tests node:test (módulos + Express app end-to-end)
+    ├── tests/                   # 47 tests node:test (módulos + Express app end-to-end)
     ├── cross_validate.mjs       # Compara Node vs. Python (oráculo) campo a campo
     ├── verify_prod.mjs          # Checklist HTTP post-despliegue contra una URL ya desplegada
     └── DEPLOYMENT-NODE.md       # Guía de despliegue en Hostinger (Node.js Web App / lsnode)
@@ -75,7 +72,7 @@ python -m src.pipeline TEST-FIXTURE
 ```
 Salida: `data/processed/<corpus_id>_{articles,referrals}.json` y `reports/<corpus_id>_run_report.json` (con el resultado de las 6 compuertas de calidad). `reports/manifest.json` consolida el resultado de las 8 fuentes reales de la corrida más reciente.
 
-**Importante:** `data/processed/` está excluido de git (son artefactos derivados, regenerables desde `data/raw/`) — en un clon nuevo del repo, esa carpeta no existe todavía. **Correr el pipeline para los 8 `corpus_id` es un paso obligatorio, no opcional**, antes de: (a) `python -m pytest tests/ -q` (`tests/test_api_corpora.py` abre esos archivos y sin ellos la recolección de la suite completa falla), y (b) usar la sección "Buscar en los códigos civiles" / "Analizar un artículo" de la consola contra un backend local.
+**Nota:** `data/processed/` **está versionado en git** desde el 14-09-2026, así que un clon nuevo ya trae los 8 corpus procesados y tanto la suite de pruebas como la consola funcionan sin correr el pipeline primero. Volvé a correrlo solo si cambiás `data/raw/` o las reglas de parsing de `config/corpus_registry.yaml`.
 
 ### Ejecutar las Sondas de Comportamiento Lógico
 ```bash
@@ -108,7 +105,14 @@ python -m pytest tests/ -q
 ```
 
 ### Abrir el LATIO Explorer
-Abre `toolkit-api/index.html` en cualquier navegador web moderno (o entrá a la versión publicada en GitHub Pages, ver más abajo) para elegir un código civil y un artículo real, analizarlo (tipo de norma, modalidad deóntica de Von Wright, posición jurídica de Hohfeld) y ver el motor de razonamiento PROLEG en acción cuando hay una excepción. **La consola hace llamadas reales** a `src/api.py` corriendo localmente (`uvicorn src.api:app --reload --port 8000`, sirviendo el HTML con `python -m http.server 5500` en vez de abrirlo con `file://`, para que CORS lo permita) — no hay datos simulados: sin ese backend corriendo, vas a ver un mensaje de error de conexión explícito, no una demo falsa. `src/api.py` en sí no está desplegado en ningún dominio público — la versión en GitHub Pages es solo el HTML/JS estático, y por eso muestra ese mismo error de conexión hasta que alguien corra la API localmente. La API que sí corre en producción es el puerto Node.js de `latio-node/` en `https://api-latio.datalexlab.com` (ver sección de despliegue más abajo) — equivalente campo a campo a `src/api.py`, pero `toolkit-api/index.html` todavía no apunta ahí.
+La consola sirve para elegir un código civil y un artículo real —los 22.110 de los 8 códigos están disponibles, con buscador por número o por palabra— y analizarlo. El resultado son exactamente tres cosas: su **modalidad deóntica** (Von Wright), su **posición jurídica** (Hohfeld) y, cuando el artículo tiene una excepción, cómo la resuelve el **motor de razonamiento derrotable PROLEG**. Es un analizador de solo lectura, no una herramienta de anotación: no hay campos que completar a mano.
+
+**La consola hace llamadas reales**; no hay datos simulados. Si la API no responde, muestra un error de conexión explícito en vez de una demo falsa. No hay que configurar la dirección de la API: la consola la deduce de dónde está corriendo.
+
+- **Servida desde cualquier dominio** (por ejemplo `datalexlab.com`), usa la API de producción: `https://api-latio.datalexlab.com`.
+- **Servida desde `localhost`**, usa un backend local de desarrollo en `http://127.0.0.1:8000`. Para ese caso: `uvicorn src.api:app --reload --port 8000`, y serví el HTML con `python -m http.server 5500` desde `toolkit-api/` en vez de abrirlo con `file://`, para que CORS lo permita.
+
+`src/api.py` (FastAPI) es la implementación de referencia y no está desplegada en ningún dominio público; la que corre en producción es el puerto Node.js de `latio-node/`, equivalente campo a campo (ver la sección de despliegue más abajo).
 
 ---
 
@@ -119,14 +123,11 @@ Proyecto abierto para facultades de derecho, investigadores, jueces y desarrolla
 
 ## 🌐 Despliegue e Integración en DataLex Lab (datalexlab.com)
 
-### Consola estática (GitHub Pages)
-El archivo `.github/workflows/deploy.yml` ya está configurado.
-1. En GitHub, ve a **Settings** > **Pages**.
-2. En **Build and deployment** > **Source**, selecciona **GitHub Actions**.
-3. Cada vez que hagas `git push`, tu consola interactiva se desplegará automáticamente en:
-   `https://juandf89.github.io/TOOL-KIT-CIIVL/`
+### Consola estática
 
-Esto publica solo el HTML/JS estático de `toolkit-api/` — sin un backend corriendo detrás, la consola sigue mostrando el error de conexión explícito descrito arriba.
+La consola es un único archivo (`toolkit-api/index.html`), sin dependencias ni paso de compilación: se sirve como cualquier archivo estático. Subirlo a la carpeta pública del hosting (`public_html/latio/`, por ejemplo) alcanza para tenerlo funcionando contra la API de producción.
+
+El despliegue automático a GitHub Pages **está desactivado**: el workflow `.github/workflows/deploy.yml` se eliminó el 15-09-2026 por decisión del autor, así que `https://juandf89.github.io/TOOL-KIT-CIIVL/` ya no se publica. Para reactivarlo hay que restaurar ese workflow y habilitar **Settings → Pages → Source: GitHub Actions**.
 
 ### API real en producción: puerto Node.js (`latio-node/`)
 `src/api.py` (FastAPI) es la implementación de referencia, pero **no está desplegada** en ningún dominio público: los planes de hosting compartido de Hostinger (Business, sin VPS) no soportan Python. La API que sí corre en producción es un **puerto completo a Node.js/Express** — mismo motor PROLEG, mismo etiquetado léxico, mismo contrato HTTP (snake_case en el wire, verificado campo a campo contra el oráculo Python) — publicado en:
@@ -140,8 +141,8 @@ como Node.js Web App de Hostinger (`lsnode`/LiteSpeed), aislado del resto de la 
 ```bash
 cd latio-node
 npm install
-npm test                    # 41 tests node:test — módulos + Express app end-to-end
+npm test                    # 47 tests node:test — módulos + Express app end-to-end
 node cross_validate.mjs     # compara Node vs. Python (oráculo) sobre el caso de oro del Apéndice B, CO-256 y labeling
 ```
 
-`toolkit-api/index.html` todavía apunta a un backend local (`http://127.0.0.1:8000`, el de `src/api.py`) — repuntarlo a `https://api-latio.datalexlab.com` para que la consola publicada en GitHub Pages haga llamadas reales es trabajo pendiente, no incluido en este cambio.
+`toolkit-api/index.html` ya apunta solo a `https://api-latio.datalexlab.com` cuando no corre en `localhost`, así que subirlo a cualquier dominio lo deja funcionando contra la API real sin configurar nada. Los orígenes `datalexlab.com`, `www.datalexlab.com` y `juandf89.github.io` están permitidos por CORS en la API.

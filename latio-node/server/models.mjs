@@ -1,7 +1,9 @@
 // models.mjs — port PARCIAL de src/models.py (Python).
 //
-// Solo se portan los símbolos que /v1/statements/validate y
-// /v1/statements/propose usan de verdad — confirmado grepeando el import
+// Solo se portan los símbolos que /v1/statements/propose usa de verdad
+// (el endpoint /v1/statements/validate existió en una versión anterior del
+// proyecto y ya no está — LATIO no es una herramienta de anotación manual;
+// ver README.md) — confirmado grepeando el import
 // real de api.py (`from src.models import AntecedentOperator, Addressee,
 // DeonticModality, ExceptionInfo, GeneralityProxies, HohfeldianPosition,
 // NormativeStatement, StatementType, Structure`). ArticleRecord,
@@ -142,7 +144,7 @@ export function makeGeneralityProxies({
 }
 
 // ---------------------------------------------------------------------------
-// NormativeStatement — la pieza que /v1/statements/validate construye para
+// NormativeStatement — la pieza que /v1/statements/propose construye para
 // dejar que las reglas decidan. Replica el model_validator "_rules" y los
 // dos computed_field (generality_level, derogability_marker_detected) EN EL
 // MISMO ORDEN que el Python original, para que el primer error que dispara

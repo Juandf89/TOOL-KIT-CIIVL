@@ -19,3 +19,14 @@ data/interim/
 
 # Puerto Node.js (latio-node/) — dependencias instalables vía npm install
 latio-node/node_modules/
+
+# Paquetes armados para subir a mano al hosting. Son COPIAS de archivos que
+# ya viven versionados (toolkit-api/index.html, latio-node/server/...), y
+# versionar la copia es garantizar que en algún momento se desincronice de su
+# original. Se arman cuando hacen falta y se descartan.
+deploy/hostinger/
+*.zip
+*.bundle
+
+# Carpeta de borradores y capturas de trabajo, no es parte del producto.
+Claude outputs/

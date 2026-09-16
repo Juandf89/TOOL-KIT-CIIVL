@@ -23,7 +23,6 @@ Passenger clásico espera un archivo `passenger_wsgi.py` con un callable WSGI ll
   - `POST /v1/statements/propose` con un texto real ("El juez podrá reducir la pena...") → 200,
     `hohfeldian_position: "potestad"` (confirma que el fix de Hohfeld del 09-11 también funciona bajo
     Passenger, no solo bajo `uvicorn`)
-  - `POST /v1/statements/validate` → 200
   - `GET /v1/corpora` → 200, 8 corpus (con `data/processed/` ya versionado en git desde el 09-14, esto
     funciona en un clon limpio sin pasos manuales adicionales)
 
@@ -160,9 +159,7 @@ la ve).
    ¿GitHub Pages? ¿local con `python -m http.server`?) — ese origen exacto (esquema + host + puerto,
    sin path) tiene que estar en `LATIO_ALLOWED_ORIGINS`.
 2. Si `LATIO_ALLOWED_ORIGINS` **no está seteada** en hPanel, la API cae al default de `src/api.py`
-   (`https://datalexlab.com`, `https://juandf89.github.io`, `localhost:5500`, `localhost:8080` —
-   actualizado el 09-14 para incluir GitHub Pages, ya que ahí es donde vive hoy la consola pública
-   real).
+   (`https://datalexlab.com`, `https://juandf89.github.io`, `localhost:5500`, `localhost:8080`).
 
    ⚠️ **`https://www.datalexlab.com` NO está en ese default, y para el navegador es un origen
    distinto de `https://datalexlab.com`.** Es una trampa concreta: el propio endpoint raíz de la
@@ -350,10 +347,12 @@ igual** y el clon son ~33 MB, no 25. No rompe nada; hay que tenerlo en cuenta pa
 ## `toolkit-api/index.html` y `card-datalex.html`: subida separada, en la misma cuenta de Hostinger
 
 Estos dos archivos son el **explorador estático** (LATIO Explorer) — HTML/JS/CSS puro, sin backend
-propio, que hoy corre con datos de ejemplo (`MOCK_METRICS`/`MOCK_LIFT`, ver `README.md`) y que puede
-consumir la API real una vez desplegada (sección "Motor de Razonamiento (real)" de la consola). **No
-van en la misma carpeta que la Python App** — son un sitio estático aparte, y en hPanel se suben como
-cualquier archivo estático del hosting compartido, no a través de "Setup Python App".
+propio. Todo lo que muestra la consola sale de llamadas reales a la API: no hay datos simulados, y si
+la API no responde se ve un error de conexión explícito. La dirección de la API no se configura a mano:
+la consola la deduce de dónde está corriendo — en `localhost` usa un backend local de desarrollo, y en
+cualquier otro dominio usa `https://api-latio.datalexlab.com`. **No van en la misma carpeta que la
+Python App** — son un sitio estático aparte, y en hPanel se suben como cualquier archivo estático del
+hosting compartido, no a través de "Setup Python App".
 
 Siguiendo la **"Opción B: Integración en Hostinger"** que ya describe `README.md` (líneas 122-125):
 1. En **hPanel → Archivos → Administrador de archivos** (o por FTP/SFTP), entrá a `public_html/` —
@@ -387,9 +386,8 @@ salvo que sepas específicamente para qué se usa.
    contrario.
 2. **`LATIO_ALLOWED_ORIGINS`: setearla explícitamente con las tres variantes** —
    `https://datalexlab.com,https://www.datalexlab.com,https://juandf89.github.io`. No basta con el
-   default: hoy la consola pública vive en GitHub Pages (`README.md` Opción A) y el explorador
-   puede terminar además en `datalexlab.com/latio/` (Opción B), y `www` es un origen distinto que
-   el default **no** cubre. Setear las tres cierra los tres escenarios de una y no cuesta nada.
+   default: la consola puede servirse desde `datalexlab.com/latio/` y `www` es un origen distinto
+   que el default **no** cubre. Setear las tres cierra todos los escenarios de una y no cuesta nada.
 
 ### Sigue abierto — necesita tu panel o tu decisión
 

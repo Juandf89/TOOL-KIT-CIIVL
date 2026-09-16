@@ -27,9 +27,9 @@ api-latio.datalexlab.com
 
 ## 0. Qué se verificó antes de este documento
 
-- **92/92 tests** del repo Python (oráculo) pasan, incluida la suite con el
+- **118/118 tests** del repo Python (oráculo) pasan, incluida la suite con el
   rate limiter activo en modo agresivo.
-- **41/41 tests Node** (`npm test`, `node --test tests/`) — subconjunto
+- **47/47 tests Node** (`npm test`, `node --test tests/`) — subconjunto
   representativo de los mismos comportamientos, corriendo directo contra los
   módulos portados (sin HTTP) y contra la app Express completa (con HTTP).
 - **`cross_validate.mjs`**: el caso de oro del Apéndice B del paper PROLEG
@@ -184,7 +184,7 @@ salen con la misma IP): confirmar el aislamiento por IP del rate limiter
 haciendo varias peticiones seguidas desde dos redes distintas (por ejemplo,
 tu conexión normal y los datos móviles del celular, o dos personas distintas
 del equipo) contra una ruta "heavy" (`/v1/reasoning/prove` o
-`/v1/statements/validate`) — confirmar que agotar el límite desde una red
+`/v1/statements/propose`) — confirmar que agotar el límite desde una red
 **no** bloquea a la otra. Es exactamente el bug que existía en la ruta
 Python original (`a2wsgi` compartía `scope["client"]` entre todos los
 clientes) y el motivo de todo el comentario de cabecera en
