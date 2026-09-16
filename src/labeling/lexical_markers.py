@@ -95,21 +95,64 @@ DEFINICION_LEAD_RE = re.compile(
 # deóntica (Von Wright) — obligación / prohibición / permiso. Orden importa:
 # la prohibición ("no podrá") es más específica que un permiso genérico
 # ("podrá"), así que se chequea primero.
+#
+# Dos reglas de fondo, ambas aprendidas midiendo sobre los 22.110 artículos
+# reales de los 8 códigos:
+#
+# 1. PRESENTE DE INDICATIVO. Los códigos no redactan solo en futuro
+#    ("deberá", "podrá"). El de Vélez (1869) y buena parte del peruano y el
+#    brasileño usan presente: "el locatario PUEDE subarrendar", "el legado en
+#    dinero DEBE ser pagado". Ignorar el presente dejaba 5.756 artículos con
+#    marcador deóntico real clasificados como "sin modalidad".
+#
+# 2. LA NEGACIÓN INVIERTE EL SIGNO, y es el error más caro posible acá:
+#    "el apoderado NO ESTÁ OBLIGADO a rendir cuentas" no es una obligación,
+#    es justo lo contrario. Por eso cada marcador afirmativo lleva la guarda
+#    `_NEG`, y las formas negadas que SÍ son prohibición ("no puede", "no
+#    podrá", "nadie puede") se listan explícitamente en la prohibición, que
+#    se evalúa primero. Las negaciones que NO son prohibición sino ausencia
+#    de deber ("no está obligado a", "no tiene derecho a") caen a "ninguno":
+#    para afirmar que eso es un privilegio hohfeldiano hace falta identificar
+#    la contraparte, que es justamente lo que este motor no hace (ver
+#    docs/limitaciones_conocidas.md §2). Preferimos "sin determinar" antes
+#    que una modalidad invertida.
 # ---------------------------------------------------------------------------
 
+# "no " inmediatamente antes del marcador. Ancho fijo, requisito de los
+# lookbehind de `re`.
+_NEG = r"(?<!\bno\s)"
+
 DEONTIC_PROHIBICION_RE = re.compile(
-    r"\bproh[íi]bese\b|\bse\s+proh[íi]be\b|\bno\s+podr[áa](n)?\b|\bno\s+se\s+permit"
-    r"|\bes\s+nul[ao]\b|\bqueda(n)?\s+proh[íi]bid[ao]s?\b|\bno\s+se\s+admit",
+    r"\bproh[íi]bese\b|\bse\s+proh[íi]be\b"
+    r"|\bno\s+podr[áa](n)?\b"
+    r"|\bno\s+puede(n)?\b"
+    r"|\bno\s+se\s+permit"
+    r"|\bes\s+nul[ao]\b|\bqueda(n)?\s+proh[íi]bid[ao]s?\b|\bno\s+se\s+admit"
+    # "Nadie puede construir…", "ninguno de los comuneros podrá inquietar…":
+    # el cuantificador negativo prohíbe aunque el verbo esté en afirmativo.
+    # La ventana se limita a palabras y comas para no cruzar a otra oración.
+    r"|\b(nadie|ninguno|ninguna)\b[\s\w,]{0,40}?\b(puede|pueden|podr[áa]|podr[áa]n)\b",
     re.IGNORECASE,
 )
 DEONTIC_OBLIGACION_RE = re.compile(
-    r"\bdeber[áa](n)?\b|\bestá(n)?\s+obligad[ao]s?\s+a\b|\btiene(n)?\s+el\s+deber\b"
-    r"|\bes\s+obligatori[ao]\b|\bestá(n)?\s+en\s+la\s+obligaci[óo]n\b",
+    _NEG + r"\bdeber[áa](n)?\b"
+    r"|" + _NEG + r"\bdebe(n)?\b"
+    r"|" + _NEG + r"\bestá(n)?\s+obligad[ao]s?\s+a\b"
+    r"|" + _NEG + r"\btiene(n)?\s+el\s+deber\b"
+    r"|" + _NEG + r"\bes\s+obligatori[ao]\b"
+    r"|" + _NEG + r"\bestá(n)?\s+en\s+la\s+obligaci[óo]n\b",
     re.IGNORECASE,
 )
 DEONTIC_PERMISO_RE = re.compile(
-    r"\bpodr[áa](n)?\b|\bestá(n)?\s+facultad[ao]s?\s+(?:a|para)\b"
-    r"|\btiene(n)?\s+derecho\s+a\b|\blibremente\b",
+    _NEG + r"\bpodr[áa](n)?\b"
+    # "puede ser / pueden ser" describe una modalidad del objeto ("la
+    # aceptación puede ser expresa o tácita"), no un permiso dirigido a
+    # alguien: se excluye para no inflar el permiso con enunciados
+    # descriptivos.
+    r"|" + _NEG + r"\bpuede(n)?\b(?!\s+ser\b)"
+    r"|" + _NEG + r"\bestá(n)?\s+facultad[ao]s?\s+(?:a|para)\b"
+    r"|" + _NEG + r"\btiene(n)?\s+derecho\s+a\b"
+    r"|\blibremente\b",
     re.IGNORECASE,
 )
 

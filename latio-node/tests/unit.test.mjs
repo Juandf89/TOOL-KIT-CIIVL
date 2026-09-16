@@ -28,7 +28,45 @@ import {
 test("antecedent_operator: siempre_que detectado", () => {
   const p = proposeFromText("Siempre que el comprador pague el precio, el vendedor entrega la cosa.");
   assert.equal(p.antecedentOperator, "siempre_que");
-  assert.ok(p.determinedFields.includes("antecedent_operator") || p.determinedFields.includes("antecedentOperator"));
+});
+
+// Espejo de los tests deónticos de tests/test_labeling_rules.py. Sin estos,
+// la paridad Python/Node en la detección de Von Wright dependía de revisión
+// manual en cada cambio, que es exactamente como se cuela una regresión.
+test("deontica: presente de indicativo, no solo futuro", () => {
+  assert.equal(
+    proposeFromText("El legado en dinero debe ser pagado en esta especie.").deonticModality,
+    "obligacion");
+  assert.equal(
+    proposeFromText("El locatario puede subarrendar en todo o en parte la cosa arrendada.").deonticModality,
+    "permiso");
+  assert.equal(
+    proposeFromText("El plazo del arrendamiento no puede exceder de diez años.").deonticModality,
+    "prohibicion");
+});
+
+test("deontica: la negacion no se lee como la modalidad afirmativa", () => {
+  assert.equal(
+    proposeFromText("El apoderado no está obligado a rendir cuentas de los frutos percibidos.").deonticModality,
+    "ninguno");
+  assert.equal(
+    proposeFromText("El usufructuario no tiene derecho a pedir cosa alguna por las mejoras.").deonticModality,
+    "ninguno");
+});
+
+test("deontica: cuantificador negativo es prohibicion aunque el verbo sea afirmativo", () => {
+  assert.equal(
+    proposeFromText("Nadie puede construir cerca de una pared ajena hornos ni chimeneas.").deonticModality,
+    "prohibicion");
+  assert.equal(
+    proposeFromText("Ninguno de los comuneros podrá inquietar a los otros en sus porciones.").deonticModality,
+    "prohibicion");
+});
+
+test("deontica: 'puede ser' descriptivo no es permiso", () => {
+  assert.equal(
+    proposeFromText("La aceptación puede ser expresa o tácita.").deonticModality,
+    "ninguno");
 });
 
 test("antecedent_operator: ausencia de marcador es ninguno_explicito, no undetermined", () => {

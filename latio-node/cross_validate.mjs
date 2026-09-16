@@ -12,10 +12,14 @@
 import { execFileSync } from "node:child_process";
 import { createApp } from "./server/app.mjs";
 
-const PY_REPO = "/home/claude/latio";
+// La ruta del repo Python y el nombre del intérprete se pueden fijar por
+// entorno: en Windows el binario es `python` (no existe `python3`) y el repo
+// no está en /home/claude. Sin esto, el script solo corría en un entorno.
+const PY_REPO = process.env.LATIO_PY_REPO || "/home/claude/latio";
+const PY_BIN = process.env.LATIO_PY_BIN || (process.platform === "win32" ? "python" : "python3");
 
 function runPython(code) {
-  const out = execFileSync("python3", ["-c", code], { cwd: PY_REPO, encoding: "utf-8" });
+  const out = execFileSync(PY_BIN, ["-c", code], { cwd: PY_REPO, encoding: "utf-8" });
   return JSON.parse(out);
 }
 
@@ -54,6 +58,18 @@ async function main() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text_span: textSpan }),
     });
+    // Un 429 del limitador devolvía un cuerpo sin los campos esperados y la
+    // comparación lo reportaba como "discrepancia con Python", que manda a
+    // buscar el bug al lugar equivocado. Acá el limitador no es lo que se
+    // está probando: si aparece, hay que decirlo con todas las letras.
+    if (!res.ok) {
+      throw new Error(
+        `el servidor Node respondió ${res.status} en /v1/statements/propose. ` +
+        (res.status === 429
+          ? "Es el límite de tasa: corré con LATIO_RATE_LIMIT_ENABLED=0, este script no prueba el limitador."
+          : "")
+      );
+    }
     return res.json();
   }
 
@@ -164,12 +180,32 @@ print(json.dumps({"proved": result.proved, "trace_length": len(result.trace)}))
   // ---------------------------------------------------------------------
   // 3) labeling/rules — proposeFromText sobre varios textos.
   // ---------------------------------------------------------------------
+  // OJO: los cinco primeros textos están escritos SIN TILDES, y durante
+  // mucho tiempo fueron los únicos. Eso ocultó la peor divergencia que tuvo
+  // este puerto: `\b` en JavaScript es ASCII, así que /podr[áa]\b/ nunca
+  // matchea "podrá", mientras que en Python sí. Con texto sin tildes los dos
+  // motores coincidían siempre; con texto real, ~2.000 artículos quedaban
+  // clasificados distinto. Los textos ACENTUADOS de abajo existen para que
+  // esa clase de error no pueda volver a esconderse: no los quites ni los
+  // "normalices" sacándoles las tildes.
   const textos = [
     "Salvo que se pruebe lo contrario, se presume de derecho que el deudor conocia la obligacion.",
     "Se entiende por contrato de arrendamiento aquel en que una parte se obliga a conceder el uso de una cosa.",
     "Lo dispuesto en el articulo 5 rige tambien para los contratos de subarrendamiento.",
     "El notario debera verificar la identidad de las partes cuando se trate de un acto de disposicion.",
     "Queda prohibido el pacto que renuncie a este derecho; sera nulo cualquier pacto en contrario.",
+    // Con tilde y en singular: el caso exacto que el `\b` de JS no ve.
+    "El juez podrá reducir la pena cuando concurran atenuantes.",
+    "El vendedor no podrá retener la cosa vendida.",
+    "El comprador deberá pagar el precio en el plazo estipulado.",
+    // Presente de indicativo (Vélez 1869, Perú, Brasil).
+    "El locatario puede subarrendar en todo o en parte la cosa arrendada.",
+    "El legado en dinero debe ser pagado en esta especie.",
+    "El plazo del arrendamiento no puede exceder de diez años.",
+    // Negación que invierte el signo, y cuantificador negativo.
+    "El apoderado no está obligado a rendir cuentas de los frutos percibidos.",
+    "Nadie puede construir cerca de una pared ajena hornos ni chimeneas.",
+    "Únicamente en los siguientes casos procede la acción.",
   ];
 
   for (const texto of textos) {
