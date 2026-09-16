@@ -1,14 +1,25 @@
-# Despliegue a producción — checklist
+# Despliegue de la API Python (Passenger) — referencia
 
-Objetivo confirmado: **Hostinger, plan de hosting compartido/Business (hPanel, sin acceso root)** —
-el mismo dominio donde ya se sirve el explorador estático. Esta versión del documento prioriza esa
-ruta. (Nota: una versión anterior de este documento armaba `Dockerfile`/`docker-compose.yml` sin
-haber confirmado antes dónde se iba a hostear — esos archivos quedan en el repo por si en algún
-momento migran a un VPS con Docker, pero **no se usan** en el despliegue de mañana.)
+> **⚠️ Esta ruta NO es la que corre en producción.** Hostinger confirmó que Python solo se ejecuta en
+> planes VPS, y el plan contratado es Business. La API de producción es el puerto Node.js de
+> `latio-node/`, en `https://api-latio.datalexlab.com`: su guía es
+> [`latio-node/DEPLOYMENT-NODE.md`](latio-node/DEPLOYMENT-NODE.md).
+>
+> La consola (`toolkit-api/index.html`) tampoco se sube por hPanel: `datalexlab.com` se publica
+> automáticamente desde el repositorio `Juandf89/datalex-lab`, así que para actualizar
+> `https://datalexlab.com/latio/` se copia el archivo a `latio/index.html` de ese repositorio y se
+> hace push. Ver la sección de la consola más abajo.
+>
+> Este documento se conserva porque `src/api.py` sigue siendo la implementación de referencia: sirve
+> para desplegarla en un plan que sí ejecute Python y documenta decisiones (límite de tasa, CORS,
+> `.htaccess`, memoria por proceso) que la versión Node replica.
+
+Objetivo original: **Hostinger, plan de hosting compartido (hPanel, sin acceso root)**, en el mismo
+dominio donde se sirve el explorador estático.
 
 ---
 
-## Ruta elegida: Hostinger compartido, vía Passenger ("Setup Python App")
+## Ruta Python: Hostinger vía Passenger ("Setup Python App") — requiere un plan que ejecute Python
 
 Hostinger Business expone en hPanel una función para correr apps Python bajo Phusion Passenger.
 Passenger clásico espera un archivo `passenger_wsgi.py` con un callable WSGI llamado `application`.
@@ -178,18 +189,13 @@ la ve).
    ¿GitHub Pages? ¿local con `python -m http.server`?) — ese origen exacto (esquema + host + puerto,
    sin path) tiene que estar en `LATIO_ALLOWED_ORIGINS`.
 2. Si `LATIO_ALLOWED_ORIGINS` **no está seteada** en hPanel, la API cae al default de `src/api.py`
-   (`https://datalexlab.com`, `https://juandf89.github.io`, `localhost:5500`, `localhost:8080`).
+   (`https://datalexlab.com`, `https://www.datalexlab.com`, `https://juandf89.github.io`,
+   `localhost:5500`, `localhost:8080`) — el mismo que usa la versión Node.
 
-   ⚠️ **`https://www.datalexlab.com` NO está en ese default, y para el navegador es un origen
-   distinto de `https://datalexlab.com`.** Es una trampa concreta: el propio endpoint raíz de la
-   API devuelve `'website': 'https://www.datalexlab.com'`, y muchos dominios en Hostinger
-   redirigen el dominio desnudo a `www`. Si el explorador termina servido en
-   `https://www.datalexlab.com/latio/`, el default lo bloquea y el síntoma es exactamente el
-   error de CORS de arriba, con la variable "correctamente" sin setear. Confirmá en
-   hPanel → Dominios hacia qué lado redirige.
-
-   Por eso **hay que setear la variable explícitamente** en hPanel en vez de confiar en el
-   default — con las tres variantes:
+   Para el navegador, `https://www.datalexlab.com` es un origen distinto de
+   `https://datalexlab.com`: por eso los dos están en el default. Si la consola se sirve desde otro
+   dominio, hay que agregarlo. Igual conviene **setear la variable explícitamente** en hPanel en
+   vez de depender del default:
    `https://datalexlab.com,https://www.datalexlab.com,https://juandf89.github.io`
 3. Seteá `LATIO_ALLOWED_ORIGINS` en hPanel con la lista separada por comas de todos los orígenes que
    necesitás (por ejemplo: `https://datalexlab.com,https://juandf89.github.io`) y reiniciá la app.
@@ -362,36 +368,28 @@ igual** y el clon son ~33 MB, no 25. No rompe nada; hay que tenerlo en cuenta pa
 
 ---
 
-## `toolkit-api/index.html` y `card-datalex.html`: subida separada, en la misma cuenta de Hostinger
+## `toolkit-api/index.html` y `card-datalex.html`: cómo se publican
 
 Estos dos archivos son el **explorador estático** (LATIO Explorer) — HTML/JS/CSS puro, sin backend
 propio. Todo lo que muestra la consola sale de llamadas reales a la API: no hay datos simulados, y si
 la API no responde se ve un error de conexión explícito. La dirección de la API no se configura a mano:
 la consola la deduce de dónde está corriendo — en `localhost` usa un backend local de desarrollo, y en
-cualquier otro dominio usa `https://api-latio.datalexlab.com`. **No van en la misma carpeta que la
-Python App** — son un sitio estático aparte, y en hPanel se suben como cualquier archivo estático del
-hosting compartido, no a través de "Setup Python App".
+cualquier otro dominio usa `https://api-latio.datalexlab.com`.
 
-Siguiendo la **"Opción B: Integración en Hostinger"** que ya describe `README.md` (líneas 122-125):
-1. En **hPanel → Archivos → Administrador de archivos** (o por FTP/SFTP), entrá a `public_html/` —
-   la raíz del hosting compartido tradicional, **no** la carpeta que configuraste para la Python App
-   en el paso anterior.
-2. Creá la carpeta `public_html/latio/` (si no existe) y subí `toolkit-api/index.html` ahí. Quedaría
-   accesible en `https://datalexlab.com/latio/index.html` (o `https://datalexlab.com/latio/` si el
-   servidor sirve `index.html` por default, que es lo habitual).
-3. `toolkit-api/card-datalex.html` **no se sube como archivo** — es un fragmento HTML para copiar y
-   pegar dentro del editor de la sección "Proyectos" de `datalexlab.com` (el CMS/builder que uses ahí,
-   fuera del alcance de este documento — **a confirmar en tu panel/CMS**).
-4. Una vez que la API esté online, actualizá en `toolkit-api/index.html` el campo "API base URL"
-   (hoy con el placeholder `http://127.0.0.1:8000`) para que apunte a la URL real de la API
-   (`https://api.datalexlab.com`), y el link "Swagger Docs" (hoy marcado `pendiente de despliegue`,
-   debería apuntar a `https://api.datalexlab.com/docs` una vez confirmado que `docs_url='/docs'`
-   sigue accesible en producción — no hay razón para que Passenger lo bloquee, pero no lo pude probar
-   contra un dominio real).
+**La consola no se sube por hPanel.** Todo el sitio `datalexlab.com` se publica automáticamente desde
+el repositorio `Juandf89/datalex-lab` cada vez que se hace push (y un proceso automático de ese repo
+hace commits varias veces por día). Un archivo subido a mano por el administrador de archivos queda
+pisado en la siguiente publicación. Para actualizar `https://datalexlab.com/latio/`:
 
-Nota: `toolkit-api/_preview_comparacion_proyectos.html` (presente en el repo) no se menciona en el
-README como parte del flujo de despliegue — parece un archivo de trabajo/preview interno; no lo subas
-salvo que sepas específicamente para qué se usa.
+1. Copiá `toolkit-api/index.html` de este repositorio a `latio/index.html` del repositorio
+   `datalex-lab`.
+2. Commit y push en `datalex-lab`. Hostinger publica el cambio en segundos.
+3. Verificá que `https://datalexlab.com/latio/` sirva el archivo nuevo (mismo tamaño en bytes) y
+   recargá con Ctrl+F5.
+
+`toolkit-api/card-datalex.html` **no se sube como archivo** — es un fragmento HTML para pegar en la
+sección "Proyectos" de la portada de `datalexlab.com`, que también vive en el repositorio
+`datalex-lab`.
 
 ---
 
@@ -399,9 +397,9 @@ salvo que sepas específicamente para qué se usa.
 
 ### Cerrado — decidido el 09-14
 
-1. **Subdominio de la API: `api.datalexlab.com`.** Es lo que ya referencian `README.md` y
-   `toolkit-api/index.html`; cambiarlo obliga a tocar los dos. Queda así salvo que digas lo
-   contrario.
+1. **Subdominio de la API.** Este documento usa `api.datalexlab.com` en sus ejemplos, pero ese
+   subdominio lo ocupa hoy el proyecto hermano `datalex-lab`. La API de LATIO en producción (Node)
+   está en `api-latio.datalexlab.com`, que es la dirección que usa la consola.
 2. **`LATIO_ALLOWED_ORIGINS`: setearla explícitamente con las tres variantes** —
    `https://datalexlab.com,https://www.datalexlab.com,https://juandf89.github.io`. No basta con el
    default: la consola puede servirse desde `datalexlab.com/latio/` y `www` es un origen distinto
@@ -412,9 +410,8 @@ salvo que sepas específicamente para qué se usa.
 3. **TLS/HTTPS**: Hostinger normalmente emite un certificado Let's Encrypt automático por dominio/
    subdominio desde hPanel (SSL) — confirmá que está activado para el subdominio de la API antes de
    anunciarlo, para no servir la API en HTTP plano.
-4. **Actualizar el placeholder de la consola** (`toolkit-api/index.html`, campo "API base URL", hoy
-   `http://127.0.0.1:8000` por default) para que apunte a la URL real una vez esté online, y el link
-   "Swagger Docs" (hoy marcado `pendiente de despliegue`).
+4. ~~Actualizar el placeholder de la consola~~ — resuelto: la consola ya no tiene un campo de
+   dirección; deduce la API de dónde corre (ver la sección de la consola).
 5. **Versión de Python disponible en tu plan** (necesitás ≥ 3.10 — ver el motivo real en el paso 1
    de hPanel) y **si tu plan expone variables de entorno para Python Apps**. Si no las expone,
    avisame: el fallback es leer un archivo de config en vez de `os.environ`, y ahora hay **siete**
@@ -527,10 +524,9 @@ Passenger instala las dependencias del lado del servidor.
 
 ---
 
-## Alternativa descartada por ahora: Docker/VPS
+## Alternativa descartada: Docker/VPS
 
-`Dockerfile`, `docker-compose.yml` y `requirements-prod.txt` (compartido con la ruta de Hostinger)
-quedan preparados por si en el futuro migran a un VPS con Docker (Hostinger también vende VPS KVM, o
-cualquier otro proveedor). **No construí ni probé la imagen** (el daemon de Docker no estaba
-disponible en este entorno) — si retoman esta ruta más adelante, correr `docker compose up --build`
-y validar antes de confiar en ella.
+`Dockerfile` y `docker-compose.yml` se retiraron del repositorio el 15-09-2026: el plan contratado
+no admite contenedores y nunca se llegó a construir ni probar la imagen. Si en el futuro se migra a
+un VPS, se pueden recuperar del historial de git como punto de partida, pero habría que validarlos
+antes de confiar en ellos.

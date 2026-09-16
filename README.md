@@ -4,47 +4,64 @@
 
 LATIO es una iniciativa comunitaria y de código abierto para dotar al ecosistema LegalTech de la región de un estándar ontológico y computable del derecho continental. Este repositorio contiene los modelos de datos, el pipeline de extracción y segmentación de enunciados normativos, las sondas de comportamiento empírico sobre 8 corpus y el explorador visual.
 
+**Probalo en [datalexlab.com/latio](https://datalexlab.com/latio/).** Elegí cualquiera de los 22.110 artículos de 8 códigos civiles —Chile, Colombia, Argentina (1869 y 2015), Brasil, México (federal y CDMX) y Perú— y el analizador determina:
+
+- su **modalidad deóntica** (Von Wright): obligación, prohibición o permiso;
+- su **posición jurídica** (Hohfeld): deber, derecho subjetivo, privilegio, potestad…;
+- su **esquema PROLEG**: regla general, excepción o prueba en contrario, a quién le toca probar cada una y, si hay excepción, cómo la resuelve el motor de razonamiento derrotable.
+
+El análisis es determinista (reglas léxicas en castellano y portugués), sin modelos de lenguaje ni costo de uso. Sus límites están documentados en [`docs/limitaciones_conocidas.md`](docs/limitaciones_conocidas.md).
+
 ---
 
 ## 📂 Estructura del Repositorio
 
 ```text
 TOOL-KIT-CIIVL/
-├── README.md                  # Descripción del proyecto, arquitectura y guía rápida
-├── .gitignore                 # Exclusiones de control de versiones
-├── requirements.txt           # Dependencias runtime: fastapi, uvicorn, pydantic, pyyaml
-├── requirements-dev.txt       # Dependencias de desarrollo: pytest
+├── README.md
+├── LICENSE                    # MIT para el código; los textos legales tienen su propio régimen
+├── DEPLOYMENT.md              # Despliegue de la API Python (referencia; producción usa latio-node/)
+├── requirements.txt           # Dependencias: fastapi, uvicorn, pydantic, pyyaml
+├── requirements-dev.txt       # + pytest
+├── requirements-prod.txt      # Versiones fijadas para desplegar la API Python (+ a2wsgi)
+├── passenger_wsgi.py          # Adaptador WSGI de src/api.py para Passenger
+├── verify_prod.py             # Verificación de la API Python a través de ese adaptador
 ├── config/
-│   └── corpus_registry.yaml   # Registro de fuentes, licencias y reglas de parsing calibradas para los 8 códigos reales + TEST-FIXTURE
+│   └── corpus_registry.yaml   # Fuentes, licencias y reglas de parsing calibradas de los 8 códigos + TEST-FIXTURE
 ├── data/
-│   └── raw/                   # Los 8 textos legales fuente (.md) + fixture_test_corpus.md (sintético, no real)
+│   ├── raw/                   # Los 8 textos legales fuente (.md) + un fixture sintético
+│   └── processed/             # Artículos y remisiones extraídos (versionado)
 ├── src/
-│   ├── __init__.py            # Módulo raíz de latio
-│   ├── models.py              # Modelos de datos Pydantic v2 (N1 a N5, esquema n3_v1.1, StrictModel base)
+│   ├── models.py              # Modelos de datos Pydantic v2 (niveles N1 a N5, esquema n3_v1.1)
 │   ├── pipeline.py            # Pipeline determinista N0 -> N1 -> N4 (segmentación y remisiones) + CLI
-│   ├── behavior.py            # Análisis de regularidades lógicas, lift de figuras y perfiles + CLI
-│   ├── labeling/               # Motor de etiquetado N3 por reglas léxicas deterministas (Von Wright, Hohfeld, PROLEG preview) — sin LLM, sin costo
-│   ├── reasoning/              # Motor de razonamiento derrotable (PROLEG): models.py, engine.py, rulesets/
-│   └── api.py                 # API FastAPI local (src/api.py) — no desplegada en api.datalexlab.com; expone /v1/reasoning/*, /v1/corpora/*, /v1/statements/*
-├── tests/                     # Suite pytest: modelos, pipeline, behavior, motor de razonamiento, etiquetado, API
+│   ├── behavior.py            # Regularidades lógicas, lift de figuras y perfiles + CLI
+│   ├── labeling/              # Análisis por reglas léxicas: Von Wright, Hohfeld y esquema PROLEG
+│   ├── reasoning/             # Motor de razonamiento derrotable (PROLEG): engine.py, models.py, rulesets/
+│   ├── ratelimit.py           # Límite de tasa por IP y tope de tamaño de las peticiones
+│   └── api.py                 # API FastAPI de referencia: /v1/corpora/*, /v1/statements/propose, /v1/reasoning/*
+├── tests/                     # Suite pytest (134 tests): modelos, pipeline, behavior, razonamiento, análisis, API
 ├── docs/
-│   ├── latio_manifiesto.md    # Manifiesto LATIO: La necesidad de arquitectura neurosimbólica
-│   ├── bitacora_ontologia_civil_law.md # Bitácora de diseño de la ontología del enunciado
+│   ├── latio_manifiesto.md             # La necesidad de una arquitectura neurosimbólica
+│   ├── bitacora_ontologia_civil_law.md # Diseño de la ontología del enunciado
 │   ├── datos_logica_juridica_v1.md     # Catálogo de datos y seis propiedades del civil law
-│   ├── diseno_experimental_v2.md       # Protocolo experimental cerrado para ejecución
-│   ├── informe_hito1.md       # Reporte de corrida en seco y compuertas de calidad
-│   └── limitaciones_conocidas.md # Brechas honestas entre el esquema/pipeline y lo declarado
+│   ├── diseno_experimental_v2.md       # Protocolo experimental
+│   ├── informe_hito1.md                # Corrida en seco y compuertas de calidad (histórico)
+│   ├── notas_gobernanza.md             # Registro de calibración y decisiones sobre los corpus
+│   └── limitaciones_conocidas.md       # Brechas honestas entre lo declarado y lo implementado
 ├── reports/
-│   └── manifest.json          # Manifiesto de ejecución con hashes inmutables y compuertas
+│   ├── manifest.json          # Manifiesto de ejecución: hashes de las fuentes y compuertas de calidad
+│   ├── *_run_report.json      # Informe de cada corpus
+│   └── debate_revision_*.md   # Auditorías de septiembre de 2026 (históricas)
 ├── toolkit-api/
-│   ├── index.html              # LATIO Explorer — consola de análisis, hace llamadas reales a una API local (sin backend corriendo, muestra un error de conexión explícito)
-│   └── card-datalex.html       # Tarjeta de proyecto para incrustar en datalexlab.com
-└── latio-node/                 # Puerto Node.js/Express de src/api.py — la API que SÍ corre en producción (api-latio.datalexlab.com), ver DEPLOYMENT-NODE.md
-    ├── server/                  # app.mjs (Express) + reasoning/, labeling/, models.mjs, ratelimit.mjs, data.mjs
-    ├── tests/                   # 54 tests node:test (módulos + Express app end-to-end)
-    ├── cross_validate.mjs       # Compara Node vs. Python (oráculo) campo a campo
-    ├── verify_prod.mjs          # Checklist HTTP post-despliegue contra una URL ya desplegada
-    └── DEPLOYMENT-NODE.md       # Guía de despliegue en Hostinger (Node.js Web App / lsnode)
+│   ├── index.html             # LATIO Explorer: la consola publicada en datalexlab.com/latio/
+│   └── card-datalex.html      # Tarjeta del proyecto en la portada de datalexlab.com
+└── latio-node/                # Puerto Node.js/Express de src/api.py: la API de producción (api-latio.datalexlab.com)
+    ├── server/                # app.mjs (Express), data.mjs, models.mjs, ratelimit.mjs, labeling/, reasoning/
+    ├── config/, data/, reports/  # Copias de los datos que sirve la API
+    ├── tests/                 # 55 tests node:test (módulos + app Express de punta a punta)
+    ├── cross_validate.mjs     # Compara Node contra Python campo a campo
+    ├── verify_prod.mjs        # Verificación HTTP contra una URL ya desplegada
+    └── DEPLOYMENT-NODE.md     # Guía de despliegue en Hostinger (Node.js Web App / lsnode)
 ```
 
 ---
@@ -62,7 +79,7 @@ pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 ### Ejecutar el Pipeline de Segmentación
-El pipeline toma un `corpus_id` de `config/corpus_registry.yaml` como argumento obligatorio. Las 8 fuentes reales ya tienen su `raw_file` en `data/raw/` y su bloque `parsing` calibrado contra el texto real (ver `docs/notas_gobernanza.md` §0 para el recall exacto de cada una — entre 96% y 102%, salvo `AR-CCYC` al 33% por corrupción de OCR de la fuente, no por calibración):
+El pipeline toma un `corpus_id` de `config/corpus_registry.yaml` como argumento obligatorio. Las 8 fuentes reales ya tienen su `raw_file` en `data/raw/` y su bloque `parsing` calibrado contra el texto real. El recall de las 8 está entre 96 % y 102 %; `AR-CCYC` es la única con las 6 compuertas de calidad en PASS, y el resto tiene advertencias o fallos puntuales documentados en `reports/manifest.json` y `docs/notas_gobernanza.md`:
 ```bash
 python -m src.pipeline CL-CC
 python -m src.pipeline CO-CC
@@ -125,9 +142,11 @@ Proyecto abierto para facultades de derecho, investigadores, jueces y desarrolla
 
 ### Consola estática
 
-La consola es un único archivo (`toolkit-api/index.html`), sin dependencias ni paso de compilación: se sirve como cualquier archivo estático. Subirlo a la carpeta pública del hosting (`public_html/latio/`, por ejemplo) alcanza para tenerlo funcionando contra la API de producción.
+La consola es un único archivo (`toolkit-api/index.html`), sin dependencias ni paso de compilación. Está publicada en **[datalexlab.com/latio](https://datalexlab.com/latio/)**.
 
-El despliegue automático a GitHub Pages **está desactivado**: el workflow `.github/workflows/deploy.yml` se eliminó el 15-09-2026 por decisión del autor, así que `https://juandf89.github.io/TOOL-KIT-CIIVL/` ya no se publica. Para reactivarlo hay que restaurar ese workflow y habilitar **Settings → Pages → Source: GitHub Actions**.
+Ese sitio se publica automáticamente desde el repositorio [`Juandf89/datalex-lab`](https://github.com/Juandf89/datalex-lab), no por el administrador de archivos de Hostinger (un archivo subido a mano queda pisado en la siguiente publicación). Para actualizar la consola: copiar `toolkit-api/index.html` a `latio/index.html` de ese repositorio y hacer push.
+
+El despliegue a GitHub Pages está desactivado: el workflow `.github/workflows/deploy.yml` se eliminó el 15-09-2026 por decisión del autor.
 
 ### API real en producción: puerto Node.js (`latio-node/`)
 `src/api.py` (FastAPI) es la implementación de referencia, pero **no está desplegada** en ningún dominio público: los planes de hosting compartido de Hostinger (Business, sin VPS) no soportan Python. La API que sí corre en producción es un **puerto completo a Node.js/Express** — mismo motor PROLEG, mismo etiquetado léxico, mismo contrato HTTP (snake_case en el wire, verificado campo a campo contra el oráculo Python) — publicado en:
@@ -141,8 +160,10 @@ como Node.js Web App de Hostinger (`lsnode`/LiteSpeed), aislado del resto de la 
 ```bash
 cd latio-node
 npm install
-npm test                    # 54 tests node:test — módulos + Express app end-to-end
-node cross_validate.mjs     # compara Node vs. Python (oráculo) sobre el caso de oro del Apéndice B, CO-256 y labeling
+npm test                    # 55 tests node:test — módulos + Express app end-to-end
+# compara Node contra Python (el repo Python tiene que estar disponible localmente):
+# caso de oro del Apéndice B, CO-256 y análisis en castellano y portugués
+LATIO_PY_REPO=.. LATIO_RATE_LIMIT_ENABLED=0 node cross_validate.mjs
 ```
 
-`toolkit-api/index.html` ya apunta solo a `https://api-latio.datalexlab.com` cuando no corre en `localhost`, así que subirlo a cualquier dominio lo deja funcionando contra la API real sin configurar nada. Los orígenes `datalexlab.com`, `www.datalexlab.com` y `juandf89.github.io` están permitidos por CORS en la API.
+Los orígenes `datalexlab.com`, `www.datalexlab.com` y `juandf89.github.io` están permitidos por CORS en la API.

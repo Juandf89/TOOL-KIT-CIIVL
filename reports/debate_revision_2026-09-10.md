@@ -1,5 +1,7 @@
 # Revisión LATIO Kit — Debate multi-agente (2026-09-10)
 
+> **Documento histórico.** Describe el estado del repositorio en la fecha del título, no el actual. Los problemas que señala se corrigieron en los commits posteriores (el pipeline corre sobre los 8 corpus, hay 134 tests en Python y 55 en Node, y la consola solo muestra resultados reales de la API). Para el estado vigente, ver `README.md` y `docs/limitaciones_conocidas.md`.
+
 ## Resumen ejecutivo
 
 `latio-kit` propone una taxonomía computable del civil law latinoamericano (esquema `n3_v1.1`, 8 corpus, pipeline determinista N0→N1→N4, análisis de "lift" de figuras, y un explorador web público). El panel de 4 especialistas convergió, de forma **independiente** y después confirmada en réplica cruzada, en que **el sistema nunca se ha ejecutado de punta a punta**: falta la clave `parsing` que el pipeline exige, no hay punto de entrada ejecutable, no hay pruebas, y el manifiesto de gobernanza no contiene ni hashes ni resultados de compuertas — es aparato documental sin ejecución verificable detrás. Sobre esa base rota, el explorador público (`datalexlab.com`) muestra cifras de "lift" y métricas con apariencia de respuesta de API real que en realidad están **fabricadas en JavaScript**, sin ningún cálculo Python detrás. El repo no está listo para ser usado, auditado ni citado tal como está.

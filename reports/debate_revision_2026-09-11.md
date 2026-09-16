@@ -1,5 +1,7 @@
 # Revisión final exhaustiva — LATIO Kit (2026-09-11)
 
+> **Documento histórico.** Describe el estado del repositorio en la fecha del título, no el actual. Los problemas que señala se corrigieron en los commits posteriores (el pipeline corre sobre los 8 corpus, hay 134 tests en Python y 55 en Node, y la consola solo muestra resultados reales de la API). Para el estado vigente, ver `README.md` y `docs/limitaciones_conocidas.md`.
+
 Síntesis de un debate estructurado en 2 rondas entre 4 especialistas (ontología legal, arquitectura/pipeline, calidad de datos, producto/despliegue), cada uno con exploración independiente del repo real (`C:\Users\DELL\Desktop\latio-kit`) en la Ronda 1, y réplica cruzada verificando los hallazgos de los otros tres contra el código en la Ronda 2. Todos los hallazgos están respaldados por evidencia de ejecución real (tests corridos, hashes calculados, reproducciones de bugs en Python, no solo lectura estática).
 
 Contexto: esta revisión llega después de una sesión de trabajo que (a) revirtió una integración con Google Gemini/LLM externo por exigencia de costo cero, (b) construyó un motor de reglas léxicas deterministas para etiquetado N3 (Von Wright + Hohfeld + vista previa PROLEG), (c) conectó un selector real de corpus/artículo a la consola pública, y (d) retiró jerga técnica visible (Swagger, Modo Demo, snippets de código). Esta revisión evalúa si ese trabajo está listo para push a `Juandf89/TOOL-KIT-CIIVL`.

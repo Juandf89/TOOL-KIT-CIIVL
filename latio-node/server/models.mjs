@@ -1,12 +1,18 @@
 // models.mjs — port PARCIAL de src/models.py (Python).
 //
-// Solo se portan los símbolos que /v1/statements/propose usa de verdad
-// (el endpoint /v1/statements/validate existió en una versión anterior del
-// proyecto y ya no está — LATIO no es una herramienta de anotación manual;
-// ver README.md) — confirmado grepeando el import
-// real de api.py (`from src.models import AntecedentOperator, Addressee,
-// DeonticModality, ExceptionInfo, GeneralityProxies, HohfeldianPosition,
-// NormativeStatement, StatementType, Structure`). ArticleRecord,
+// Qué usa la API hoy: SOLO `COMPATIBILITY`, que labeling/rules.mjs consulta
+// para derivar la estructura de la norma. El resto (vocabularios cerrados,
+// makeExceptionInfo, makeNormativeStatement, etc.) se portó cuando existía
+// POST /v1/statements/validate, que reconstruía un NormativeStatement con
+// etiquetas cargadas a mano; ese endpoint se eliminó porque LATIO no es una
+// herramienta de anotación. Se conserva como espejo del modelo de dominio de
+// src/models.py y lo ejercitan los tests unitarios, pero ninguna ruta HTTP lo
+// alcanza.
+//
+// El espejo no es completo: `makeTimeLimit` no calcula el campo derivado
+// `min_days` de TimeLimit (src/models.py). Si alguna vez se expone un
+// endpoint que construya NormativeStatement, portar ese campo y su test
+// (tests/test_models.py) antes de hacerlo. ArticleRecord,
 // Institution, Architecture, Referral, Referrals, Validity, PathNode y sus
 // validadores (uid/source_hash format, remisión reflexiva, etc.) NO están
 // alcanzados por ninguna ruta HTTP — pertenecen al pipeline de ingesta

@@ -10,7 +10,9 @@ app ASGI (FastAPI) — `a2wsgi.ASGIMiddleware` la envuelve como WSGI sin tocar
 Si el plan de Hostinger específico soporta ASGI nativo en su versión de
 Passenger, este wrapper igual funciona (corre en modo síncrono, sin
 aprovechar async nativo) — es la opción más compatible entre planes, no la
-más rápida. Ver DEPLOYMENT.md, sección "Hostinger (hosting compartido)".
+más rápida. Ver DEPLOYMENT.md. Esta ruta requiere un plan que ejecute Python:
+la API de producción es el puerto Node de latio-node/ (ver
+latio-node/DEPLOYMENT-NODE.md).
 
 Nota sobre la IP del cliente (importa para el límite de tasa): a2wsgi solo
 puebla `scope["client"]` si el entorno WSGI trae REMOTE_ADDR **y**
