@@ -999,8 +999,12 @@ function renderParamsForm() {
           </select>
         </div>
         <div class="param-row">
+          <div class="param-label"><span>Buscar artículo</span></div>
+          <input type="text" id="lbl-article-search" class="form-input" placeholder="por número (ej. 256) o por palabra (ej. usufructo)" oninput="filterArticlesForLabeling()">
+        </div>
+        <div class="param-row">
           <div class="param-label"><span>Artículo</span></div>
-          <select id="lbl-article-uid" class="form-select" onchange="loadArticleForLabeling()">
+          <select id="lbl-article-uid" class="form-select" size="10" style="height:auto;" onchange="loadArticleForLabeling()">
             <option value="">Cargando artículos…</option>
           </select>
         </div>
@@ -1224,28 +1228,126 @@ async function proposeLabels() {
 // GET /v1/corpora/{corpus_id}/articles/{uid} (texto completo) con el
 // análisis, para no depender de que alguien pegue texto a mano.
 
+// El código civil entero se trae de una vez, no la primera página: la API
+// pagina de a 200 como máximo, así que un código grande (AR-CC, 3989
+// artículos) son 20 peticiones. Se piden en tandas y la lista se va
+// llenando mientras llegan, para que se pueda empezar a buscar enseguida.
+// Una vez cargado, el código queda en memoria y buscar es instantáneo.
+const ARTICLES_PAGE_SIZE = 200;
+const ARTICLES_BATCH = 4;
+const articlesByCorpus = {};
+let articlesLoadToken = 0;
+
 async function loadCorpusArticlesForLabeling() {
   const corpusId = document.getElementById('lbl-corpus-id').value;
   const articleSelect = document.getElementById('lbl-article-uid');
   const status = document.getElementById('lbl-article-status');
   const base = currentApiBase();
+  const search = document.getElementById('lbl-article-search');
+  if (search) search.value = '';
+
+  // Cambiar de código mientras el anterior todavía se está cargando debe
+  // descartar lo que venga de aquella carga, o las dos listas se mezclan.
+  const token = ++articlesLoadToken;
+
+  if (articlesByCorpus[corpusId]) {
+    renderArticleOptions(articlesByCorpus[corpusId], '');
+    status.innerText = `${articlesByCorpus[corpusId].length} artículos.`;
+    return;
+  }
 
   articleSelect.innerHTML = '<option value="">Cargando…</option>';
-  status.innerText = '';
+  status.innerText = 'Cargando el código completo…';
+
+  const fetchPage = async (offset) => {
+    const res = await fetch(`${base}/v1/corpora/${encodeURIComponent(corpusId)}/articles?limit=${ARTICLES_PAGE_SIZE}&offset=${offset}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  };
 
   try {
-    const res = await fetch(`${base}/v1/corpora/${encodeURIComponent(corpusId)}/articles?limit=100&offset=0`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const articles = data.articles || [];
-    articleSelect.innerHTML = articles.map(a => {
-      const preview = (a.text_raw || '').replace(/\s+/g, ' ').slice(0, 70);
-      return `<option value="${a.uid}">Art. ${a.number ?? '?'}${a.suffix || ''} — ${preview}…</option>`;
-    }).join('');
-    status.innerText = `${data.total} artículos en ${corpusId} (mostrando ${articles.length}).`;
+    const first = await fetchPage(0);
+    if (token !== articlesLoadToken) return;
+
+    const total = first.total;
+    let articles = first.articles || [];
+    renderArticleOptions(articles, '');
+    status.innerText = `Cargando… ${articles.length} de ${total} artículos.`;
+
+    for (let offset = ARTICLES_PAGE_SIZE; offset < total; offset += ARTICLES_PAGE_SIZE * ARTICLES_BATCH) {
+      const offsets = [];
+      for (let k = 0; k < ARTICLES_BATCH && offset + k * ARTICLES_PAGE_SIZE < total; k++) {
+        offsets.push(offset + k * ARTICLES_PAGE_SIZE);
+      }
+      const pages = await Promise.all(offsets.map(fetchPage));
+      if (token !== articlesLoadToken) return;
+      pages.forEach(p => { articles = articles.concat(p.articles || []); });
+      renderArticleOptions(articles, document.getElementById('lbl-article-search')?.value || '');
+      status.innerText = `Cargando… ${articles.length} de ${total} artículos.`;
+    }
+
+    if (token !== articlesLoadToken) return;
+    articlesByCorpus[corpusId] = articles;
+    renderArticleOptions(articles, document.getElementById('lbl-article-search')?.value || '');
+    status.innerText = `${articles.length} artículos. Buscá por número o por palabra.`;
   } catch (e) {
+    if (token !== articlesLoadToken) return;
     articleSelect.innerHTML = '<option value="">(no se pudo cargar)</option>';
-    status.innerHTML = `<span style="color:#991B1B;">⚠️ No se pudo conectar al analizador. Revisá la dirección de conexión arriba. Detalle: ${e.message}</span>`;
+    status.innerHTML = `<span style="color:#991B1B;">⚠️ No se pudieron cargar los artículos. Detalle: ${e.message}</span>`;
+  }
+}
+
+function articleLabel(a) {
+  const preview = (a.text_raw || '').replace(/\s+/g, ' ').slice(0, 70);
+  return `Art. ${a.number ?? '?'}${a.suffix || ''} — ${preview}…`;
+}
+
+// El desplegable no puede dibujar miles de opciones en cada tecla sin
+// trabarse, así que muestra como mucho las primeras coincidencias y avisa
+// cuántas quedaron afuera; afinar la búsqueda las alcanza.
+const ARTICLES_MAX_RENDERED = 300;
+
+function renderArticleOptions(articles, query) {
+  const articleSelect = document.getElementById('lbl-article-uid');
+  if (!articleSelect) return;
+  const previous = articleSelect.value;
+
+  const q = (query || '').trim().toLowerCase();
+  let matches = articles;
+  if (q) {
+    // Un número suelto se interpreta como número de artículo exacto (buscar
+    // "256" no debería devolver también el 1256 y el 2567 antes que el 256).
+    const asNumber = /^\d+$/.test(q) ? parseInt(q, 10) : null;
+    matches = articles.filter(a => {
+      if (asNumber !== null && a.number === asNumber) return true;
+      const label = `art. ${a.number ?? ''}${a.suffix || ''} ${a.text_raw || ''}`.toLowerCase();
+      return label.includes(q);
+    });
+  }
+
+  const shown = matches.slice(0, ARTICLES_MAX_RENDERED);
+  articleSelect.innerHTML = shown.length
+    ? shown.map(a => `<option value="${a.uid}">${articleLabel(a)}</option>`).join('')
+    : '<option value="">(ningún artículo coincide)</option>';
+
+  if (shown.some(a => a.uid === previous)) articleSelect.value = previous;
+
+  const status = document.getElementById('lbl-article-status');
+  if (status && q) {
+    status.innerText = matches.length > shown.length
+      ? `${matches.length} artículos coinciden (mostrando los primeros ${shown.length}).`
+      : `${matches.length} artículo${matches.length === 1 ? '' : 's'} coincide${matches.length === 1 ? '' : 'n'}.`;
+  }
+}
+
+function filterArticlesForLabeling() {
+  const corpusId = document.getElementById('lbl-corpus-id').value;
+  const articles = articlesByCorpus[corpusId];
+  const query = document.getElementById('lbl-article-search').value;
+  if (!articles) return;
+  renderArticleOptions(articles, query);
+  if (!query.trim()) {
+    document.getElementById('lbl-article-status').innerText = `${articles.length} artículos. Buscá por número o por palabra.`;
   }
 }
 
