@@ -10,7 +10,15 @@
 // que /home/claude/latio existe con el venv/deps de pytest ya instaladas).
 
 import { execFileSync } from "node:child_process";
-import { createApp } from "./server/app.mjs";
+
+// app.mjs arranca un servidor apenas se lo importa (lsnode lo exige; ver el
+// comentario al final de ese archivo). Acá ese servidor sobra: se lo manda a
+// un puerto efímero para que no choque con nada que ya esté escuchando, y el
+// script termina con process.exit() explícito, porque si no ese servidor deja
+// el proceso vivo para siempre. El import es dinámico para que PORT quede
+// fijado ANTES de que app.mjs se evalúe.
+process.env.PORT = "0";
+const { createApp } = await import("./server/app.mjs");
 
 // La ruta del repo Python y el nombre del intérprete se pueden fijar por
 // entorno: en Windows el binario es `python` (no existe `python3`) y el repo
@@ -243,6 +251,7 @@ print(result.model_dump_json())
     process.exit(1);
   } else {
     console.log("Todos los casos coinciden entre Python (oráculo) y Node.");
+    process.exit(0);
   }
 }
 

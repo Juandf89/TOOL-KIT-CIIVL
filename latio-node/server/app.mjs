@@ -369,8 +369,19 @@ export async function createApp() {
 // defecto) sobre TCP normal.
 // ---------------------------------------------------------------------------
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
-if (isMain) {
+// IMPORTANTE: el arranque NO puede ir detrás de un guard tipo
+// `import.meta.url === file://${process.argv[1]}` (el equivalente ESM de
+// `require.main === module`). El módulo lsnode de LiteSpeed carga este archivo
+// sin ejecutarlo como entry point, así que ese guard evalúa a falso, listen()
+// nunca se llama y Hostinger responde 503 con el error de runtime
+// "App did not call listen() within 3 seconds". Verificado en producción el
+// 2026-09-15. El proyecto hermano (datalex-lab/server/app.mjs) llama a listen()
+// de forma incondicional por esta misma razón.
+//
+// La única condición admisible es excluir el runner de tests: node --test
+// define NODE_TEST_CONTEXT en el proceso hijo, y los tests levantan su propio
+// servidor efímero con app.listen(0). Esa variable no existe en producción.
+if (!process.env.NODE_TEST_CONTEXT) {
   const app = await createApp();
   const listenTarget = process.env.LSNODE_SOCKET || process.env.PORT || 3000;
   app.listen(listenTarget, () => {
