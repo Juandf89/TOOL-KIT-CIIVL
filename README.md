@@ -39,7 +39,7 @@ TOOL-KIT-CIIVL/
 │   ├── reasoning/             # Motor de razonamiento derrotable (PROLEG): engine.py, models.py, rulesets/
 │   ├── ratelimit.py           # Límite de tasa por IP y tope de tamaño de las peticiones
 │   └── api.py                 # API FastAPI de referencia: /v1/corpora/*, /v1/statements/propose, /v1/reasoning/*
-├── tests/                     # Suite pytest (134 tests): modelos, pipeline, behavior, razonamiento, análisis, API
+├── tests/                     # Suite pytest (138 tests): modelos, pipeline, behavior, razonamiento, análisis, API
 ├── docs/
 │   ├── latio_manifiesto.md             # La necesidad de una arquitectura neurosimbólica
 │   ├── bitacora_ontologia_civil_law.md # Diseño de la ontología del enunciado
@@ -58,7 +58,7 @@ TOOL-KIT-CIIVL/
 └── latio-node/                # Puerto Node.js/Express de src/api.py: la API de producción (api-latio.datalexlab.com)
     ├── server/                # app.mjs (Express), data.mjs, models.mjs, ratelimit.mjs, labeling/, reasoning/
     ├── config/, data/, reports/  # Copias de los datos que sirve la API
-    ├── tests/                 # 55 tests node:test (módulos + app Express de punta a punta)
+    ├── tests/                 # 57 tests node:test (módulos + app Express de punta a punta)
     ├── cross_validate.mjs     # Compara Node contra Python campo a campo
     ├── verify_prod.mjs        # Verificación HTTP contra una URL ya desplegada
     └── DEPLOYMENT-NODE.md     # Guía de despliegue en Hostinger (Node.js Web App / lsnode)
@@ -160,7 +160,7 @@ como Node.js Web App de Hostinger (`lsnode`/LiteSpeed), aislado del resto de la 
 ```bash
 cd latio-node
 npm install
-npm test                    # 55 tests node:test — módulos + Express app end-to-end
+npm test                    # 57 tests node:test — módulos + Express app end-to-end
 # compara Node contra Python (el repo Python tiene que estar disponible localmente):
 # caso de oro del Apéndice B, CO-256 y análisis en castellano y portugués
 LATIO_PY_REPO=.. LATIO_RATE_LIMIT_ENABLED=0 node cross_validate.mjs

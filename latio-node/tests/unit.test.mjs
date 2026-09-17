@@ -96,6 +96,21 @@ test("deontica: formas perifrasticas en presente y futuro", () => {
   assert.equal(proposeFromText("El fiduciario tiene derecho al reembolso de los gastos.").hohfeldianPosition, "derecho_subjetivo");
 });
 
+test("deontica: 'ningún' y 'en ningún caso' son prohibicion", () => {
+  for (const texto of [
+    "Ningún heredero podrá pedir la partición antes del plazo.",
+    "En ningún caso la ausencia de requisitos o la falta de documentos referentes a la futura contratación podrá servir de título suficiente para el rechazo de los ofrecimientos.",
+    "El locador bajo ningún pretexto puede pedir aumento en el precio.",
+    "Em nenhum caso poderá o devedor ceder o contrato.",
+  ]) assert.equal(deontica(texto), "prohibicion", texto);
+  assert.notEqual(deontica("Los derechos transmitidos quedan sin ningún valor, y pueden ser reclamados directamente del poseedor actual."), "prohibicion");
+  assert.equal(deontica("En ningún caso. El acreedor podrá cobrar intereses."), "permiso");
+});
+
+test("antecedente: 'siempre y cuando' es siempre_que", () => {
+  assert.equal(proposeFromText("Será válido siempre y cuando el comprador pague el precio.").antecedentOperator, "siempre_que");
+});
+
 test("presuncion absoluta con otras redacciones", () => {
   for (const texto of [
     "Se presume, sin admitirse prueba en contrario, que toda persona tiene conocimiento del contenido de las inscripciones.",

@@ -1,6 +1,6 @@
 # Revisión LATIO Kit — Debate multi-agente (2026-09-10)
 
-> **Documento histórico.** Describe el estado del repositorio en la fecha del título, no el actual. Los problemas que señala se corrigieron en los commits posteriores (el pipeline corre sobre los 8 corpus, hay 134 tests en Python y 55 en Node, y la consola solo muestra resultados reales de la API). Para el estado vigente, ver `README.md` y `docs/limitaciones_conocidas.md`.
+> **Documento histórico.** Describe el estado del repositorio en la fecha del título, no el actual. Los problemas que señala se corrigieron en los commits posteriores (el pipeline corre sobre los 8 corpus, hay 138 tests en Python y 57 en Node, y la consola solo muestra resultados reales de la API). Para el estado vigente, ver `README.md` y `docs/limitaciones_conocidas.md`.
 
 ## Resumen ejecutivo
 

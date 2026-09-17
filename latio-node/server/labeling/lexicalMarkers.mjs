@@ -53,7 +53,7 @@ const re = (src, flags = "") => new RegExp(py(src), "iu" + flags);
 // reflexivo con que arrancan miles de artículos en castellano.
 // ---------------------------------------------------------------------------
 export const ANTECEDENT_PATTERNS = [
-  ["siempre_que", re(String.raw`\bsiempre\s+que\b|\bsempre\s+que\b`)],
+  ["siempre_que", re(String.raw`\bsiempre\s+(?:y\s+cuando|que)\b|\bsempre\s+que\b`)],
   ["en_caso_de", re(String.raw`\ben\s+caso\s+de(\s+que)?\b|\b(?:no|em)\s+caso\s+de\b`)],
   ["cuando", re(String.raw`\bcuando\b|\bquando\b`)],
   ["si", re(String.raw`(?:^|[.,]\s*)si\s+(?!bien\b)`)],
@@ -135,7 +135,14 @@ const _CLITICOS = [
   "se", "le", "les", "lo", "la", "los", "las", "me", "te", "nos", "os",
   "lhe", "lhes", "o", "a", "as", "vos",
 ];
-const _CUANTIFICADORES_NEGATIVOS = ["nadie", "ninguno", "ninguna", "ningu[ée]m", "nenhum", "nenhuma"];
+// "ningún" es la forma apocopada ("ningún heredero podrá").
+const _CUANTIFICADORES_NEGATIVOS = ["nadie", "ninguno", "ninguna", "ningún", "ningu[ée]m", "nenhum", "nenhuma"];
+
+// Locuciones que niegan la oración entera ("en ningún caso … podrá").
+const _LOCUCIONES_NEGATIVAS =
+  String.raw`(?:en\s+ningún\s+caso|en\s+caso\s+alguno|de\s+ningún\s+modo|de\s+ninguna\s+manera` +
+  String.raw`|bajo\s+ningún\s+(?:concepto|pretexto)` +
+  String.raw`|em\s+nenhum\s+caso|em\s+hipótese\s+alguma|de\s+modo\s+algum|de\s+forma\s+alguma)`;
 
 // Equivalente a los lookbehind de ancho fijo de Python: ni una negación (con o
 // sin pronombre en el medio) ni un cuantificador negativo antes del marcador.
@@ -171,8 +178,11 @@ export const DEONTIC_PROHIBICION_RE = re(
   // sobre el ACTO, no un operador deóntico sobre la CONDUCTA de alguien.
   String.raw`|\b` + _QUEDAR + String.raw`\s+proh[íi]bid[ao]s?\b|\bno\s+se\s+admit` +
   String.raw`|\b(?:` + _SER + "|" + _QUEDAR + String.raw`)\s+(?:vedad|proibid|defes)[oa]s?\b` +
-  String.raw`|\b(?:` + _CUANTIFICADORES_NEGATIVOS.join("|") + String.raw`)\b[\s\w,]{0,40}?\b` +
-    _PODER + String.raw`(?![\w-])`,
+  // "sin ningún valor, y pueden…" no niega el verbo.
+  String.raw`|(?<!\bsin\s)(?<!\bsem\s)\b(?:` + _CUANTIFICADORES_NEGATIVOS.join("|") + String.raw`)\b[\s\w,]{0,40}?\b` +
+    _PODER + String.raw`(?![\w-])` +
+  // "En ningún caso … podrá": la locución niega la oración entera.
+  String.raw`|\b` + _LOCUCIONES_NEGATIVAS + String.raw`\b[^.;:]{0,160}?\b` + _PODER + String.raw`(?![\w-])`,
 );
 
 export const DEONTIC_OBLIGACION_RE = re(

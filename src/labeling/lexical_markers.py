@@ -39,7 +39,9 @@ import re
 # ---------------------------------------------------------------------------
 
 ANTECEDENT_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
-    ("siempre_que", re.compile(r"\bsiempre\s+que\b|\bsempre\s+que\b", re.IGNORECASE)),
+    # "siempre y cuando" es la misma condición que "siempre que"; sin listarla
+    # acá, el "cuando" que contiene la hacía pasar por un antecedente temporal.
+    ("siempre_que", re.compile(r"\bsiempre\s+(?:y\s+cuando|que)\b|\bsempre\s+que\b", re.IGNORECASE)),
     ("en_caso_de", re.compile(r"\ben\s+caso\s+de(\s+que)?\b|\b(?:no|em)\s+caso\s+de\b", re.IGNORECASE)),
     ("cuando", re.compile(r"\bcuando\b|\bquando\b", re.IGNORECASE)),
     # "si" condicional: al inicio de cláusula (arranque de texto, tras punto
@@ -191,7 +193,18 @@ _CLITICOS = (
     "se", "le", "les", "lo", "la", "los", "las", "me", "te", "nos", "os",
     "lhe", "lhes", "o", "a", "as", "vos",
 )
-_CUANTIFICADORES_NEGATIVOS = ("nadie", "ninguno", "ninguna", r"ningu[ée]m", "nenhum", "nenhuma")
+# "ningún" es la forma apocopada ("ningún heredero podrá"): sin ella, esas
+# prohibiciones se leían como permisos.
+_CUANTIFICADORES_NEGATIVOS = (
+    "nadie", "ninguno", "ninguna", "ningún", r"ningu[ée]m", "nenhum", "nenhuma",
+)
+
+# Locuciones que niegan la oración entera ("en ningún caso … podrá").
+_LOCUCIONES_NEGATIVAS = (
+    r"(?:en\s+ningún\s+caso|en\s+caso\s+alguno|de\s+ningún\s+modo|de\s+ninguna\s+manera"
+    r"|bajo\s+ningún\s+(?:concepto|pretexto)"
+    r"|em\s+nenhum\s+caso|em\s+hipótese\s+alguma|de\s+modo\s+algum|de\s+forma\s+alguma)"
+)
 
 _NEG = "".join(
     [rf"(?<!\b{n}\s)" for n in _NEGADORES]
@@ -268,7 +281,15 @@ DEONTIC_PROHIBICION_RE = re.compile(
     # "ninguém pode…": el cuantificador negativo prohíbe aunque el verbo esté
     # en afirmativo. La ventana se limita a palabras y comas para no cruzar a
     # otra oración.
-    + r"|\b(?:" + "|".join(_CUANTIFICADORES_NEGATIVOS) + r")\b[\s\w,]{0,40}?\b" + _PODER + r"(?![\w-])",
+    # "sin ningún valor, y pueden ser reclamados" no niega el verbo: la
+    # negación queda dentro del complemento, así que "sin" + cuantificador no
+    # cuenta.
+    + r"|(?<!\bsin\s)(?<!\bsem\s)\b(?:" + "|".join(_CUANTIFICADORES_NEGATIVOS) + r")\b[\s\w,]{0,40}?\b" + _PODER + r"(?![\w-])"
+    # "En ningún caso la ausencia de requisitos … podrá servir de título
+    # suficiente para el rechazo": la locución niega toda la oración, y el verbo
+    # suele quedar lejos. Por eso la ventana es más larga que la del
+    # cuantificador, pero no cruza el final de la oración ni un punto y coma.
+    + r"|\b" + _LOCUCIONES_NEGATIVAS + r"\b[^.;:]{0,160}?\b" + _PODER + r"(?![\w-])",
     re.IGNORECASE,
 )
 DEONTIC_OBLIGACION_RE = re.compile(

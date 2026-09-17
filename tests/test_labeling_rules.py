@@ -267,6 +267,36 @@ def test_formas_perifrasticas_en_presente_y_futuro():
     assert p.hohfeldian_position == "derecho_subjetivo"
 
 
+def test_ningun_y_en_ningun_caso_son_prohibicion():
+    """"ningún" (apocopado) y las locuciones que niegan la oración entera
+    ("en ningún caso … podrá") se leían como permiso: el signo invertido."""
+    for texto in (
+        "Ningún heredero podrá pedir la partición antes del plazo.",
+        "En ningún caso la ausencia de requisitos o la falta de documentos referentes a la "
+        "futura contratación podrá servir de título suficiente para el rechazo de los ofrecimientos.",
+        "El locador bajo ningún pretexto puede pedir aumento en el precio.",
+        "Em nenhum caso poderá o devedor ceder o contrato.",
+    ):
+        assert propose_from_text(texto).deontic_modality == "prohibicion", texto
+
+
+def test_sin_ningun_no_niega_el_verbo_siguiente():
+    p = propose_from_text(
+        "Los derechos transmitidos quedan sin ningún valor, y pueden ser reclamados directamente del poseedor actual."
+    )
+    assert p.deontic_modality != "prohibicion"
+
+
+def test_la_locucion_negativa_no_cruza_la_oracion():
+    p = propose_from_text("En ningún caso. El acreedor podrá cobrar intereses.")
+    assert p.deontic_modality == "permiso"
+
+
+def test_siempre_y_cuando_es_siempre_que():
+    p = propose_from_text("Será válido siempre y cuando el comprador pague el precio.")
+    assert p.antecedent_operator == "siempre_que"
+
+
 def test_presuncion_absoluta_con_otras_redacciones():
     """"Se presume de derecho" es la fórmula de Bello; los demás códigos
     declaran la presunción absoluta con otras palabras, y sin reconocerlas
