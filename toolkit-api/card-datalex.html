@@ -19,37 +19,31 @@
 <!-- portada de datalexlab.com y la consola se publica en           -->
 <!-- datalexlab.com/latio/ (repo Juandf89/datalex-lab). Esta es la  -->
 <!-- misma tarjeta que está publicada ahí.                          -->
+<!-- ACTUALIZADA 2026-09-30: copia literal de la tarjeta de LATIO que hoy   -->
+<!-- está en la portada de datalexlab.com (index.html, sección Proyectos). -->
+<!-- Cambios respecto a la versión anterior: ícono SVG en vez de emoji     -->
+<!-- (aria-hidden), flecha SVG, texto de 12 px mínimo (text-xs), colores   -->
+<!-- de texto con contraste 4,5:1 (slate-600, indigo-700), relleno         -->
+<!-- p-6 en móvil y movimiento reducido respetado (motion-reduce). Si la   -->
+<!-- tarjeta de la portada cambia, actualizar este archivo con ella.       -->
 <!-- ============================================================= -->
 
-<a href="latio/"
-   class="group bg-slate-50 hover:bg-white rounded-3xl border border-slate-200 hover:border-indigo-300 hover:shadow-xl transition-all duration-300 p-8 flex flex-col">
-
-  <div class="flex justify-between items-start mb-6">
-    <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center text-white text-xl group-hover:scale-110 transition-transform">
-      🧠
+<a href="latio/" class="group bg-slate-50 hover:bg-white rounded-3xl border border-slate-200 hover:border-indigo-300 hover:shadow-xl transition-all duration-300 p-6 md:p-8 flex flex-col">
+    <div class="flex justify-between items-start mb-6">
+        <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform motion-reduce:transition-none"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M12 5v13"/></svg></div>
+        <span class="text-xs bg-violet-100 text-violet-700 px-3 py-1 rounded-full font-bold uppercase tracking-wider">Razonamiento real</span>
     </div>
-    <span class="text-[10px] bg-violet-100 text-violet-700 px-3 py-1 rounded-full font-bold uppercase tracking-wider">
-      Razonamiento real
+    <h3 class="text-xl font-serif font-bold mb-2 text-slate-900">LATIO · Motor Ontológico del Civil Law</h3>
+    <p class="text-slate-600 text-sm leading-relaxed mb-6 flex-grow">
+        Modelamos la estructura del enunciado normativo en 8 códigos civiles de América Latina y conectamos
+        un motor de razonamiento derrotable (reglas por defecto, excepciones, carga de la prueba) que
+        responde sobre contenido real, no simulado.
+    </p>
+    <div class="flex flex-wrap gap-x-5 gap-y-1 text-xs text-slate-600 mb-6 font-semibold">
+        <span>22.110 artículos reales</span>
+        <span>8 códigos civiles LATAM</span>
+    </div>
+    <span class="inline-flex items-center gap-2 text-indigo-700 text-xs font-bold uppercase tracking-wider">
+        Abrir consola API <svg class="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform motion-reduce:transition-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </span>
-  </div>
-
-  <h3 class="text-xl font-serif font-bold mb-2 text-slate-900">
-    LATIO · Motor Ontológico del Civil Law
-  </h3>
-
-  <p class="text-slate-600 text-sm leading-relaxed mb-6 flex-grow">
-    Modelamos la estructura del enunciado normativo en 8 códigos civiles de América Latina y conectamos
-    un motor de razonamiento derrotable (reglas por defecto, excepciones, carga de la prueba) que
-    responde sobre contenido real, no simulado.
-  </p>
-
-  <div class="flex flex-wrap gap-x-5 gap-y-1 text-xs text-slate-500 mb-6 font-semibold">
-    <span>22.110 artículos reales</span>
-    <span>8 códigos civiles LATAM</span>
-  </div>
-
-  <span class="inline-flex items-center gap-2 text-indigo-600 text-xs font-bold uppercase tracking-wider">
-    Abrir consola API
-    <span class="group-hover:translate-x-1 transition-transform">➔</span>
-  </span>
 </a>
