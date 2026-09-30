@@ -144,7 +144,7 @@ Proyecto abierto para facultades de derecho, investigadores, jueces y desarrolla
 
 La consola es un único archivo (`toolkit-api/index.html`), sin dependencias ni paso de compilación. Está publicada en **[datalexlab.com/latio](https://datalexlab.com/latio/)**.
 
-Ese sitio se publica automáticamente desde el repositorio [`Juandf89/datalex-lab`](https://github.com/Juandf89/datalex-lab), no por el administrador de archivos de Hostinger (un archivo subido a mano queda pisado en la siguiente publicación). Para actualizar la consola: copiar `toolkit-api/index.html` a `latio/index.html` de ese repositorio y hacer push.
+Ese sitio se publica automáticamente desde el repositorio [`Juandf89/datalex-lab`](https://github.com/Juandf89/datalex-lab), no por el administrador de archivos de Hostinger (un archivo subido a mano queda pisado en la siguiente publicación). La fuente de la consola es **este** repositorio: editá solo `toolkit-api/index.html` y hacé push a `main`. Un workflow de `datalex-lab` (`sincronizar-latio.yml`, cada 6 horas o a pedido) copia el archivo a `latio/index.html` y lo publica; no hay que copiarlo a mano, y una edición directa de `latio/index.html` en `datalex-lab` se pierde en el siguiente sincronizado.
 
 El despliegue a GitHub Pages está desactivado: el workflow `.github/workflows/deploy.yml` se eliminó el 15-09-2026 por decisión del autor.
 

@@ -7,8 +7,9 @@
 >
 > La consola (`toolkit-api/index.html`) tampoco se sube por hPanel: `datalexlab.com` se publica
 > automáticamente desde el repositorio `Juandf89/datalex-lab`, así que para actualizar
-> `https://datalexlab.com/latio/` se copia el archivo a `latio/index.html` de ese repositorio y se
-> hace push. Ver la sección de la consola más abajo.
+> `https://datalexlab.com/latio/` basta con hacer push de `toolkit-api/index.html` a `main` de este
+> repositorio: un workflow de `datalex-lab` la copia a `latio/index.html`. Ver la sección de la consola
+> más abajo.
 >
 > Este documento se conserva porque `src/api.py` sigue siendo la implementación de referencia: sirve
 > para desplegarla en un plan que sí ejecute Python y documenta decisiones (límite de tasa, CORS,
@@ -379,13 +380,21 @@ cualquier otro dominio usa `https://api-latio.datalexlab.com`.
 **La consola no se sube por hPanel.** Todo el sitio `datalexlab.com` se publica automáticamente desde
 el repositorio `Juandf89/datalex-lab` cada vez que se hace push (y un proceso automático de ese repo
 hace commits varias veces por día). Un archivo subido a mano por el administrador de archivos queda
-pisado en la siguiente publicación. Para actualizar `https://datalexlab.com/latio/`:
+pisado en la siguiente publicación.
 
-1. Copiá `toolkit-api/index.html` de este repositorio a `latio/index.html` del repositorio
-   `datalex-lab`.
-2. Commit y push en `datalex-lab`. Hostinger publica el cambio en segundos.
-3. Verificá que `https://datalexlab.com/latio/` sirva el archivo nuevo (mismo tamaño en bytes) y
-   recargá con Ctrl+F5.
+**La fuente es este repositorio; `datalex-lab` solo guarda una copia que se sincroniza sola** (desde
+2026-09-30). Para actualizar `https://datalexlab.com/latio/`:
+
+1. Editá `toolkit-api/index.html` aquí, commit y push a `main`.
+2. El workflow `sincronizar-latio.yml` de `datalex-lab` corre cada 6 horas (a :40) y copia el archivo a
+   `latio/index.html` si cambió. Para no esperar: en GitHub, `datalex-lab` → Actions → *Sincronizar
+   consola de LATIO* → *Run workflow*. Hostinger publica el cambio en segundos.
+3. Verificá que `https://datalexlab.com/latio/` sirva el archivo nuevo y recargá con Ctrl+F5.
+
+El script (`scripts/sincronizar_consola_latio.sh` en `datalex-lab`) no copia nada si lo descargado no
+parece la consola (tamaño, estructura, o si no apunta a `https://api-latio.datalexlab.com`): en ese
+caso el job falla y el sitio conserva la versión anterior. **No edites `latio/index.html` directamente
+en `datalex-lab`**: el siguiente sincronizado la pisa.
 
 `toolkit-api/card-datalex.html` **no se sube como archivo** — es un fragmento HTML para pegar en la
 sección "Proyectos" de la portada de `datalexlab.com`, que también vive en el repositorio
